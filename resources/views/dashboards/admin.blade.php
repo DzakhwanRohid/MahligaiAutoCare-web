@@ -82,7 +82,7 @@
                         Agus Wijaya
                         <span class="badge bg-secondary">User</span>
                     </li>
-                     <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
                         Putri Ayu
                         <span class="badge bg-secondary">User</span>
                     </li>
