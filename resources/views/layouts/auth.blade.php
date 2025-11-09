@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Autentikasi' }} - Mahligai AutoCare</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Mahligai Auto Care') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,9 +13,15 @@
 
     <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
 </head>
-<body class="auth-page" style="background-image: url('{{ asset('img/bgpesan.jpg') }}');">
+<body class="auth-page">
 
-   @yield('content')
+    <div id="particles-js"></div>
 
+    <main>
+        @yield('content')
+    </main>
+
+    <script src="{{ asset('js/particles.js') }}"></script>
+    <script src="{{ asset('js/auth-particles.js') }}"></script>
 </body>
 </html>

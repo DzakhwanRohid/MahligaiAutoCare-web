@@ -1,39 +1,72 @@
-html, body {
+/* public/css/auth.css */
+
+html,
+body {
     height: 100%;
+    margin: 0;
+    overflow: hidden; /* Mencegah scrollbar karena canvas partikel */
 }
 
 body.auth-page {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    font-family: 'Poppins', sans-serif; /* Menggunakan font yang lebih modern */
+    font-family: "Poppins", sans-serif;
+    /* Latar belakang gradien gelap untuk kontras dengan partikel putih */
+    background: #0f2027; /* fallback for old browsers */
+    background: -webkit-linear-gradient(
+        to right,
+        #2c5364,
+        #203a43,
+        #0f2027
+    ); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(
+        to right,
+        #2c5364,
+        #203a43,
+        #0f2027
+    ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    position: relative;
+}
+
+/* Container untuk partikel JS */
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0; /* Pastikan di belakang konten */
 }
 
 .auth-container {
     max-width: 450px;
     width: 100%;
     padding: 40px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
     text-align: center;
+    position: relative;
+    z-index: 1; /* Pastikan di atas partikel */
+
+    /* Efek Glassmorphism */
+    background: rgba(25, 29, 39, 0.6);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff; /* Warna teks utama menjadi putih */
 }
 
 .auth-logo {
     margin-bottom: 20px;
-    max-width: 200px;
+    max-width: 180px;
 }
 
 .auth-container h2 {
-    color: #5d7e2c;
+    color: #fff; /* Judul menjadi putih */
     font-weight: 700;
     margin-bottom: 25px;
+    letter-spacing: 1px;
 }
 
 .auth-form .form-group {
@@ -45,7 +78,7 @@ body.auth-page {
     display: block;
     margin-bottom: 8px;
     font-weight: 600;
-    color: #333;
+    color: #ddd; /* Warna label lebih lembut */
 }
 
 .auth-form input[type="text"],
@@ -54,14 +87,25 @@ body.auth-page {
     width: 100%;
     padding: 12px 15px;
     border-radius: 8px;
-    border: 1px solid #ddd;
     box-sizing: border-box;
-    transition: border-color 0.3s;
+    transition: all 0.3s ease;
+
+    /* Gaya input yang lebih modern */
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 16px;
+}
+
+.auth-form input::placeholder {
+    color: #bbb;
 }
 
 .auth-form input:focus {
     outline: none;
-    border-color: #7BAA23;
+    border-color: #8cc03b; /* Warna hijau brand saat focus */
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 15px rgba(140, 192, 59, 0.3);
 }
 
 .auth-form button {
@@ -74,23 +118,48 @@ body.auth-page {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
 }
 
 .auth-form button:hover {
-    background-color: #7BAA23;
+    background-color: #7baa23;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.auth-container .auth-link {
+.auth-container .auth-link,
+.login-register-link {
     margin-top: 20px;
-    color: #555;
+    color: #ccc;
 }
 
-.auth-container .auth-link a {
-    color: #5d7e2c;
+.auth-container .auth-link a,
+.login-register-link a {
+    color: #8cc03b; /* Warna link hijau brand */
     font-weight: 600;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
-.auth-container .auth-link a:hover {
+.auth-container .auth-link a:hover,
+.login-register-link a:hover {
+    color: #a4e052; /* Warna link lebih cerah saat hover */
     text-decoration: underline;
+}
+
+/* Penyesuaian untuk "Ingat Saya" */
+.block.text-left {
+    display: flex;
+    align-items: center;
+    color: #ddd;
+}
+
+.block.text-left input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+/* Penyesuaian untuk "Lupa Password" */
+a.login-register-link {
+    font-size: 0.9em;
 }

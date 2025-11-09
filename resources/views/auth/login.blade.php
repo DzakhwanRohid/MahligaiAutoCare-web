@@ -1,11 +1,5 @@
-@extends('layouts.auth')
-
-@section('content')
-<div class="auth-container">
-    <a href="/">
-        <img src="{{ asset('img/logo_project.png') }}" alt="Logo Mahligai AutoCare" class="auth-logo">
-    </a>
-    <h2>Selamat Datang Kembali</h2>
+<x-guest-layout>
+    <h2>Login Akun</h2>
 
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -13,39 +7,42 @@
         @csrf
 
         <div class="form-group">
-            <label for="email">Email</label>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">
+            <label for="email">{{ __('Email') }}</label>
+            <input id="email" class="form-control" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <div class="form-group">
-            <label for="password">Password</label>
-            <input id="password" type="password" name="password" required autocomplete="current-password">
+            <label for="password">{{ __('Password') }}</label>
+            <input id="password" class="form-control" type="password" name="password" required autocomplete="current-password" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <div class="block mt-4 text-left" style="display: flex; align-items: center;">
-            <input id="remember_me" type="checkbox" name="remember" style="width: auto; margin-right: 8px;">
-            <label for="remember_me">{{ __('Ingat saya') }}</label>
-        </div>
+        <div class="form-group d-flex justify-content-between align-items-center">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="remember_me" name="remember">
+                <label class="custom-control-label" for="remember_me">
+                    {{ __('Remember me') }}
+                </label>
+            </div>
 
-        <div style="text-align: right; margin-top: 10px;">
             @if (Route::has('password.request'))
-                <a class="login-register-link" style="font-size: 0.9em;" href="{{ route('password.request') }}">
+                <a class="auth-link" href="{{ route('password.request') }}">
                     {{ __('Lupa password?') }}
                 </a>
             @endif
         </div>
 
-        <div class="form-group mt-4">
-            <button type="submit">
-                {{ __('Login') }}
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary btn-block">
+                {{ __('Log in') }}
             </button>
         </div>
 
-        <div class="login-register-link">
-            Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a>
-        </div>
+        @if (Route::has('register'))
+            <p class="auth-link-register">
+                Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a>
+            </p>
+        @endif
     </form>
-</div>
-@endsection
+</x-guest-layout>
