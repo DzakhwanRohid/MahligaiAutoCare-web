@@ -12,8 +12,6 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\POSController;
 
 // Web Routes
-
-
 // Rute untuk halaman-halaman utama (Publik)
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/layanan', [HomeController::class, 'layanan'])->name('layanan');
@@ -71,7 +69,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kasir/pelanggan/{customer}/edit', [CustomerController::class, 'edit'])
         ->middleware('role:kasir')
         ->name('kasir.customer.edit');
-        
+
     Route::put('/kasir/pelanggan/{customer}', [CustomerController::class, 'update'])
         ->middleware('role:kasir')
         ->name('kasir.customer.update');
@@ -108,13 +106,13 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/kasir/pembayaran/{transaction}', [POSController::class, 'processPayment'])
         ->middleware('role:kasir')
         ->name('kasir.pembayaran.process');
-        
+
     // 2. Untuk menampilkan halaman struk setelah berhasil bayar
     Route::get('/kasir/struk/{transaction}', [POSController::class, 'showStruk'])
         ->middleware('role:kasir')
         ->name('kasir.struk.show');
 
-    
+
 });
 
 // Memuat semua rute autentikasi (login, register, logout, dll.) dari Breeze
