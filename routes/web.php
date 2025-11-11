@@ -17,6 +17,11 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/layanan', [HomeController::class, 'layanan'])->name('layanan');
 Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang.kami');
 Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
+Route::get('/pantau', [HomeController::class, 'pantauAntrian'])->name('pantau');
+
+//Pemesanan route
+Route::get('/pemesanan', [HomeController::class, 'showPemesanan'])->name('pemesanan.create');
+Route::post('/pemesanan', [HomeController::class, 'storePemesanan'])->name('pemesanan.store');
 
 
 // Rute Dashboard bawaan Breeze

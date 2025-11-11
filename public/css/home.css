@@ -1,0 +1,325 @@
+/* public/css/theme-light.css */
+
+@keyframes pulse-glow-light {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(140, 192, 59, 0.4);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(140, 192, 59, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(140, 192, 59, 0.4);
+    }
+}
+
+:root {
+    --primary-green: #7baa23; /* Sedikit lebih gelap agar kontras di background putih */
+    --primary-hover: #8cc03b;
+    --light-bg: #ffffff;
+    --section-bg: #f8f9fa; /* Warna abu-abu sangat terang untuk variasi section */
+    --text-dark: #212529;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+}
+
+body {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
+    font-family: "Poppins", sans-serif;
+}
+
+/* === Navbar & Topbar === */
+.topbar {
+    background-color: var(--section-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.navbar-brand {
+    color: var(--primary-green) !important;
+}
+
+.navbar-nav .nav-link {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link:hover {
+    color: var(--primary-green) !important;
+}
+
+.btn-cta {
+    background-color: var(--primary-green);
+    border-color: var(--primary-green);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-cta:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(140, 192, 59, 0.3);
+}
+
+/* === Hero Section === */
+/* === Hero Section === */
+.hero-section {
+    padding: 180px 0; /* Padding diperbesar agar gambar lebih terlihat */
+    position: relative;
+    color: #fff; /* Warna teks utama diubah menjadi putih */
+    background-color: #212529; /* Warna cadangan jika gambar gagal dimuat */
+
+    /* Gambar background baru dengan lapisan gelap untuk kontras */
+    background-image: linear-gradient(
+            rgba(15, 23, 43, 0.7),
+            rgba(15, 23, 43, 0.7)
+        ),
+        url("/img/bgpesan.jpg");
+
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* Penyesuaian warna teks di dalam hero section agar terbaca */
+.hero-section h1 {
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); /* Efek bayangan agar teks lebih tajam */
+}
+
+.hero-section p {
+    color: rgba(
+        255,
+        255,
+        255,
+        0.85
+    ); /* Warna deskripsi dibuat sedikit lebih redup */
+}
+
+/* Animasi untuk Tombol CTA di Hero (tidak berubah, tapi sertakan) */
+.animated-cta {
+    animation: pulse-glow-light 2.5s infinite ease-in-out;
+}
+
+/* === Section Umum === */
+.home-section {
+    padding: 100px 0;
+}
+
+.section-title {
+    color: var(--primary-green);
+    font-weight: 700;
+    margin-bottom: 15px;
+    font-size: 2.5rem;
+}
+
+.text-primary {
+    color: var(--primary-green) !important;
+}
+
+/* === Layanan Section === */
+.service-card {
+    background-color: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    height: 100%;
+}
+
+.service-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-green);
+}
+
+.service-card .card-img-top {
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.service-card:hover .card-img-top {
+    transform: scale(1.1);
+}
+
+.service-card .card-body {
+    padding: 30px;
+}
+
+.service-card .card-title {
+    color: var(--text-dark);
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+/* === Testimonial Section === */
+.testimonial-card {
+    background-color: var(--light-bg);
+    border-radius: 16px;
+    padding: 30px;
+    border: 1px solid var(--border-color);
+    height: 100%;
+}
+
+.testimonial-card img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid var(--primary-green);
+}
+
+.testimonial-card .customer-name {
+    font-weight: 600;
+    color: var(--primary-green);
+    margin-top: 1.5rem;
+}
+
+/* === Footer === */
+.footer {
+    background: #0f172b;
+    color: #b0b9ae;
+}
+
+.footer .btn.btn-social:hover {
+    color: var(--primary-green);
+}
+
+.footer .btn.btn-link:hover {
+    color: var(--primary-hover);
+}
+
+.footer .copyright a {
+    color: var(--primary-green);
+}
+
+.footer .copyright a:hover {
+    color: var(--primary-hover);
+}
+/* === CSS UNTUK SECTION KONTAK & PETA === */
+
+.bg-light {
+    background-color: #f8f9fa !important; /* !important untuk memastikan override */
+}
+
+.contact-info-box {
+    background-color: #f8f9fa; /* Warna dari --section-bg */
+    padding: 30px;
+    border-radius: 16px;
+    height: 100%;
+    border: 1px solid #dee2e6; /* Warna dari --border-color */
+}
+
+.contact-info-box .info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+.contact-info-box .info-icon {
+    font-size: 1.5rem;
+    color: var(--primary-green);
+    min-width: 45px;
+}
+
+.contact-form {
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    height: 100%;
+    border: 1px solid var(--border-color);
+}
+
+/* Penyesuaian untuk form-floating Bootstrap */
+.form-floating > .form-control {
+    border-radius: 12px;
+}
+.form-floating > label {
+    padding: 1rem 0.95rem;
+}
+.form-control:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 0.25rem rgba(123, 170, 35, 0.25);
+}
+
+/* CSS untuk Peta Responsif */
+.map-responsive {
+    overflow: hidden;
+    padding-bottom: 40%; /* Rasio aspek peta */
+    position: relative;
+    height: 0;
+    border-radius: 16px; /* Memberi sudut melengkung pada peta */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.map-responsive iframe {
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+/* --- CSS untuk Header Bersih (Tanpa BG) --- */
+
+.page-header {
+    /* Hapus background image dan overlay */
+    background: none;
+    background-color: #f8f9fa; /* Background putih bersih/abu-abu muda */
+    padding: 80px 0 40px 0; /* Memberi ruang yang cukup di atas dan bawah */
+    margin-bottom: 50px;
+    border-bottom: 2px solid var(--primary-green, #198754); /* Garis pemisah yang elegan */
+}
+
+/* Pastikan teks header kontras dengan background terang */
+.page-header h1 {
+    color: var(--primary-green, #198754); /* Gunakan warna tema utama (Hijau) */
+    font-weight: 700;
+}
+
+.page-header .lead {
+    color: #495057; /* Warna abu-abu gelap agar terbaca */
+}
+
+/* --- CSS Perbaikan Card Layanan (Warna dan Ukuran Gambar) --- */
+
+.service-card {
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Tambahkan shadow agar menonjol */
+    transition: transform 0.3s ease-in-out;
+    /* Pastikan warna teks di dalam card kembali gelap jika tidak ada class .card-text khusus */
+}
+.service-card:hover {
+    transform: translateY(-5px);
+}
+.service-card .card-img-top {
+    width: 100%;
+    height: 200px; /* Tinggi seragam untuk semua gambar card */
+    object-fit: cover; /* Memastikan gambar mengisi area tanpa terdistorsi */
+}
+.service-card .card-title {
+    color: var(--primary-green, #198754); /* Warna judul card (Hijau) */
+}
+/* Agar deskripsi terbaca dengan baik di latar belakang terang */
+.service-card .card-text {
+    color: #495057 !important;
+}
+
+/* Pastikan section content lainnya tetap konsisten */
+.home-section {
+    padding: 60px 0;
+}

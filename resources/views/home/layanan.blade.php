@@ -2,23 +2,27 @@
 
 @section('content')
 
+{{-- HEADER LAYANAN - Tanpa BG --}}
 <div class="page-header text-center">
     <div class="container">
         <h1 class="display-4">Layanan Kami</h1>
-        <p class="lead text-white-50">Kualitas terbaik untuk kilau sempurna kendaraan Anda.</p>
+        {{-- Hapus class text-white-50 --}}
+        <p class="lead">Kualitas terbaik untuk kilau sempurna kendaraan Anda.</p>
     </div>
 </div>
 
-<div class="container py-5">
-    <div class="text-center mb-5">
+{{-- DETAIL LAYANAN --}}
+<div class="container home-section">
+    <div class="text-center mb-5" data-aos="fade-up">
         <h2 class="section-title">Detail Layanan Perawatan</h2>
         <p class="text-muted">Kami menawarkan berbagai layanan untuk memenuhi setiap kebutuhan mobil Anda.</p>
     </div>
 
     <div class="row g-4">
-        <div class="col-lg-4 col-md-6">
+        {{-- Card 1: Premium Car Wash --}}
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
             <div class="card service-card h-100">
-                <img src="https://images.unsplash.com/photo-1616422285855-ab45c5aabc48?q=80&w=2070&auto=format&fit=crop" class="card-img-top" alt="Cuci Mobil Premium">
+                <img src="img/premium.jpg" class="card-img-top" alt="Cuci Mobil Premium">
                 <div class="card-body">
                     <h5 class="card-title">Premium Car Wash</h5>
                     <p class="card-text">Pencucian menyeluruh menggunakan shampoo pH netral, aman untuk semua jenis cat, membersihkan hingga ke sela-sela terkecil.</p>
@@ -26,9 +30,10 @@
             </div>
         </div>
 
-        <div class="col-lg-4 col-md-6">
+        {{-- Card 2: Detailing Interior --}}
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
             <div class="card service-card h-100">
-                <img src="https://images.unsplash.com/photo-1599175217482-5a48d0a75f48?q=80&w=1932&auto=format&fit=crop" class="card-img-top" alt="Detailing Interior">
+                <img src="img/interior.webp" class="card-img-top" alt="Detailing Interior">
                 <div class="card-body">
                     <h5 class="card-title">Interior Detailing</h5>
                     <p class="card-text">Membersihkan kabin secara detail, mulai dari jok, dashboard, karpet, hingga plafon, mengembalikan suasana baru di dalam mobil.</p>
@@ -36,17 +41,16 @@
             </div>
         </div>
 
-        <div class="col-lg-4 col-md-6">
+        {{-- Card 3: Nano Coating --}}
+        <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
             <div class="card service-card h-100">
-                <img src="https://images.unsplash.com/photo-1617105522332-95a43f1636d2?q=80&w=2070&auto=format&fit=crop" class="card-img-top" alt="Nano Coating">
+                <img src="img/nano.jpg" class="card-img-top" alt="Nano Coating">
                 <div class="card-body">
                     <h5 class="card-title">Nano Ceramic Coating</h5>
                     <p class="card-text">Memberikan lapisan pelindung super hidrofobik yang melindungi cat dari goresan halus, sinar UV, dan kotoran.</p>
                 </div>
             </div>
         </div>
-
-        {{-- Tambahkan card layanan lainnya di sini sesuai kebutuhan --}}
     </div>
 </div>
 @endsection

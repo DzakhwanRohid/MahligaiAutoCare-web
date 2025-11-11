@@ -37,4 +37,18 @@ class HomeController extends Controller
     {
         return view('home.kontak');
     }
+    public function pantauAntrian() {
+    return view('home.pantau');
+}
+public function showPemesanan()
+{
+    return view('home.pemesanan');
+}
+public function storePemesanan(Request $request)
+{
+    // ... Logika Validasi dan Penyimpanan ke Database (Customer dan Transaction)
+    // ...
+    return redirect()->route('pantau-antrian')->with('success', 'Pemesanan berhasil!');
+
+}
 }

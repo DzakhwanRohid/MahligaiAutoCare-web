@@ -1,0 +1,230 @@
+/*
+========================================
+  CSS BARU: HALAMAN PANTAU ANTRIAN V2
+========================================
+*/
+
+/* Header Halaman (Tanpa Background) */
+.page-header {
+    background-color: var(--section-bg, #f8f9fa);
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+}
+.page-header h1 {
+    color: var(--text-dark, #212529);
+}
+.page-header .lead {
+    color: var(--text-muted, #6c757d);
+}
+
+/* Section Utama */
+.queue-section-v2 {
+    padding: 80px 0;
+    background-color: #f1f3f5; /* Latar belakang abu-abu lembut */
+}
+
+/* Desain Kartu Antrian (Pod) */
+.queue-pod {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+.queue-pod:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Header Pod */
+.pod-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e9ecef;
+}
+.pod-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.pod-title h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* Indikator Status (Titik Berdenyut) */
+.status-indicator {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+}
+.status-indicator.working {
+    background-color: #ff9800;
+    box-shadow: 0 0 0 0 rgba(255, 152, 0, 1);
+    animation: pulse-orange 2s infinite;
+}
+.status-indicator.finished {
+    background-color: var(--primary-green);
+}
+@keyframes pulse-orange {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 152, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 152, 0, 0);
+    }
+}
+
+/* Tag Status (Teks) */
+.pod-status-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 7px;
+    letter-spacing: 0.5px;
+}
+.pod-status-tag.working {
+    background-color: #ffe8cc;
+    color: #ff9800;
+}
+.pod-status-tag.finished {
+    background-color: #e2fbd7;
+    color: #5d9c59;
+}
+
+/* Body Pod */
+.pod-body {
+    padding: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+}
+.vehicle-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.vehicle-info i {
+    font-size: 3rem;
+    color: var(--primary-green);
+}
+.vehicle-details {
+    display: flex;
+    flex-direction: column;
+}
+.vehicle-details strong {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+}
+.vehicle-details span {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.worker-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f8f9fa;
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.worker-info i {
+    color: var(--text-muted);
+}
+
+/* Footer Pod */
+.pod-footer {
+    padding: 20px 25px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+.time-details {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.time-details i {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+}
+.time-details div {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+}
+.time-details small {
+    color: var(--text-muted);
+}
+
+/* Progress Bar Futuristik */
+.progress-bar-container {
+    height: 10px;
+    width: 100%;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    background-color: #ff9800;
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 1rem 1rem;
+    transition: width 0.6s ease;
+}
+
+/* Kartu Status: Tersedia */
+.queue-pod.available {
+    border: 2px dashed #ced4da;
+    background: linear-gradient(145deg, #f8f9fa, #ffffff);
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+}
+.available-content {
+    text-align: center;
+}
+.available-content i {
+    font-size: 3.5rem;
+    color: var(--primary-green);
+}
+.available-content h4 {
+    margin-top: 15px;
+    color: var(--text-dark);
+}
+.available-content p {
+    color: var(--primary-green);
+    font-weight: 500;
+    margin-top: 5px;
+}
+
+/* Status Selesai */
+.queue-pod.finished .vehicle-info i,
+.queue-pod.finished .pod-title span {
+    color: var(--primary-green);
+}
