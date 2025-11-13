@@ -40,7 +40,7 @@ class CustomerController extends Controller
         // Simpan sebagai 'walk-in' (user_id = null)
         Customer::create($request->all());
 
-        return redirect()->route('customer.index')->with('success', 'Pelanggan (walk-in) baru berhasil ditambahkan.');
+        return redirect()->route('admin.customer.index')->with('success', 'Pelanggan (walk-in) baru berhasil ditambahkan.');
     }
 
     /**
@@ -75,7 +75,7 @@ class CustomerController extends Controller
         // Update data
         $customer->update($request->all());
 
-        return redirect()->route('customer.index')->with('success', 'Data pelanggan berhasil diperbarui.');
+        return redirect()->route('admin.customer.index')->with('success', 'Data pelanggan berhasil diperbarui.');
     }
 
     /**
@@ -87,19 +87,19 @@ class CustomerController extends Controller
 
         // 1. Cek jika pelanggan punya akun user
         if ($customer->user) {
-            return redirect()->route('customer.index')
+            return redirect()->route('admin.customer.index')
                 ->with('error', 'Tidak bisa menghapus pelanggan ini. Dia terdaftar sebagai User. Hapus Akun User-nya terlebih dahulu di Manajemen User.');
         }
 
         // 2. Cek jika pelanggan punya riwayat transaksi
         if ($customer->transactions()->count() > 0) {
-            return redirect()->route('customer.index')
+            return redirect()->route('admin.customer.index')
                 ->with('error', 'Tidak bisa menghapus pelanggan ini. Dia memiliki riwayat transaksi.');
         }
 
         // 3. Jika aman (walk-in dan tidak punya transaksi), hapus.
         $customer->delete();
 
-        return redirect()->route('customer.index')->with('success', 'Pelanggan berhasil dihapus.');
+        return redirect()->route('admin.customer.index')->with('success', 'Pelanggan berhasil dihapus.');
     }
 }

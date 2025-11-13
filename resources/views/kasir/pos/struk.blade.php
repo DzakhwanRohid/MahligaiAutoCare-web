@@ -14,15 +14,15 @@
                 </div>
                 <div class="card-body">
                     <h4 class="text-center mb-3">STRUK PEMBAYARAN</h4>
-                    
+
                     <p><strong>No. Invoice:</strong> {{ $transaction->invoice }}</p>
                     <p><strong>Tanggal:</strong> {{ $transaction->created_at->format('d M Y, H:i') }}</p>
                     <p><strong>Kasir:</strong> {{ $transaction->user->name }}</p>
                     <p><strong>Pelanggan:</strong> {{ $transaction->customer->name }}</p>
-                    
+
                     <hr>
-                    
-                    <table class="table table-sm table-borderless">
+
+                 <table class="table table-sm table-borderless">
                         <thead>
                             <tr>
                                 <th>Layanan</th>
@@ -32,13 +32,30 @@
                         <tbody>
                             <tr>
                                 <td>{{ $transaction->service->name }}</td>
-                                <td class="text-end">Rp {{ number_format($transaction->total, 0, ',', '.') }}</td>
+                                <td class="text-end">Rp {{ number_format($transaction->base_price, 0, ',', '.') }}</td>
+                            </tr>
+                            @if($transaction->discount > 0)
+                            <tr>
+                                <td class="text-danger">Diskon</td>
+                                <td class="text-end text-danger">- Rp {{ number_format($transaction->discount, 0, ',', '.') }}</td>
+                            </tr>
+                            @endif
+                            <tr class="border-top">
+                                <th class="h5">Total Tagihan</th>
+                                <th class="text-end h5">Rp {{ number_format($transaction->total, 0, ',', '.') }}</th>
+                            </tr>
+                            <tr>
+                                <td>Tunai / Bayar</td>
+                                <td class="text-end">Rp {{ number_format($transaction->amount_paid, 0, ',', '.') }}</td>
+                            </tr>
+                            <tr>
+                                <td>Kembali</td>
+                                <td class="text-end">Rp {{ number_format($transaction->change, 0, ',', '.') }}</td>
                             </tr>
                         </tbody>
                     </table>
-                    
                     <hr>
-                    
+
                     <div class="d-flex justify-content-between">
                         <span class="font-weight-bold">Total Tagihan</span>
                         <span class="font-weight-bold">Rp {{ number_format($transaction->total, 0, ',', '.') }}</span>
@@ -60,7 +77,7 @@
                     <p class="text-center small">Terima kasih atas kunjungan Anda!</p>
 
                     <div class="d-flex justify-content-around mt-4">
-                        <a href="{{ route('kasir.pembayaran.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('pos.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Transaksi Baru
                         </a>
                         <button onclick="window.print()" class="btn btn-primary">

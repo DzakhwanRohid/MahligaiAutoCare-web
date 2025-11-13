@@ -4,69 +4,113 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Transaction; // <-- 1. Import Transaction
-use App\Models\Customer;    // <-- 2. Import Customer
-use Carbon\Carbon;          // <-- 3. Import Carbon
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\Transaction;
+use App\Models\Service;
+use App\Models\Customer;
 
 class DashboardController extends Controller
 {
+    /**
+     * Method utama yang dipanggil oleh route '/dashboard'
+     */
     public function index()
+    {
+        if (Auth::user()->role === 'admin') {
+            return $this->admin();
+        } elseif (Auth::user()->role === 'kasir') {
+            return $this->kasir();
+        }
+
+        return redirect()->route('home');
+    }
+
+    /**
+     * Logika untuk Dashboard Admin (KPI & Grafik)
+     */
+   public function admin()
+    {
+        // --- 1. Data KPI (Kartu Atas - Sudah Ada) ---
+        $totalPendapatanBulanIni = Transaction::whereMonth('created_at', Carbon::now()->month)
+            ->where('status', 'Selesai')
+            ->sum('total');
+
+        $penggunaBaruBulanIni = Customer::whereMonth('created_at', Carbon::now()->month)->count();
+        $totalTransaksi = Transaction::count();
+        $jumlahLayanan = Service::count();
+
+        // --- 2. Data Grafik Pendapatan (Line Chart - Sudah Ada) ---
+        $incomeLabels = [];
+        $incomeData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $incomeLabels[] = $date->translatedFormat('F');
+
+            $total = Transaction::whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->where('status', 'Selesai')
+                ->sum('total');
+            $incomeData[] = $total / 1000000; // Ubah ke Juta agar angka chart rapi
+        }
+
+        // --- 3. Data Layanan Terpopuler (Pie Chart - BARU) ---
+        $topServices = Transaction::select('service_id', DB::raw('count(*) as total'))
+            ->where('status', 'Selesai')
+            ->groupBy('service_id')
+            ->orderByDesc('total')
+            ->take(5)
+            ->with('service')
+            ->get();
+
+        $serviceLabels = $topServices->map(function($row) {
+            return $row->service->name ?? 'Layanan Dihapus';
+        });
+        $serviceData = $topServices->pluck('total');
+
+        // --- 4. Data Transaksi Harian (Bar Chart - BARU) ---
+        $dailyLabels = [];
+        $dailyData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i);
+            $dailyLabels[] = $date->format('d M'); // Contoh: 14 Nov
+
+            $count = Transaction::whereDate('created_at', $date->format('Y-m-d'))->count();
+            $dailyData[] = $count;
+        }
+
+        // 5. Transaksi Terbaru (Tabel - Sudah Ada)
+        $transaksi_terbaru = Transaction::with(['customer', 'service'])->latest()->take(5)->get();
+
+        return view('dashboards.admin', compact(
+            'totalPendapatanBulanIni', 'penggunaBaruBulanIni', 'totalTransaksi', 'jumlahLayanan',
+            'incomeLabels', 'incomeData',
+            'serviceLabels', 'serviceData',
+            'dailyLabels', 'dailyData',
+            'transaksi_terbaru'
+        ));
+    }
+
+    /**
+     * Logika untuk Dashboard Kasir
+     */
+    public function kasir()
     {
         $today = Carbon::today();
 
-        if (Auth::user()->role === 'admin') {
-            // --- Data untuk Admin ---
+        // KPI Antrean
+        $antrean_count = Transaction::whereDate('created_at', $today)
+            ->where('status', 'Menunggu')
+            ->count();
 
-            // 1. KPI Pendapatan
-            $pendapatan_hari_ini = Transaction::whereDate('created_at', $today)
-                ->where('status', 'Selesai') // Hanya hitung yang Selesai
-                ->sum('total');
+        // KPI Sedang Dicuci
+        $dicuci_count = Transaction::whereDate('created_at', $today)
+            ->where('status', 'Sedang Dicuci')
+            ->count();
 
-            // 2. KPI Transaksi
-            $transaksi_hari_ini = Transaction::whereDate('created_at', $today)->count();
-
-            // 3. KPI Pelanggan Baru
-            $pelanggan_baru_hari_ini = Customer::whereDate('created_at', $today)->count();
-
-            // 4. KPI Antrean
-            $antrean_count = Transaction::whereDate('created_at', $today)
-                ->where('status', 'Menunggu')
-                ->count();
-
-            // 5. Tabel Transaksi Terbaru
-            $transaksi_terbaru = Transaction::with(['customer', 'service'])
-                ->latest() // Ambil yang paling baru
-                ->take(5)  // Ambil 5 saja
-                ->get();
-
-            return view('dashboards.admin', compact(
-                'pendapatan_hari_ini',
-                'transaksi_hari_ini',
-                'pelanggan_baru_hari_ini',
-                'antrean_count',
-                'transaksi_terbaru'
-            ));
-
-        } elseif (Auth::user()->role === 'kasir') {
-            // --- Data untuk Kasir ---
-
-            // 1. KPI Antrean
-            $antrean_count = Transaction::whereDate('created_at', $today)
-                ->where('status', 'Menunggu')
-                ->count();
-
-            // 2. KPI Sedang Dicuci
-            $dicuci_count = Transaction::whereDate('created_at', $today)
-                ->where('status', 'Sedang Dicuci')
-                ->count();
-
-            return view('dashboards.kasir', compact(
-                'antrean_count',
-                'dicuci_count'
-            ));
-        }
-
-        // Fallback jika role tidak dikenal
-        return redirect()->route('home');
+        return view('dashboards.kasir', compact(
+            'antrean_count',
+            'dicuci_count'
+        ));
     }
 }

@@ -38,13 +38,13 @@ class ReportController extends Controller
         // 2. Hitung KPI (Ringkasan Total)
         // Kita clone query agar tidak mempengaruhi query tabel harian
         $summaryQuery = clone $queryBase;
-        $totalPendapatan = $summaryQuery->sum('total_price');
+        $totalPendapatan = $summaryQuery->sum('total');
         $totalTransaksi = $summaryQuery->count();
         $rataRata = ($totalTransaksi > 0) ? $totalPendapatan / $totalTransaksi : 0;
 
         // 3. Ambil Laporan Harian (Grup per Tanggal)
         $laporan = $queryBase
-            ->selectRaw('DATE(created_at) as tanggal, COUNT(*) as total_transaksi, SUM(total_price) as total_pendapatan')
+            ->selectRaw('DATE(created_at) as tanggal, COUNT(*) as total_transaksi, SUM(total) as total_pendapatan')
             ->groupBy('tanggal')
             ->orderBy('tanggal', 'asc')
             ->get();

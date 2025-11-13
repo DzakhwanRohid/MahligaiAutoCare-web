@@ -14,42 +14,42 @@ class Transaction extends Model
      *
      * @var array<int, string>
      */
-    // TAMBAHKAN KOLOM BARU KE FILLABLE
     protected $fillable = [
         'customer_id',
         'service_id',
-        'promotion_id', // <-- BARU
-        'transaction_code',
+        'promotion_id',
+        'user_id',
+        'invoice',
+        'vehicle_brand',
+        'vehicle_plate',
+        // === BAGIAN INI YANG PENTING AGAR TIDAK 0 ===
+        'total',
+        'base_price',
+        'discount',
+        'amount_paid',
+        'change',
+        // ============================================
         'status',
-        'payment_method', // <-- BARU
-        'base_price', // <-- BARU
-        'discount', // <-- BARU
-        'total_price',
+        'payment_method',
     ];
 
-    /**
-     * Relasi ke Customer
-     */
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
 
-    /**
-     * Relasi ke Service
-     */
     public function service()
     {
         return $this->belongsTo(Service::class);
     }
 
-    /**
-     * =============================================
-     * RELASI BARU KE PROMOTION
-     * =============================================
-     */
     public function promotion()
     {
         return $this->belongsTo(Promotion::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

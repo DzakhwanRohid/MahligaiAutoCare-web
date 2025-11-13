@@ -148,7 +148,7 @@
                         <tbody>
                             @forelse ($laporan as $data)
                             <tr>
-                                <td>{{ Carbon::parse($data->tanggal)->format('d F Y') }}</td>
+                               <td>{{ \Carbon\Carbon::parse($data->tanggal)->format('d F Y') }}</td>
                                 <td>{{ $data->total_transaksi }}</td>
                                 <td>Rp {{ number_format($data->total_pendapatan, 0, ',', '.') }}</td>
                             </tr>

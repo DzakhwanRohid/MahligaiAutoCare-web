@@ -41,37 +41,36 @@ class PromotionController extends Controller
 
         Promotion::create($request->all());
 
-        return redirect()->route('promosi.index')->with('success', 'Promosi baru berhasil ditambahkan.');
+        // PERBAIKAN: Gunakan route 'admin.promosi.index'
+        return redirect()->route('admin.promosi.index')->with('success', 'Promosi baru berhasil ditambahkan.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Promotion $promotion)
+    public function show(Promotion $promosi)
     {
-        // Kita tidak pakai 'show' di resource route kita, jadi biarkan kosong
+        // Kosong
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Promotion $promotion)
+    public function edit(Promotion $promosi) // Gunakan $promosi sesuai parameter route
     {
-        // 1. TAMPILKAN VIEW FORM EDIT
-        // $promotion otomatis didapat dari ID di URL (Route Model Binding)
-        return view('admin.promosi.edit', compact('promotion'));
+        // PERBAIKAN: Kirim data sebagai 'promotion' agar view tidak error
+        return view('admin.promosi.edit', ['promotion' => $promosi]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Promotion $promotion)
+    public function update(Request $request, Promotion $promosi) // Gunakan $promosi
     {
-        // 2. VALIDASI INPUT (Mirip store, tapi rule 'unique' diubah)
         $request->validate([
             'name' => 'required|string|max:255',
-            // Rule unique: abaikan ID dari promosi yang sedang di-edit
-            'code' => 'required|string|max:100|unique:promotions,code,' . $promotion->id,
+            // PERBAIKAN: Gunakan $promosi->id untuk pengecualian unique
+            'code' => 'required|string|max:100|unique:promotions,code,' . $promosi->id,
             'type' => 'required|in:percentage,fixed',
             'value' => 'required|numeric|min:0',
             'start_date' => 'required|date',
@@ -79,22 +78,20 @@ class PromotionController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
-        // 3. UPDATE DATA DI DATABASE
-        $promotion->update($request->all());
+        // PERBAIKAN: Gunakan variabel $promosi
+        $promosi->update($request->all());
 
-        // 4. KEMBALIKAN KE HALAMAN INDEX DENGAN PESAN SUKSES
-        return redirect()->route('promosi.index')->with('success', 'Promosi berhasil diperbarui.');
+        return redirect()->route('admin.promosi.index')->with('success', 'Promosi berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Promotion $promotion)
+    public function destroy(Promotion $promosi) // Gunakan $promosi
     {
-        // 1. HAPUS DATA
-        $promotion->delete();
+        // PERBAIKAN: Gunakan variabel $promosi
+        $promosi->delete();
 
-        // 2. KEMBALIKAN KE HALAMAN INDEX DENGAN PESAN SUKSES
-        return redirect()->route('promosi.index')->with('success', 'Promosi berhasil dihapus.');
+        return redirect()->route('admin.promosi.index')->with('success', 'Promosi berhasil dihapus.');
     }
 }

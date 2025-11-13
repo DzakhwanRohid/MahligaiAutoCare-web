@@ -37,7 +37,7 @@
                                     <td>{{ $tx->customer->name ?? 'N/A' }}</td>
                                     <td>{{ $tx->customer->license_plate ?? 'N/A' }}</td>
                                     <td>{{ $tx->service->name ?? 'N/A' }}</td>
-                                    <td>Rp {{ number_format($tx->total_price, 0, ',', '.') }}</td>
+                                    <td>Rp {{ number_format($tx->total, 0, ',', '.') }}</td>
                                     <td>
                                         @if($tx->status == 'Sudah Dibayar')
                                             <span class="badge bg-success">Sudah Dibayar</span>

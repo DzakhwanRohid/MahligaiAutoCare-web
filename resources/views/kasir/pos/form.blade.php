@@ -19,113 +19,132 @@
         @csrf
         <div class="row">
             <div class="col-lg-7">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Form Transaksi Baru</h3>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Data Pelanggan</h6>
                     </div>
                     <div class="card-body">
-
-                        <ul class="nav nav-tabs" id="customerTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="terdaftar-tab" data-bs-toggle="tab"
-                                        data-bs-target="#terdaftar" type="button" role="tab"
-                                        aria-controls="terdaftar" aria-selected="true">Pelanggan Terdaftar</button>
+                        <ul class="nav nav-tabs mb-3" id="customerTab" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" id="terdaftar-tab" data-bs-toggle="tab" data-bs-target="#terdaftar" type="button" role="tab">Pelanggan Terdaftar</button>
                             </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="walkin-tab" data-bs-toggle="tab"
-                                        data-bs-target="#walkin" type="button" role="tab"
-                                        aria-controls="walkin" aria-selected="false">Pelanggan Baru (Walk-in)</button>
+                            <li class="nav-item">
+                                <button class="nav-link" id="walkin-tab" data-bs-toggle="tab" data-bs-target="#walkin" type="button" role="tab">Pelanggan Baru (Walk-in)</button>
                             </li>
                         </ul>
 
-                        <div class="tab-content pt-3" id="customerTabContent">
-
-                            <div class="tab-pane fade show active" id="terdaftar" role="tabpanel" aria-labelledby="terdaftar-tab">
-                                <input type="hidden" name="customer_type" value="terdaftar">
+                        <div class="tab-content" id="customerTabContent">
+                            <div class="tab-pane fade show active" id="terdaftar" role="tabpanel">
+                                <input type="hidden" name="customer_type" id="customer_type_input" value="terdaftar">
                                 <div class="mb-3">
-                                    <label for="customer_id" class="form-label">Cari Pelanggan (No. Polisi / Nama)</label>
+                                    <label class="form-label">Cari Pelanggan</label>
                                     <select id="customer_id" name="customer_id" class="form-select">
                                         <option value="">-- Pilih Pelanggan --</option>
                                         @foreach($customers as $customer)
-                                            <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
-                                                {{ $customer->license_plate }} - {{ $customer->name }} ({{ $customer->phone }})
+                                            <option value="{{ $customer->id }}">
+                                                {{ $customer->license_plate }} - {{ $customer->name }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="tab-pane fade" id="walkin" role="tabpanel" aria-labelledby="walkin-tab">
-                                <input type="hidden" name="customer_type" value="walkin" disabled>
+                            <div class="tab-pane fade" id="walkin" role="tabpanel">
                                 <div class="mb-3">
-                                    <label for="walkin_name" class="form-label">Nama Pelanggan</label>
-                                    <input type="text" class="form-control" id="walkin_name" name="walkin_name" value="{{ old('walkin_name') }}">
+                                    <label class="form-label">Nama Pelanggan</label>
+                                    <input type="text" class="form-control" name="walkin_name" disabled>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="walkin_license_plate" class="form-label">No. Polisi</label>
-                                            <input type="text" class="form-control" id="walkin_license_plate" name="walkin_license_plate" value="{{ old('walkin_license_plate') }}">
-                                        </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">No. Polisi</label>
+                                        <input type="text" class="form-control" name="walkin_license_plate" disabled>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="walkin_phone" class="form-label">No. HP</label>
-                                            <input type="text" class="form-control" id="walkin_phone" name="walkin_phone" value="{{ old('walkin_phone') }}">
-                                        </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">No. HP</label>
+                                        <input type="text" class="form-control" name="walkin_phone" disabled>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="walkin_vehicle_type" class="form-label">Tipe Kendaraan (Opsional)</label>
-                                    <input type="text" class="form-control" id="walkin_vehicle_type" name="walkin_vehicle_type" placeholder="Contoh: Avanza Putih" value="{{ old('walkin_vehicle_type') }}">
+                                    <label class="form-label">Tipe Kendaraan</label>
+                                    <input type="text" class="form-control" name="walkin_vehicle_type" placeholder="Contoh: Pajero Sport" disabled>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
             <div class="col-lg-5">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Detail Layanan & Pembayaran</h3>
+                <div class="card shadow-sm">
+                    <div class="card-header py-3 bg-primary text-white">
+                        <h6 class="m-0 font-weight-bold">Rincian Pembayaran</h6>
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="service_id" class="form-label">Pilih Layanan</label>
-                            <select id="service_id" name="service_id" class="form-select" required>
-                                <option value="">-- Pilih Layanan --</option>
+                            <label class="form-label fw-bold">Pilih Layanan</label>
+                            <select id="service_id" name="service_id" class="form-select form-select-lg" required onchange="updateTotal()">
+                                <option value="" data-price="0">-- Pilih Layanan --</option>
                                 @foreach($services as $service)
-                                    <option value="{{ $service->id }}" data-price="{{ $service->price }}" {{ old('service_id') == $service->id ? 'selected' : '' }}>
-                                        {{ $service->name }} (Rp {{ number_format($service->price, 0, ',', '.') }})
+                                    <option value="{{ $service->id }}" data-price="{{ $service->price }}">
+                                        {{ $service->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
 
                         <div class="mb-3">
-                            <label for="promotion_code" class="form-label">Kode Promosi (Opsional)</label>
-                            <input type="text" class="form-control" id="promotion_code" name="promotion_code"
-                                   value="{{ old('promotion_code') }}" placeholder="Contoh: CUCIHEMAT10">
+                            <label class="form-label">Kode Promosi (Opsional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-tag"></i></span>
+                                <input type="text" class="form-control" name="promotion_code" placeholder="Contoh: HEMAT10" style="text-transform: uppercase">
+                            </div>
+                            <div class="form-text">Total harga akan dipotong otomatis setelah diproses.</div>
                         </div>
 
                         <div class="mb-3">
-                            <label for="payment_method" class="form-label">Metode Pembayaran</label>
-                            <select id="payment_method" name="payment_method" class="form-select" required>
-                                <option value="Tunai" {{ old('payment_method') == 'Tunai' ? 'selected' : '' }}>Tunai (Cash)</option>
-                                <option value="QRIS" {{ old('payment_method') == 'QRIS' ? 'selected' : '' }}>QRIS</option>
-                                <option value="Debit" {{ old('payment_method') == 'Debit' ? 'selected' : '' }}>Kartu Debit</option>
+                            <label class="form-label">Metode Pembayaran</label>
+                            <select id="payment_method" name="payment_method" class="form-select" required onchange="togglePaymentMethod()">
+                                <option value="Tunai">Tunai (Cash)</option>
+                                <option value="QRIS">QRIS (Scan QR)</option>
+                                <option value="Debit">Kartu Debit/Kredit (EDC)</option>
                             </select>
                         </div>
 
                         <hr>
 
-                        {{-- Di sini nanti kita bisa tambahkan JS untuk menampilkan Total Harga --}}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="h5 mb-0">Total Tagihan:</span>
+                            <span class="h3 mb-0 text-primary fw-bold" id="display_total">Rp 0</span>
+                        </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fa fa-save"></i> Buat Transaksi & Cetak Struk
+                        <div id="cash_section">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Uang Diterima</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="number" class="form-control form-control-lg" id="amount_paid" name="amount_paid" placeholder="0">
+                                </div>
+                                <div class="form-text text-end" id="display_change">Kembali: Rp 0</div>
+                            </div>
+                        </div>
+
+                        <div id="qris_section" class="text-center d-none mb-3">
+                            <div class="alert alert-info">Silakan scan QR Code di bawah ini</div>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg"
+                                 alt="QRIS Code" class="img-fluid border p-2" style="max-width: 200px;">
+                            <p class="mt-2 text-muted small">Otomatis lunas setelah scan berhasil.</p>
+                        </div>
+
+                        <div id="debit_section" class="text-center d-none mb-3">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-credit-card fa-2x mb-2"></i><br>
+                                Silakan lakukan pembayaran menggunakan mesin EDC.<br>
+                                <strong>Pastikan transaksi BERHASIL sebelum menyimpan.</strong>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fa fa-save me-2"></i> Proses & Cetak Struk
                             </button>
                         </div>
                     </div>
@@ -136,34 +155,95 @@
 </div>
 
 <script>
+    // Variabel Global
+    const serviceSelect = document.getElementById('service_id');
+    const displayTotal = document.getElementById('display_total');
+    const amountInput = document.getElementById('amount_paid');
+    const displayChange = document.getElementById('display_change');
+
+    // Elemen Section Pembayaran
+    const paymentSelect = document.getElementById('payment_method');
+    const cashSection = document.getElementById('cash_section');
+    const qrisSection = document.getElementById('qris_section');
+    const debitSection = document.getElementById('debit_section');
+
+    let currentTotal = 0;
+
+    function formatRupiah(angka) {
+        return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
+    }
+
+    function updateTotal() {
+        const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+        currentTotal = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+        displayTotal.innerText = formatRupiah(currentTotal);
+        calculateChange(); // Hitung ulang kembalian jika harga berubah
+    }
+
+    function togglePaymentMethod() {
+        const method = paymentSelect.value;
+
+        // Reset tampilan
+        cashSection.classList.add('d-none');
+        qrisSection.classList.add('d-none');
+        debitSection.classList.add('d-none');
+
+        // Reset input tunai
+        amountInput.value = '';
+        amountInput.required = false; // Default tidak wajib
+        displayChange.innerText = 'Kembali: Rp 0';
+
+        if (method === 'Tunai') {
+            cashSection.classList.remove('d-none');
+            amountInput.required = true; // Tunai wajib isi jumlah
+        } else if (method === 'QRIS') {
+            qrisSection.classList.remove('d-none');
+        } else if (method === 'Debit') {
+            debitSection.classList.remove('d-none');
+        }
+    }
+
+    function calculateChange() {
+        // Hanya hitung jika metode Tunai
+        if (paymentSelect.value === 'Tunai') {
+            const paid = parseFloat(amountInput.value) || 0;
+            const change = paid - currentTotal;
+
+            if(paid > 0) {
+                displayChange.innerText = 'Kembali: ' + formatRupiah(change);
+                if(change < 0) {
+                    displayChange.classList.add('text-danger');
+                } else {
+                    displayChange.classList.remove('text-danger');
+                }
+            } else {
+                displayChange.innerText = 'Kembali: Rp 0';
+            }
+        }
+    }
+
+    // Event Listeners
+    amountInput.addEventListener('input', calculateChange);
+
+    // Tab Logic
     document.addEventListener('DOMContentLoaded', function () {
+        // ... (Logic Tab Pelanggan sama seperti sebelumnya) ...
         const terdaftarTab = document.getElementById('terdaftar-tab');
         const walkinTab = document.getElementById('walkin-tab');
+        const terdaftarInputs = document.querySelectorAll('#terdaftar select');
+        const walkinInputs = document.querySelectorAll('#walkin input');
+        const typeInput = document.getElementById('customer_type_input');
 
-        const terdaftarInputs = document.querySelectorAll('#terdaftar input, #terdaftar select');
-        const walkinInputs = document.querySelectorAll('#walkin input, #walkin select');
-
-        function toggleInputs(inputs, status) {
-            inputs.forEach(input => input.disabled = !status);
-        }
-
-        terdaftarTab.addEventListener('shown.bs.tab', function () {
-            toggleInputs(terdaftarInputs, true);
-            toggleInputs(walkinInputs, false);
+        terdaftarTab.addEventListener('shown.bs.tab', () => {
+            typeInput.value = 'terdaftar';
+            terdaftarInputs.forEach(i => i.disabled = false);
+            walkinInputs.forEach(i => i.disabled = true);
         });
 
-        walkinTab.addEventListener('shown.bs.tab', function () {
-            toggleInputs(terdaftarInputs, false);
-            toggleInputs(walkinInputs, true);
+        walkinTab.addEventListener('shown.bs.tab', () => {
+            typeInput.value = 'walkin';
+            terdaftarInputs.forEach(i => i.disabled = true);
+            walkinInputs.forEach(i => i.disabled = false);
         });
-
-        // Inisialisasi saat halaman dimuat
-        if (walkinTab.classList.contains('active')) {
-            toggleInputs(terdaftarInputs, false);
-            toggleInputs(walkinInputs, true);
-        } else {
-            toggleInputs(terdaftarInputs, true);
-            toggleInputs(walkinInputs, false);
-        }
     });
 </script>

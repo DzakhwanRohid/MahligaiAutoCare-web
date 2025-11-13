@@ -3,8 +3,19 @@
         <div class="row g-5">
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-light mb-4">Alamat</h4>
-                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Jl. Jend. Sudirman No. 123, Pekanbaru</p>
-                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+62 812 3456 7890</p>
+
+                {{-- BAGIAN DINAMIS: Mengambil Alamat dari Pengaturan --}}
+                <p class="mb-2">
+                    <i class="fa fa-map-marker-alt me-3"></i>
+                    {{ $appSettings['business_address'] ?? 'Jl. Jend. Sudirman No. 123, Pekanbaru' }}
+                </p>
+
+                {{-- BAGIAN DINAMIS: Mengambil No HP dari Pengaturan --}}
+                <p class="mb-2">
+                    <i class="fa fa-phone-alt me-3"></i>
+                    {{ $appSettings['business_phone'] ?? '+62 812 3456 7890' }}
+                </p>
+
                 <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@mahligaiautocare.com</p>
                 <div class="d-flex pt-2">
                     <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
@@ -22,6 +33,8 @@
             </div>
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-light mb-4">Layanan</h4>
+                {{-- Kita tambahkan satu link dinamis ke halaman semua layanan --}}
+                <a class="btn btn-link" href="{{ route('home.layanan') }}">Lihat Semua Layanan</a>
                 <a class="btn btn-link" href="#">Cuci Mobil Premium</a>
                 <a class="btn btn-link" href="#">Detailing Interior</a>
                 <a class="btn btn-link" href="#">Nano Ceramic Coating</a>
@@ -42,7 +55,8 @@
         <div class="copyright">
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    &copy; <a class="border-bottom" href="#">Mahligai AutoCare</a>, All Right Reserved.
+                    {{-- BAGIAN DINAMIS: Mengambil Nama Usaha dari Pengaturan --}}
+                    &copy; <a class="border-bottom" href="#">{{ $appSettings['business_name'] ?? 'Mahligai AutoCare' }}</a>, All Right Reserved.
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     Designed By <a class="border-bottom" href="https://htmlcodex.com">_DzakhwanRohid</a>

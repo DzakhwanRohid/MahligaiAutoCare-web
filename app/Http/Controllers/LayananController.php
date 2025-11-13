@@ -46,7 +46,7 @@ class LayananController extends Controller
             'image' => $imagePath,
         ]);
 
-        return redirect()->route('layanan.index')->with('success', 'Layanan baru berhasil ditambahkan.');
+        return redirect()->route('admin.layanan.index')->with('success', 'Layanan baru berhasil ditambahkan.');
     }
 
     /**
@@ -60,57 +60,52 @@ class LayananController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Service $service) // <-- Diubah dari string $id
+    public function edit(Service $layanan) // <-- Ubah $service jadi $layanan
     {
-        // Tampilkan view edit dan kirim data layanan yang mau diedit
-        return view('admin.layanan.edit', compact('service'));
+        // Kita kirim sebagai 'service' agar view tidak perlu diubah
+        return view('admin.layanan.edit', ['service' => $layanan]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Service $service) // <-- Diubah dari string $id
+    public function update(Request $request, Service $layanan) // <-- Ubah $service jadi $layanan
     {
-        // Validasi (gambar 'nullable' artinya boleh kosong)
+        // Validasi
         $request->validate([
-            'name' => 'required|string|max:255|unique:services,name,' . $service->id, // unique tapi abaikan id ini
+            'name' => 'required|string|max:255|unique:services,name,' . $layanan->id,
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // Boleh kosong
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $data = $request->except('_token', '_method', 'image');
 
         // Logika Update Gambar
         if ($request->hasFile('image')) {
-            // 1. Hapus gambar lama (jika ada)
-            if ($service->image) {
-                Storage::disk('public')->delete($service->image);
+            if ($layanan->image) {
+                Storage::disk('public')->delete($layanan->image);
             }
-
-            // 2. Upload gambar baru
             $data['image'] = $request->file('image')->store('layanan', 'public');
         }
 
-        // Update data di database
-        $service->update($data);
+        // Update data
+        $layanan->update($data);
 
-        return redirect()->route('layanan.index')->with('success', 'Layanan berhasil diperbarui.');
+        return redirect()->route('admin.layanan.index')->with('success', 'Layanan berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Service $service) // <-- Diubah dari string $id
+    public function destroy(Service $layanan) // <-- Ubah $service jadi $layanan
     {
-        // 1. Hapus gambar dari storage (jika ada)
-        if ($service->image) {
-            Storage::disk('public')->delete($service->image);
+        if ($layanan->image) {
+            Storage::disk('public')->delete($layanan->image);
         }
 
-        // 2. Hapus data dari database
-        $service->delete();
+        $layanan->delete();
 
-        return redirect()->route('layanan.index')->with('success', 'Layanan berhasil dihapus.');
+        return redirect()->route('admin.layanan.index')->with('success', 'Layanan berhasil dihapus.');
     }
 }
