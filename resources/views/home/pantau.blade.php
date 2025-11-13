@@ -1,114 +1,51 @@
 @extends('layouts.main')
 
 @section('content')
-
-{{-- Header Halaman Baru (Tanpa Background Gambar) --}}
-<div class="page-header text-center">
-    <div class="container">
-        <h1 class="display-4" data-aos="fade-down">Real-Time Queue Monitoring</h1>
-        <p class="lead" data-aos="fade-down" data-aos-delay="100">Status terkini dari setiap area cuci di Mahligai AutoCare.</p>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-5 mb-3">Pantau Antrean & Ketersediaan</h1>
+        <p class="lead text-muted">Lihat ketersediaan slot cuci secara real-time sebelum Anda datang.</p>
     </div>
-</div>
 
-{{-- Konten Antrian dengan Desain Futuristik --}}
-<div class="queue-section-v2">
-    <div class="container">
-        <div class="row g-4">
+    <div class="row g-4 justify-content-center">
+        @for ($i = 1; $i <= 4; $i++)
+            @php
+                $tx = $slots[$i] ?? null;
+            @endphp
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm text-center {{ $tx ? 'bg-light' : 'bg-success text-white' }}">
+                    <div class="card-body py-5">
+                        <div class="mb-3">
+                            <i class="fa {{ $tx ? 'fa-car-side' : 'fa-check-circle' }} fa-4x"></i>
+                        </div>
+                        <h3 class="fw-bold mb-1">SLOT {{ $i }}</h3>
 
-            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="queue-pod in-use">
-                    <div class="pod-header">
-                        <div class="pod-title">
-                            <span class="status-indicator working"></span>
-                            <h4>CUCI HIDROLIK 1</h4>
-                        </div>
-                        <span class="pod-status-tag working">IN PROGRESS</span>
-                    </div>
-                    <div class="pod-body">
-                        <div class="vehicle-info">
-                            <i class="fas fa-car-alt"></i>
-                            <div class="vehicle-details">
-                                <strong>Toyota Avanza</strong>
-                                <span>Premium Wash</span>
-                            </div>
-                        </div>
-                        <div class="worker-info">
-                            <i class="fas fa-user-cog"></i>
-                            <span>Budi Santoso</span>
-                        </div>
-                    </div>
-                    <div class="pod-footer">
-                        <div class="time-details">
-                            <i class="fas fa-stopwatch"></i>
-                            <div>
-                                <span>Mulai: <strong>10:30 WIB</strong></span>
-                                <small>Estimasi Selesai: <strong>11:15 WIB</strong></small>
-                            </div>
-                        </div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width: 65%;"></div>
-                        </div>
+                        @if($tx)
+                            <span class="badge bg-danger fs-6 mb-3">SEDANG DIGUNAKAN</span>
+                            <h5 class="text-dark">{{ $tx->vehicle_brand ?? 'Kendaraan' }}</h5>
+                            <p class="text-muted mb-0">
+                                {{ substr($tx->vehicle_plate, 0, 2) }} *** {{ substr($tx->vehicle_plate, -2) }}
+                            </p>
+                            <small class="text-danger fw-bold">Estimasi: Sedang Proses</small>
+                        @else
+                            <span class="badge bg-light text-success fs-6 mb-3">TERSEDIA</span>
+                            <h5 class="mb-3">Siap Digunakan</h5>
+                            <a href="{{ route('pemesanan.create') }}" class="btn btn-light rounded-pill px-4">
+                                Booking Sekarang
+                            </a>
+                        @endif
                     </div>
                 </div>
             </div>
+        @endfor
+    </div>
 
-            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="queue-pod available">
-                    <div class="available-content">
-                        <i class="fas fa-check-circle"></i>
-                        <h4>CUCI HIDROLIK 2</h4>
-                        <p>Area Ini Tersedia</p>
-                    </div>
-                </div>
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="alert alert-info d-inline-block">
+                <i class="fa fa-info-circle me-2"></i>
+                Data diperbarui secara otomatis setiap kali ada perubahan status oleh kasir.
             </div>
-
-            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="queue-pod finished">
-                     <div class="pod-header">
-                        <div class="pod-title">
-                            <span class="status-indicator finished"></span>
-                            <h4>CUCI 1</h4>
-                        </div>
-                        <span class="pod-status-tag finished">SELESAI</span>
-                    </div>
-                    <div class="pod-body">
-                        <div class="vehicle-info">
-                            <i class="fas fa-motorcycle"></i>
-                             <div class="vehicle-details">
-                                <strong>Honda Vario</strong>
-                                <span>Cuci Standar</span>
-                            </div>
-                        </div>
-                         <div class="worker-info">
-                            <i class="fas fa-user-cog"></i>
-                            <span>Ahmad</span>
-                        </div>
-                    </div>
-                     <div class="pod-footer">
-                         <div class="time-details">
-                            <i class="fas fa-flag-checkered"></i>
-                             <div>
-                                <span>Selesai: <strong>10:40 WIB</strong></span>
-                                <small class="text-success fw-bold">Siap Diambil!</small>
-                            </div>
-                        </div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill bg-success" style="width: 100%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="queue-pod available">
-                    <div class="available-content">
-                        <i class="fas fa-check-circle"></i>
-                        <h4>CUCI 2</h4>
-                        <p>Area Ini Tersedia</p>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>

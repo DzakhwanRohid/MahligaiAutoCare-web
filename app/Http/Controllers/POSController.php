@@ -16,15 +16,19 @@ class POSController extends Controller
      */
     public function index()
     {
-        // 3. KIRIM DATA KE VIEW
         $services = Service::orderBy('name')->get();
-        // Ambil pelanggan yang terdaftar (punya user_id) ATAU yang walk-in tapi punya No. Polisi
         $customers = Customer::with('user')
                         ->whereNotNull('license_plate')
                         ->orderBy('name')
                         ->get();
 
-        return view('kasir.pos.index', compact('services', 'customers'));
+        // Cek Slot yang SEDANG TERPAKAI (Status 'Sedang Dicuci')
+        $filledSlots = Transaction::where('status', 'Sedang Dicuci')
+            ->whereNotNull('slot')
+            ->pluck('slot')
+            ->toArray();
+
+        return view('kasir.pos.index', compact('services', 'customers', 'filledSlots'));
     }
 
     /**
@@ -39,6 +43,7 @@ class POSController extends Controller
             'payment_method' => 'required|string',
             // Validasi 'amount_paid' akan dilakukan di bawah setelah total dihitung
             'promotion_code' => 'nullable|string', // Validasi kode promo (opsional)
+
         ]);
 
         // 2. LOGIKA PELANGGAN (Cari atau Buat Baru)
@@ -132,6 +137,24 @@ class POSController extends Controller
             $vehicle_brand = $customer->vehicle_type;
         }
 
+        // Jika kasir memilih slot, pastikan slot itu belum dipakai
+        if ($request->filled('selected_slot')) {
+            $isFilled = Transaction::where('status', 'Sedang Dicuci')
+                ->where('slot', $request->selected_slot)
+                ->exists();
+
+            if ($isFilled) {
+                return back()->withErrors(['selected_slot' => 'Slot ' . $request->selected_slot . ' sudah terisi!'])->withInput();
+            }
+        }
+        $status = 'Menunggu';
+        $slot = null;
+
+        if ($request->filled('selected_slot')) {
+            $status = 'Sedang Dicuci';
+            $slot = $request->selected_slot;
+        }
+
         // 7. SIMPAN TRANSAKSI KE DATABASE
         $transaction = Transaction::create([
             'customer_id' => $customerId,
@@ -148,11 +171,15 @@ class POSController extends Controller
             'total' => $totalPrice,        // <-- Menyimpan Total Akhir
             'amount_paid' => $amountPaid,  // <-- Menyimpan Uang Bayar
             'change' => $change,           // <-- Menyimpan Kembalian
+            'status' => $status, // Status dinamis
+            'slot' => $slot,     // Simpan nomor slot
         ]);
 
         // 8. Redirect ke Halaman Struk
         return redirect()->route('pos.struk', $transaction->id)
-                         ->with('success', 'Transaksi berhasil dibuat!');
+            ->with('success', 'Transaksi berhasil! Mobil masuk ke ' . ($slot ? 'Slot ' . $slot : 'Antrean Menunggu'));
+
+
     }
 
     /**

@@ -92,6 +92,35 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label fw-bold">Pilih Penempatan Mobil</label>
+                            <div class="row g-2">
+                                <div class="col-12 mb-2">
+                                    <input type="radio" class="btn-check" name="selected_slot" id="slot_queue" value="" checked>
+                                    <label class="btn btn-outline-secondary w-100" for="slot_queue">
+                                        <i class="fa fa-clock"></i> Masuk Antrean (Menunggu)
+                                    </label>
+                                </div>
+
+                                {{-- Loop 4 Slot --}}
+                                @for ($i = 1; $i <= 4; $i++)
+                                    @php
+                                        $isFilled = in_array($i, $filledSlots ?? []);
+                                    @endphp
+                                    <div class="col-6">
+                                        <input type="radio" class="btn-check" name="selected_slot" id="slot_{{ $i }}" value="{{ $i }}" {{ $isFilled ? 'disabled' : '' }}>
+                                        <label class="btn btn-outline-{{ $isFilled ? 'danger' : 'success' }} w-100" for="slot_{{ $i }}">
+                                            @if($isFilled)
+                                                <i class="fa fa-times-circle"></i> Slot {{ $i }} (Isi)
+                                            @else
+                                                <i class="fa fa-check-circle"></i> Slot {{ $i }} (Kosong)
+                                            @endif
+                                        </label>
+                                    </div>
+                                @endfor
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
                             <label class="form-label">Kode Promosi (Opsional)</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-tag"></i></span>

@@ -67,30 +67,34 @@ class TransactionController extends Controller
      * ==========================================================
      * Ini dipanggil oleh route 'transaksi.update_status' (via POST)
      */
-    public function update_status(Transaction $transaction)
+   public function update_status(Request $request, Transaction $transaction)
     {
-        $currentStatus = $transaction->status;
-        $nextStatus = $currentStatus; // Default
-
-        // 4. Logika perpindahan status
-        switch ($currentStatus) {
-            case 'Menunggu':
-                $nextStatus = 'Sedang Dicuci';
-                break;
-            case 'Sedang Dicuci':
-                $nextStatus = 'Selesai';
-                break;
-            case 'Selesai':
-                $nextStatus = 'Sudah Dibayar'; // Status final (akan hilang dari kanban)
-                break;
+        // Jika tombol "Selesai Cuci" ditekan
+        if ($transaction->status == 'Sedang Dicuci') {
+            $transaction->status = 'Selesai';
+            $transaction->slot = null; // Kosongkan slot agar bisa dipakai orang lain
+            $transaction->save();
+            return back()->with('success', 'Mobil selesai dicuci. Slot sekarang kosong.');
         }
 
-        // 5. Update status di database
-        $transaction->status = $nextStatus;
-        $transaction->save();
+        // Jika tombol "Masukan ke Slot" ditekan (dari Menunggu -> Sedang Dicuci)
+        if ($transaction->status == 'Menunggu' && $request->has('target_slot')) {
+            $targetSlot = $request->target_slot;
 
-        // 6. Kembalikan ke halaman antrean
-        return redirect()->route('transaksi.antrean')->with('success', 'Status berhasil diperbarui.');
+            // Validasi slot kosong lagi (untuk keamanan)
+            $isFilled = Transaction::where('status', 'Sedang Dicuci')->where('slot', $targetSlot)->exists();
+            if ($isFilled) {
+                return back()->with('error', 'Slot ' . $targetSlot . ' baru saja terisi!');
+            }
+
+            $transaction->status = 'Sedang Dicuci';
+            $transaction->slot = $targetSlot;
+            $transaction->save();
+            return back()->with('success', 'Mobil masuk ke Slot ' . $targetSlot);
+        }
+
+        // Default fallback (jika ada logika lain)
+        return back();
     }
 
     /**

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone')->nullable();
-
+            $table->string('email')->nullable();
             // === KOLOM BARU YANG WAJIB DITAMBAHKAN ===
             $table->string('license_plate')->unique()->nullable(); // No. Polisi
             $table->string('vehicle_type')->nullable();            // Tipe Kendaraan

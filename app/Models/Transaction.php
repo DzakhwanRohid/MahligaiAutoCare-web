@@ -31,6 +31,7 @@ class Transaction extends Model
         // ============================================
         'status',
         'payment_method',
+        'slot',
     ];
 
     public function customer()

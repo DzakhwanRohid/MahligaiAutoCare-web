@@ -67,13 +67,30 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            // Validasi unik, tapi abaikan ID customer ini sendiri
-            'license_plate' => 'required|string|max:20|unique:customers,license_plate,' . $customer->id,
+            // Validasi unik license_plate, abaikan ID customer ini
+            'license_plate' => 'nullable|string|max:20|unique:customers,license_plate,' . $customer->id,
             'vehicle_type' => 'nullable|string|max:100',
         ]);
 
-        // Update data
-        $customer->update($request->all());
+        // 1. Update Data di Tabel Customers
+        $customer->update([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'license_plate' => $request->license_plate,
+            'vehicle_type' => $request->vehicle_type,
+        ]);
+
+        // 2. SINKRONISASI: Update Data di Tabel Users (Jika punya akun)
+        if ($customer->user_id) {
+            $user = \App\Models\User::find($customer->user_id);
+            if ($user) {
+                $user->update([
+                    'name' => $request->name, // Sinkronkan Nama
+                    // Email tidak kita update di sini demi keamanan login,
+                    // kecuali Anda ingin admin bisa ubah email login user juga.
+                ]);
+            }
+        }
 
         return redirect()->route('admin.customer.index')->with('success', 'Data pelanggan berhasil diperbarui.');
     }

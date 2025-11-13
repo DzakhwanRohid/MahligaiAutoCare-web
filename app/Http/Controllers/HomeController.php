@@ -37,9 +37,16 @@ class HomeController extends Controller
     {
         return view('home.kontak');
     }
-    public function pantauAntrian() {
-    return view('home.pantau');
-}
+    public function pantauAntrian()
+    {
+        // Ambil data slot yang sedang terisi
+        $slots = Transaction::where('status', 'Sedang Dicuci')
+            ->whereNotNull('slot')
+            ->get()
+            ->keyBy('slot'); // Key array berdasarkan nomor slot (1, 2, 3, 4)
+
+        return view('home.pantau', compact('slots'));
+    }
 public function pemesanan_create()
 {
     $services = Service::orderBy('name')->get();
