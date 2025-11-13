@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Service extends Model
+class Promotion extends Model
 {
     use HasFactory;
 
@@ -16,8 +16,11 @@ class Service extends Model
      */
     protected $fillable = [
         'name',
-        'description',
-        'price',
-        'image', 
+        'code',
+        'type',
+        'value',
+        'start_date',
+        'end_date',
+        'is_active',
     ];
 }

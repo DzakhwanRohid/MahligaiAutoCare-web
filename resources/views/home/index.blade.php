@@ -6,8 +6,7 @@
             <h1 class="display-4 mb-4" data-aos="fade-down">Kilau Sempurna, Performa Maksimal</h1>
             <p class="lead mb-5" data-aos="fade-down" data-aos-delay="200">Percayakan perawatan kendaraan Anda pada ahlinya.
                 Standar baru dalam dunia auto detailing di Pekanbaru.</p>
-            <a href="{{ route('layanan') }}" class="btn btn-cta rounded-pill text-white py-3 px-5 fs-5 animated-cta"
-                data-aos="fade-up" data-aos-delay="400">Lihat Layanan Kami</a>
+            <a href="{{ route('home.layanan') }}" class="btn btn-cta rounded-pill text-white py-3 px-5 fs-5 animated-cta" data-aos="fade-up" data-aos-delay="400">Lihat Layanan Kami</a>
         </div>
     </div>
 
@@ -50,7 +49,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('tentang.kami') }}" class="btn btn-outline-success rounded-pill py-2 px-4 mt-5">Pelajari
+                <a href="{{ route('home.tentang') }}" class="btn btn-outline-success rounded-pill py-2 px-4 mt-5">Pelajari
                     Lebih Lanjut</a>
             </div>
             <div class="col-lg-6" data-aos="fade-left">

@@ -1,124 +1,108 @@
 <?php
 
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\layananController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LayananController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\POSController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ReportController;
 
-// Web Routes
-// Rute untuk halaman-halaman utama (Publik)
+// Controller ini sudah kita buat
+use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\SettingController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Rute untuk halaman publik (landing page)
+|
+*/
+
+// RUTE PUBLIK (TETAP SAMA dan SEKARANG AKAN BERFUNGSI)
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/layanan', [HomeController::class, 'layanan'])->name('layanan');
-Route::get('/tentang-kami', [HomeController::class, 'tentangKami'])->name('tentang.kami');
-Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
-Route::get('/pantau', [HomeController::class, 'pantauAntrian'])->name('pantau');
+Route::get('/pantau-antrean', [HomeController::class, 'pantau'])->name('home.pantau');
+Route::get('/layanan', [HomeController::class, 'layanan'])->name('home.layanan'); // <-- INI YANG ERROR
+Route::get('/tentang', [HomeController::class, 'tentang'])->name('home.tentang');
+Route::get('/kontak', [HomeController::class, 'kontak'])->name('home.kontak');
+Route::get('/pemesanan', [HomeController::class, 'pemesanan_create'])->name('pemesanan.create');
+Route::post('/pemesanan', [HomeController::class, 'pemesanan'])->name('home.pemesanan');
 
-//Pemesanan route
-Route::get('/pemesanan', [HomeController::class, 'showPemesanan'])->name('pemesanan.create');
-Route::post('/pemesanan', [HomeController::class, 'storePemesanan'])->name('pemesanan.store');
+/*
+|--------------------------------------------------------------------------
+| Rute Dashboard & Autentikasi
+|--------------------------------------------------------------------------
+*/
 
+Route::middleware(['auth', 'verified'])->group(function () {
 
-// Rute Dashboard bawaan Breeze
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-
-// Rute Profil bawaan Breeze
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-// Rute Dashboard
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
-        ->middleware('role:admin')
-        ->name('admin.dashboard');
+    /*
+    |--------------------------------------------------------------------------
+    | Rute untuk KASIR & ADMIN (URL INI SUDAH BENAR)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:admin,kasir'])->group(function () {
 
-    Route::get('/admin/transaksi', [TransactionController::class, 'index'])
-        ->middleware('role:admin')
-        ->name('admin.transaksi');
+        Route::get('/kasir/pos', [POSController::class, 'index'])->name('pos.index');
+        Route::post('/kasir/pos', [POSController::class, 'store'])->name('pos.store');
+        Route::get('/kasir/pos/struk/{transaction}', [POSController::class, 'struk'])->name('pos.struk');
 
-    Route::get('/admin/laporan', [ReportController::class, 'index'])
-        ->middleware('role:admin')
-        ->name('admin.laporan');
+        Route::get('/transaksi/antrean', [TransactionController::class, 'antrean'])->name('transaksi.antrean');
+        Route::post('/transaksi/status/{transaction}', [TransactionController::class, 'update_status'])->name('transaksi.update_status');
 
-    Route::get('/admin/users',[UserController::class, 'index'])
-        ->middleware('role:admin')
-        ->name('admin.users.index');
+        Route::get('/kasir/transaksi', [TransactionController::class, 'index'])->name('transaksi.riwayat');
+    });
 
-    Route::get('admin/layanan',[layananController::class,'index'])
-        ->middleware('role:admin')
-        ->name('admin.layanan.index');
+    /*
+    |--------------------------------------------------------------------------
+    | Rute HANYA UNTUK ADMIN (INI YANG DIPERBAIKI)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['role:admin'])->prefix('admin')->group(function () { 
 
-    Route::get('/kasir/dashboard', [DashboardController::class, 'kasir'])
-        ->middleware('role:kasir')
-        ->name('kasir.dashboard');
+        // --- Manajemen Data ---
+        // URL menjadi /admin/layanan, Nama menjadi admin.layanan.index
+        Route::resource('layanan', LayananController::class)->names('admin.layanan');
+        // URL menjadi /admin/promosi, Nama menjadi admin.promosi.index
+        Route::resource('promosi', PromotionController::class)->except(['show'])->names('admin.promosi');
 
-    Route::get('/kasir/transaksi',[TransactionController::class,'kasirIndex'])
-        ->middleware('role:kasir')
-        ->name('kasir.transaksi');
 
-    Route::get('/kasir/laporan', [CustomerController::class, 'index'])
-        ->middleware('role:kasir')
-        ->name('kasir.laporan');
+        // --- Manajemen Pengguna ---
+        // URL menjadi /admin/users, Nama menjadi admin.users.index
+        Route::resource('users', UserController::class)->names('admin.users');
+        // URL menjadi /admin/customer, Nama menjadi admin.customer.index
+        Route::resource('customer', CustomerController::class)->names('admin.customer');
 
-    Route::get('/kasir/pelanggan/{customer}/edit', [CustomerController::class, 'edit'])
-        ->middleware('role:kasir')
-        ->name('kasir.customer.edit');
 
-    Route::put('/kasir/pelanggan/{customer}', [CustomerController::class, 'update'])
-        ->middleware('role:kasir')
-        ->name('kasir.customer.update');
+        // --- Laporan & Analitik ---
+        // URL menjadi /admin/laporan/pemesanan
+        Route::get('/laporan/pemesanan', [ReportController::class, 'pemesanan'])->name('laporan.pemesanan');
+        // URL menjadi /admin/laporan (sudah benar)
+        Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.pendapatan');
+        // URL menjadi /admin/laporan/filter (sudah benar)
+        Route::post('/laporan/filter', [ReportController::class, 'filter'])->name('laporan.filter');
 
-    Route::get('/kasir/status-kendaraan', [TransactionController::class, 'vehicleStatus'])
-        ->middleware('role:kasir')
-        ->name('kasir.status');
 
-    Route::patch('/kasir/status-kendaraan/{transaction}', [TransactionController::class, 'updateStatus'])
-        ->middleware('role:kasir')
-        ->name('kasir.status.update');
+        // --- Pengaturan ---
+        // URL menjadi /admin/pengaturan
+        Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan.index');
+        Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
 
-        // ROUTE UNTUK MENAMPILKAN FORM PENDAFTARAN
-    Route::get('/kasir/pendaftaran', [TransactionController::class, 'create'])
-        ->middleware('role:kasir')
-        ->name('kasir.pendaftaran');
-
-        // ROUTE UNTUK MENYIMPAN DATA DARI FORM
-    Route::post('/kasir/pendaftaran', [TransactionController::class, 'store'])
-        ->middleware('role:kasir')
-        ->name('kasir.pendaftaran.store');
-
-        // ROUTE UNTUK HALAMAN AWAL POS (DAFTAR TRANSAKSI)
-    Route::get('/kasir/pembayaran', [POSController::class, 'index'])
-        ->middleware('role:kasir')
-        ->name('kasir.pembayaran.index');
-
-        // ROUTE UNTUK MENAMPILKAN FORM PEMBAYARAN SPESIFIK
-    Route::get('/kasir/pembayaran/{id}', [POSController::class, 'showPaymentForm'])
-        ->middleware('role:kasir')
-        ->name('kasir.pembayaran.form');
-
-    // 1. Untuk memproses pembayaran (saat tombol di form diklik)
-    Route::put('/kasir/pembayaran/{transaction}', [POSController::class, 'processPayment'])
-        ->middleware('role:kasir')
-        ->name('kasir.pembayaran.process');
-
-    // 2. Untuk menampilkan halaman struk setelah berhasil bayar
-    Route::get('/kasir/struk/{transaction}', [POSController::class, 'showStruk'])
-        ->middleware('role:kasir')
-        ->name('kasir.struk.show');
-
+    });
 
 });
 
-// Memuat semua rute autentikasi (login, register, logout, dll.) dari Breeze
+
+// Rute Autentikasi (Login, Register, dll.)
 require __DIR__.'/auth.php';

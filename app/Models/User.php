@@ -54,4 +54,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class);
     }
+    /**
+     * Seorang User (yang role-nya 'user') memiliki satu profil Customer.
+     */
+    public function customer()
+    {
+        return $this->hasOne(Customer::class);
+    }
 }

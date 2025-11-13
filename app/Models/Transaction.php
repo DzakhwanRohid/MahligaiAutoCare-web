@@ -4,44 +4,52 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-// PASTIKAN TIGA BARIS DI BAWAH INI ADA DAN BENAR
-use App\Models\Customer;
-use App\Models\Service;
-use App\Models\User;
 
 class Transaction extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    // TAMBAHKAN KOLOM BARU KE FILLABLE
     protected $fillable = [
-        'invoice', 'customer_id', 'service_id', 'user_id',
-        'vehicle_brand', 'vehicle_plate', 'total', 'status',
-        'payment_method', 'amount_paid', 'change'
+        'customer_id',
+        'service_id',
+        'promotion_id', // <-- BARU
+        'transaction_code',
+        'status',
+        'payment_method', // <-- BARU
+        'base_price', // <-- BARU
+        'discount', // <-- BARU
+        'total_price',
     ];
 
     /**
-     * Mendapatkan data customer yang terkait dengan transaksi ini.
+     * Relasi ke Customer
      */
-    public function customer(): BelongsTo
+    public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
 
     /**
-     * Mendapatkan data layanan yang terkait dengan transaksi ini.
+     * Relasi ke Service
      */
-    public function service(): BelongsTo
+    public function service()
     {
         return $this->belongsTo(Service::class);
     }
 
     /**
-     * Mendapatkan data kasir (user) yang terkait dengan transaksi ini.
+     * =============================================
+     * RELASI BARU KE PROMOTION
+     * =============================================
      */
-    public function user(): BelongsTo
+    public function promotion()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Promotion::class);
     }
 }

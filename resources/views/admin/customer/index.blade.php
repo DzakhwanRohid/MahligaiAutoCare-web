@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Manajemen User (Karyawan)')
+@section('title', 'Data Pelanggan')
 
 @section('content')
 <div class="container-fluid">
@@ -11,9 +11,10 @@
                     <h3 class="card-title">@yield('title')</h3>
                 </div>
                 <div class="card-body">
+
                     <div class="mb-3">
-                        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                            <i class="fa fa-plus"></i> Tambah User Baru
+                        <a href="{{ route('admin.customer.create') }}" class="btn btn-primary">
+                            <i class="fa fa-plus"></i> Tambah Pelanggan (Manual)
                         </a>
                     </div>
 
@@ -23,7 +24,6 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
-
                     @if (session('error'))
                         <div class="alert alert-danger alert-dismissible fade show" role="alert">
                             {{ session('error') }}
@@ -35,48 +35,45 @@
                         <table class="table table-bordered table-striped table-hover">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Tanggal Bergabung</th>
+                                    <th>Nama Pelanggan</th>
+                                    <th>No. Polisi</th>
+                                    <th>Tipe Kendaraan</th>
+                                    <th>No. HP</th>
+                                    <th>Status Akun</th>
                                     <th style="width: 15%;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($users as $user)
+                                @forelse ($customers as $customer)
                                 <tr>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $customer->user->name ?? $customer->name }}</td>
+                                    <td>{{ $customer->license_plate }}</td>
+                                    <td>{{ $customer->vehicle_type }}</td>
+                                    <td>{{ $customer->phone }}</td>
                                     <td>
-                                        @if($user->role == 'admin')
-                                            <span class="badge bg-primary">Admin</span>
-                                        @elseif($user->role == 'kasir')
-                                            <span class="badge bg-info">Kasir</span>
+                                        @if($customer->user)
+                                            <span class="badge bg-success">Terdaftar ({{ $customer->user->email }})</span>
                                         @else
-                                            <span class="badge bg-secondary">{{ $user->role }}</span>
+                                            <span class="badge bg-secondary">Walk-in</span>
                                         @endif
                                     </td>
-                                  <td>{{ $user->created_at ? $user->created_at->format('d M Y') : '-' }}</td>
                                     <td>
-                                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-warning">
+                                        <a href="{{ route('admin.customer.edit', $customer->id) }}" class="btn btn-sm btn-warning">
                                             <i class="fa fa-edit"></i> Edit
                                         </a>
-
-                                        @if(Auth::id() != $user->id)
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
+                                        <form action="{{ route('admin.customer.destroy', $customer->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus pelanggan ini? Ini akan mempengaruhi riwayat transaksi.');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger">
                                                 <i class="fa fa-trash"></i> Hapus
                                             </button>
                                         </form>
-                                        @endif
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">
-                                        Belum ada data user.
+                                    <td colspan="6" class="text-center">
+                                        Belum ada data pelanggan.
                                     </td>
                                 </tr>
                                 @endforelse
@@ -85,7 +82,7 @@
                     </div>
 
                     <div class="mt-3">
-                        {{ $users->links('pagination::bootstrap-5') }}
+                        {{ $customers->links('pagination::bootstrap-5') }}
                     </div>
 
                 </div>

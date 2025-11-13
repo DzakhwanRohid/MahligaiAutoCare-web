@@ -19,12 +19,12 @@
                 <a href="{{ route('register') }}" class="text-light">Register</a>
             @else
                 @if (Auth::user()->role == 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="text-light me-3">
+                    <a href="{{ route('dashboard') }}" class="text-light me-3">
                         <i class="fas fa-tachometer-alt me-1"></i>
                         Dashboard
                     </a>
                 @elseif (Auth::user()->role == 'kasir')
-                    <a href="{{ route('kasir.dashboard') }}" class="text-light me-3">
+                    <a href="{{ route('dashboard') }}" class="text-light me-3">
                         <i class="fas fa-tachometer-alt me-1"></i>
                         Dashboard
                     </a>

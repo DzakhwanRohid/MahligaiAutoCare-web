@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Manajemen User (Karyawan)')
+@section('title', 'Manajemen Diskon & Promosi')
 
 @section('content')
 <div class="container-fluid">
@@ -12,10 +12,11 @@
                 </div>
                 <div class="card-body">
                     <div class="mb-3">
-                        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                            <i class="fa fa-plus"></i> Tambah User Baru
+                        <a href="{{ route('admin.promosi.create') }}" class="btn btn-primary">
+                            <i class="fa fa-plus"></i> Tambah Promosi Baru
                         </a>
                     </div>
+
 
                     @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -24,59 +25,59 @@
                         </div>
                     @endif
 
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
-
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>Nama</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Tanggal Bergabung</th>
-                                    <th style="width: 15%;">Aksi</th>
+                                    <th>Nama Promosi</th>
+                                    <th>Kode</th>
+                                    <th>Tipe</th>
+                                    <th>Nilai</th>
+                                    <th>Mulai Berlaku</th>
+                                    <th>Selesai</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($users as $user)
+                                @forelse ($promotions as $promo)
                                 <tr>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $promo->name }}</td>
+                                    <td>{{ $promo->code }}</td>
+                                    <td>{{ $promo->type == 'percentage' ? 'Persen (%)' : 'Nominal (Rp)' }}</td>
                                     <td>
-                                        @if($user->role == 'admin')
-                                            <span class="badge bg-primary">Admin</span>
-                                        @elseif($user->role == 'kasir')
-                                            <span class="badge bg-info">Kasir</span>
+                                        @if($promo->type == 'percentage')
+                                            {{ $promo->value }}%
                                         @else
-                                            <span class="badge bg-secondary">{{ $user->role }}</span>
+                                            Rp {{ number_format($promo->value, 0, ',', '.') }}
                                         @endif
                                     </td>
-                                  <td>{{ $user->created_at ? $user->created_at->format('d M Y') : '-' }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($promo->start_date)->format('d M Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($promo->end_date)->format('d M Y') }}</td>
                                     <td>
-                                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-warning">
+                                        @if($promo->is_active)
+                                            <span class="badge bg-success">Aktif</span>
+                                        @else
+                                            <span class="badge bg-danger">Non-Aktif</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.promosi.edit', $promo->id) }}" class="btn btn-sm btn-warning">
                                             <i class="fa fa-edit"></i> Edit
                                         </a>
-
-                                        @if(Auth::id() != $user->id)
-                                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
+                                        <form action="{{ route('admin.promosi.destroy', $promo->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus promosi ini?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger">
                                                 <i class="fa fa-trash"></i> Hapus
                                             </button>
                                         </form>
-                                        @endif
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">
-                                        Belum ada data user.
+                                    <td colspan="8" class="text-center">
+                                        Belum ada data promosi.
                                     </td>
                                 </tr>
                                 @endforelse
@@ -85,8 +86,7 @@
                     </div>
 
                     <div class="mt-3">
-                        {{ $users->links('pagination::bootstrap-5') }}
-                    </div>
+                        {{ $promotions->links('pagination::bootstrap-5') }} </div>
 
                 </div>
             </div>

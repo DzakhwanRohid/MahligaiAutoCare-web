@@ -3,66 +3,86 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Transaction;
+use App\Models\Service;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
     /**
-     * Menampilkan halaman utama laporan.
+     * Menampilkan Laporan Pendapatan (Halaman Form)
      */
     public function index()
     {
-        // Data Dummy untuk Ringkasan
-        $summary = [
-            'total_pendapatan' => 15730000,
-            'total_transaksi' => 352,
-            'rata_rata_transaksi' => 15730000 / 352,
-        ];
-
-        // Data Dummy untuk Tabel Laporan Pendapatan Harian
-        $dailyReport = [
-            ['tanggal' => '2025-10-03', 'jumlah_transaksi' => 8, 'total_pendapatan' => 1850000],
-            ['tanggal' => '2025-10-02', 'jumlah_transaksi' => 12, 'total_pendapatan' => 2300000],
-            ['tanggal' => '2025-10-01', 'jumlah_transaksi' => 9, 'total_pendapatan' => 1950000],
-        ];
-
-        // Data Dummy untuk Tabel Laporan Kinerja Layanan
-        $serviceReport = [
-            ['nama_layanan' => 'Premium Car Wash', 'jumlah_dipesan' => 80, 'total_pendapatan' => 12000000],
-            ['nama_layanan' => 'Nano Ceramic Coating', 'jumlah_dipesan' => 15, 'total_pendapatan' => 11250000],
-            ['nama_layanan' => 'Interior Detailing', 'jumlah_dipesan' => 25, 'total_pendapatan' => 8750000],
-        ];
-
-        // Mengirim semua data ke view 'admin.laporan'
-        return view('admin.laporan', compact('summary', 'dailyReport', 'serviceReport'));
+        // Menampilkan view dengan form filter
+        return view('admin.laporan.laporan_pendapatan');
     }
 
-    public function indexKasir()
+    /**
+     * Memfilter dan Menampilkan Hasil Laporan Pendapatan
+     */
+    public function filter(Request $request)
     {
-        // Data dummy, nanti bisa diganti dengan query dari database
-        $transaksis = [
-            (object) [
-                'nama_pelanggan' => 'Budi Santoso',
-                'mobil' => 'Toyota Avanza',
-                'plat_mobil' => 'BM 1234 ABC'
-            ],
-            (object) [
-                'nama_pelanggan' => 'Citra Lestari',
-                'mobil' => 'Honda Brio',
-                'plat_mobil' => 'BM 5678 DEF'
-            ],
-            (object) [
-                'nama_pelanggan' => 'Ahmad Subarjo',
-                'mobil' => 'Mitsubishi Pajero',
-                'plat_mobil' => 'BM 9101 GHI'
-            ],
-            (object) [
-                'nama_pelanggan' => 'Rina Marlina',
-                'mobil' => 'Daihatsu Terios',
-                'plat_mobil' => 'BM 1122 JKL'
-            ],
-        ];
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
 
-        // Arahkan ke view laporan dan kirim data dummy
-        return view('kasir.laporan', ['transaksis' => $transaksis]);
+        $startDate = Carbon::parse($request->start_date)->startOfDay();
+        $endDate = Carbon::parse($request->end_date)->endOfDay();
+
+        // 1. Buat Query Dasar untuk Laporan Pendapatan (Hanya yang Selesai)
+        $queryBase = Transaction::whereBetween('created_at', [$startDate, $endDate])
+                                ->where('status', 'Selesai');
+
+        // 2. Hitung KPI (Ringkasan Total)
+        // Kita clone query agar tidak mempengaruhi query tabel harian
+        $summaryQuery = clone $queryBase;
+        $totalPendapatan = $summaryQuery->sum('total_price');
+        $totalTransaksi = $summaryQuery->count();
+        $rataRata = ($totalTransaksi > 0) ? $totalPendapatan / $totalTransaksi : 0;
+
+        // 3. Ambil Laporan Harian (Grup per Tanggal)
+        $laporan = $queryBase
+            ->selectRaw('DATE(created_at) as tanggal, COUNT(*) as total_transaksi, SUM(total_price) as total_pendapatan')
+            ->groupBy('tanggal')
+            ->orderBy('tanggal', 'asc')
+            ->get();
+
+        // 4. Kirim semua data ke view
+        return view('admin.laporan.laporan_pendapatan', compact(
+            'laporan',
+            'startDate',
+            'endDate',
+            'totalPendapatan',
+            'totalTransaksi',
+            'rataRata'
+        ));
+    }
+
+    /**
+     * Laporan Pemesanan (Ini sudah benar dari langkah sebelumnya)
+     */
+    public function pemesanan(Request $request)
+    {
+        $query = Transaction::with(['customer', 'service'])->latest();
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', Carbon::parse($request->start_date));
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', Carbon::parse($request->end_date));
+        }
+        if ($request->filled('service_id')) {
+            $query->where('service_id', $request->service_id);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $services = Service::orderBy('name')->get();
+        $transactions = $query->paginate(15);
+
+        return view('admin.laporan.laporan_pemesanan', compact('transactions', 'services'));
     }
 }

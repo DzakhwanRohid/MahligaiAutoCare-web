@@ -1,60 +1,75 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Manajemen Transaksi')
+@section('title', 'Riwayat Transaksi')
 
 @section('content')
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Manajemen Transaksi</h1>
-    </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">@yield('title')</h3>
+                    <div class="card-subtitle text-muted">Menampilkan semua transaksi yang telah selesai.</div>
+                </div>
+                <div class="card-body">
 
-    {{-- Menampilkan notifikasi sukses jika ada --}}
-    @if (session('success'))
-        <div class="alert alert-success" role="alert">
-            {{ session('success') }}
-        </div>
-    @endif
+                    {{-- Kita bisa tambahkan filter tanggal di sini nanti jika perlu --}}
 
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>No. Invoice</th>
-                            <th>Nama Pelanggan</th>
-                            <th>Layanan</th>
-                            <th>Status</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($transactions as $transaction)
-                            <tr>
-                                <td>{{ $transaction->invoice }}</td>
-                                
-                                {{-- Mengambil data dari relasi customer --}}
-                                <td>{{ $transaction->customer->name }}</td>
-                                
-                                {{-- Mengambil data dari relasi service --}}
-                                <td>{{ $transaction->service->name }}</td>
-                                
-                                <td>{{ $transaction->status }}</td>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>No. Transaksi</th>
+                                    <th>Pelanggan</th>
+                                    <th>No. Polisi</th>
+                                    <th>Layanan</th>
+                                    <th>Total Biaya</th>
+                                    <th>Status</th>
+                                    <th style="width: 10%;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($transactions as $tx)
+                                <tr>
+                                    <td>{{ $tx->created_at->format('d M Y, H:i') }}</td>
+                                    <td>{{ $tx->transaction_code }}</td>
+                                    <td>{{ $tx->customer->name ?? 'N/A' }}</td>
+                                    <td>{{ $tx->customer->license_plate ?? 'N/A' }}</td>
+                                    <td>{{ $tx->service->name ?? 'N/A' }}</td>
+                                    <td>Rp {{ number_format($tx->total_price, 0, ',', '.') }}</td>
+                                    <td>
+                                        @if($tx->status == 'Sudah Dibayar')
+                                            <span class="badge bg-success">Sudah Dibayar</span>
+                                        @else
+                                            <span class="badge bg-secondary">{{ $tx->status }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('pos.struk', $tx->id) }}" class="btn btn-sm btn-info" target="_blank" title="Cetak Struk">
+                                            <i class="fa fa-print"></i>
+                                        </a>
+                                        {{-- Bisa tambahkan tombol 'Detail' jika perlu --}}
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="8" class="text-center">
+                                        Belum ada riwayat transaksi.
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-                                <td>Rp {{ number_format($transaction->total, 0, ',', '.') }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center">Data transaksi masih kosong.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                    <div class="mt-3">
+                        {{ $transactions->links('pagination::bootstrap-5') }}
+                    </div>
+
+                </div>
             </div>
-
-            {{-- Menampilkan link Paginasi --}}
-            <div class="d-flex justify-content-end">
-                {{ $transactions->links() }}
-            </div>
         </div>
     </div>
+</div>
 @endsection

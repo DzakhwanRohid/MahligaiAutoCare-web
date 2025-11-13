@@ -4,20 +4,31 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-// TAMBAHKAN BARIS INI
-use App\Models\Transaction;
 
 class Customer extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'phone'];
+
+    protected $fillable = [
+        'name',
+        'phone',
+        'license_plate',
+        'vehicle_type',
+        'user_id',
+    ];
 
     /**
-     * Mendapatkan semua transaksi yang dimiliki oleh customer ini.
+     * Relasi ke tabel User.
      */
-    public function transactions(): HasMany
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relasi ke tabel Transaction.
+     */
+    public function transactions()
     {
         return $this->hasMany(Transaction::class);
     }

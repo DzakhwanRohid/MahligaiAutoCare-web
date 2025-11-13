@@ -40,6 +40,11 @@ class HomeController extends Controller
     public function pantauAntrian() {
     return view('home.pantau');
 }
+public function pemesanan_create()
+{
+    $services = Service::orderBy('name')->get();
+    return view('home.pemesanan', compact('services'));
+}
 public function showPemesanan()
 {
     return view('home.pemesanan');
