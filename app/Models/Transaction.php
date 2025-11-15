@@ -22,16 +22,16 @@ class Transaction extends Model
         'invoice',
         'vehicle_brand',
         'vehicle_plate',
-        // === BAGIAN INI YANG PENTING AGAR TIDAK 0 ===
         'total',
         'base_price',
         'discount',
         'amount_paid',
         'change',
-        // ============================================
         'status',
         'payment_method',
         'slot',
+        'booking_date',
+        'payment_proof',
     ];
 
     public function customer()

@@ -20,11 +20,24 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+  public function boot(): void
     {
-        // Membagikan data pengaturan ke semua view
         if (Schema::hasTable('settings')) {
-            $globalSettings = Setting::pluck('value', 'key')->all();
+            // Ambil semua settings dan jadikan default jika kosong
+            $settings = Setting::pluck('value', 'key')->all();
+
+            // Siapkan fallback default jika key belum ada di database
+            $defaults = [
+                'business_name' => 'Mahligai AutoCare',
+                'business_address' => 'Jl. Jend. Sudirman No. 123, Pekanbaru',
+                'business_phone' => '+62 812 3456 7890',
+                'business_email' => 'info@mahligaiautocare.com',
+                'business_hours' => 'Senin - Minggu: 08:00 - 20:00 WIB',
+            ];
+
+            // Gabungkan default dengan data dari DB (data DB akan menimpa default)
+            $globalSettings = array_merge($defaults, $settings);
+
             View::share('appSettings', $globalSettings);
         }
     }

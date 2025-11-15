@@ -418,3 +418,95 @@ body {
 .footer .copyright a:hover {
     color: #5d7e2c;
 }
+/*
+/* --- Styling Khusus Halaman Pemesanan --- */
+
+/* Efek scaling pada tombol utama */
+.hover-scale:hover {
+    transform: scale(1.02);
+    transition: transform 0.2s;
+}
+
+/* * Styling Tombol Metode Pembayaran (Radio Button)
+ * Saat dipilih, border menjadi hijau
+ */
+.btn-check:checked + .btn-outline-secondary {
+    background-color: #f0fff4; /* Hijau muda */
+    border-color: #198754; /* Hijau tema */
+    color: #212529;
+    font-weight: bold;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
+
+/* * Styling Tombol Slot Waktu
+ * (Mengganti warna default 'primary' menjadi 'success' hijau)
+ */
+.btn-outline-primary {
+    color: #198754;
+    border-color: #198754;
+}
+.btn-outline-primary:hover,
+.btn-primary {
+    background-color: #198754;
+    color: white;
+    border-color: #198754;
+}
+
+/* * Styling Tombol Slot Waktu (Warna Hijau)
+ * Ini akan menggantikan style 'primary' di JavaScript
+ */
+.btn-outline-success {
+    color: #198754;
+    border-color: #198754;
+}
+.btn-outline-success:hover,
+.btn-success {
+    background-color: #198754;
+    color: white;
+    border-color: #198754;
+}
+
+/* Kustomisasi Rincian Box */
+#rincian_box {
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    transition: all 0.3s;
+}
+#rincian_box:hover {
+    border-color: #198754;
+}
+#rincian_box .h5 {
+    color: #198754 !important; /* Total Akhir berwarna hijau */
+}
+
+/* Input Group di Promo */
+.input-group input.form-control {
+    border-left: none;
+}
+.input-group span.input-group-text {
+    border-right: none;
+}
+
+/* Scrollbar horizontal untuk slot */
+#slots_container {
+    overflow-x: auto;
+    padding-bottom: 10px;
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+#slots_container::-webkit-scrollbar {
+    height: 8px;
+}
+#slots_container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+#slots_container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+#slots_container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

@@ -77,20 +77,30 @@
                                 @forelse ($transactions as $tx)
                                 <tr>
                                     <td>{{ $tx->created_at->format('d M Y, H:i') }}</td>
-                                    <td>{{ $tx->transaction_code }}</td>
+                                    <td>{{ $tx->invoice }}</td>
                                     <td>{{ $tx->customer->name ?? 'N/A' }}</td>
                                     <td>{{ $tx->customer->license_plate ?? 'N/A' }}</td>
                                     <td>{{ $tx->service->name ?? 'N/A' }}</td>
+
+                                    {{-- === PERBAIKAN LOGIKA STATUS DI SINI === --}}
                                     <td>
-                                        @if($tx->status == 'Selesai')
-                                            <span class="badge bg-success">Selesai</span>
+                                        @if($tx->status == 'Selesai' || $tx->status == 'Sudah Dibayar')
+                                            <span class="badge bg-success">{{ $tx->status }}</span>
+                                        @elseif($tx->status == 'Terkonfirmasi')
+                                            <span class="badge bg-info text-dark">Terkonfirmasi</span>
                                         @elseif($tx->status == 'Sedang Dicuci')
-                                            <span class="badge bg-warning">Sedang Dicuci</span>
+                                            <span class="badge bg-warning text-dark">Sedang Dicuci</span>
+                                        @elseif($tx->status == 'Ditolak')
+                                            <span class="badge bg-danger">Ditolak</span>
+                                        @elseif($tx->status == 'Menunggu')
+                                            <span class="badge bg-secondary">Menunggu Verifikasi</span>
                                         @else
-                                            <span class="badge bg-secondary">Menunggu</span>
+                                            <span class="badge bg-dark">{{ $tx->status }}</span>
                                         @endif
                                     </td>
-                                    <td>Rp {{ number_format($tx->total_price, 0, ',', '.') }}</td>
+                                    {{-- ======================================= --}}
+
+                                    <td>Rp {{ number_format($tx->total, 0, ',', '.') }}</td>
                                 </tr>
                                 @empty
                                 <tr>

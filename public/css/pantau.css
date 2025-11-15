@@ -228,3 +228,80 @@
 .queue-pod.finished .pod-title span {
     color: var(--primary-green);
 }
+
+/* --- Styling Khusus Halaman Pantau Antrean --- */
+
+.bg-success-soft {
+    background-color: #f0fff4; /* Hijau sangat muda */
+    border: 2px solid #198754 !important;
+}
+
+.slot-card {
+    transition: transform 0.3s;
+    border-radius: 15px;
+}
+.slot-card:hover {
+    transform: translateY(-5px);
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+.status-icon.washing i.fa-shower {
+    animation: shower 1.5s infinite ease-in-out;
+}
+@keyframes shower {
+    0%,
+    100% {
+        transform: translate(-50%, -10px);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(-50%, 0px);
+        opacity: 1;
+    }
+}
+
+/* CSS BARU UNTUK JADWAL WAKTU */
+.slot-waktu-wrapper {
+    flex-basis: 100px; /* Lebar minimum tombol */
+    flex-grow: 1;
+}
+.slot-waktu-btn {
+    width: 100%;
+    padding: 15px 10px;
+    font-weight: 500;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    color: white;
+    opacity: 1;
+}
+/* Tombol Disabled (Lewat tapi kosong) */
+.slot-waktu-btn.disabled.btn-light {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #adb5bd;
+    opacity: 0.7;
+}
+/* Tombol Disabled (Sudah dibooking) */
+.slot-waktu-btn.disabled.btn-danger {
+    opacity: 0.6;
+}
+.slot-waktu-btn.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+.slot-waktu-btn.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+.slot-waktu-jam {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+.slot-waktu-status {
+    font-size: 0.8rem;
+    font-weight: 400;
+}

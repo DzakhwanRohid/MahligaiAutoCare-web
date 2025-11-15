@@ -1,38 +1,118 @@
 @extends('layouts.main')
 
+{{-- Tambahkan CSS khusus di <head> --}}
+@push('styles')
+    <link href="{{ asset('css/pantau.css') }}" rel="stylesheet">
+@endpush
+
 @section('content')
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-5 mb-3">Pantau Antrean & Ketersediaan</h1>
-        <p class="lead text-muted">Lihat ketersediaan slot cuci secara real-time sebelum Anda datang.</p>
+
+{{-- HEADER --}}
+<div class="page-header text-center mb-5">
+    <div class="container">
+        <h1 class="display-4">Pantau Antrean & Jadwal</h1>
+        <p class="lead">Lihat kondisi slot cuci dan jadwal booking untuk hari ini.</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+
+  {{-- 1. Alert Flash (Hanya muncul sekali setelah booking) --}}
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
+{{-- 2. Kotak Status Persisten (Muncul selama pesanan aktif) --}}
+@if(isset($myActiveBookings) && $myActiveBookings->count() > 0)
+    <div class="card shadow-lg border-0 mb-5" style="background-color: #f0fff4; border: 2px solid #198754 !important;" data-aos="fade-up">
+        <div class="card-body p-4 p-md-5">
+            <h3 class="fw-bold text-success mb-3"><i class="fa fa-bell me-2"></i>Status Pesanan Aktif Anda</h3>
+
+            @foreach($myActiveBookings as $booking)
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                    <div>
+                        <h5 class="fw-bold mb-1">{{ $booking->service->name }}</h5>
+                        <p class="mb-0 text-muted">
+                            <i class="fa fa-calendar-alt me-1"></i>
+                            {{ \Carbon\Carbon::parse($booking->booking_date)->format('l, d F Y') }}
+                            <i class="fa fa-clock me-1 ms-3"></i>
+                            Pukul {{ \Carbon\Carbon::parse($booking->booking_date)->format('H:i') }} WIB
+                        </p>
+                    </div>
+                    <div class="text-end" style="min-width: 150px;">
+                        {{-- Badge Status Dinamis --}}
+                        @if($booking->status == 'Terkonfirmasi')
+                            <span class="badge bg-success fs-6 rounded-pill px-3 py-2">Terkonfirmasi</span>
+                            <small class="d-block text-muted mt-1">Silakan datang sesuai jadwal</small>
+                        @elseif($booking->status == 'Sedang Dicuci')
+                            <span class="badge bg-primary fs-6 rounded-pill px-3 py-2">Sedang Dicuci</span>
+                            <small class="d-block text-muted mt-1">Mobil Anda sedang diproses</small>
+                        @else
+                            <span class="badge bg-warning text-dark fs-6 rounded-pill px-3 py-2">Menunggu Verifikasi</span>
+                            <small class="d-block text-muted mt-1">Admin akan cek bukti bayar</small>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+
+            <a href="{{ route('profile.edit') }}" class="btn btn-link text-success fw-bold p-0">
+                Lihat semua riwayat di halaman profil <i class="fa fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+@endif
+
+    {{-- Tampilkan notifikasi sukses jika baru selesai booking --}}
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <div class="text-center mb-5" data-aos="fade-up">
+        <h2 class="section-title">Kondisi Slot Cuci (Saat Ini)</h2>
+        <p class="text-muted">Status 4 slot fisik pencucian kami saat ini.</p>
     </div>
 
-    <div class="row g-4 justify-content-center">
+    <div class="row g-4 justify-content-center mb-5">
         @for ($i = 1; $i <= 4; $i++)
             @php
                 $tx = $slots[$i] ?? null;
             @endphp
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 border-0 shadow-sm text-center {{ $tx ? 'bg-light' : 'bg-success text-white' }}">
-                    <div class="card-body py-5">
-                        <div class="mb-3">
-                            <i class="fa {{ $tx ? 'fa-car-side' : 'fa-check-circle' }} fa-4x"></i>
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $i * 100 }}">
+                <div class="card h-100 border-0 shadow-lg slot-card {{ $tx ? 'bg-light' : 'bg-success-soft' }}">
+                    <div class="card-body text-center py-5 d-flex flex-column justify-content-center">
+                        <h4 class="fw-bold text-secondary mb-4">SLOT {{ $i }}</h4>
+                        <div class="mb-4 position-relative">
+                            @if($tx)
+                                <div class="status-icon washing"><i class="fa fa-car fa-3x text-primary"></i><i class="fa fa-shower fa-2x text-info position-absolute top-0 start-50 translate-middle"></i></div>
+                            @else
+                                <div class="status-icon available"><i class="fa fa-check-circle fa-4x text-success"></i></div>
+                            @endif
                         </div>
-                        <h3 class="fw-bold mb-1">SLOT {{ $i }}</h3>
-
                         @if($tx)
-                            <span class="badge bg-danger fs-6 mb-3">SEDANG DIGUNAKAN</span>
-                            <h5 class="text-dark">{{ $tx->vehicle_brand ?? 'Kendaraan' }}</h5>
-                            <p class="text-muted mb-0">
-                                {{ substr($tx->vehicle_plate, 0, 2) }} *** {{ substr($tx->vehicle_plate, -2) }}
-                            </p>
-                            <small class="text-danger fw-bold">Estimasi: Sedang Proses</small>
+                            <span class="badge bg-primary fs-6 mb-3 px-3 py-2 rounded-pill">SEDANG DICUCI</span>
+                            <h5 class="fw-bold text-dark mb-1">{{ $tx->vehicle_brand ?? 'Kendaraan' }}</h5>
+                            @php
+                                $plat = $tx->vehicle_plate ?? 'XXXXXX';
+                                // Sensor: Ambil 2 huruf depan dan 2 huruf belakang
+                                $sensor = substr($plat, 0, 2) . ' *** ' . substr($plat, -2);
+                            @endphp
+                            <p class="text-muted fw-bold font-monospace fs-5">{{ $sensor }}</p>
+                            <div class="mt-auto pt-3 border-top">
+                                <small class="text-muted d-block">Layanan:</small>
+                                <small class="fw-bold text-primary">{{ $tx->service->name ?? 'Cuci Mobil' }}</small>
+                            </div>
                         @else
-                            <span class="badge bg-light text-success fs-6 mb-3">TERSEDIA</span>
-                            <h5 class="mb-3">Siap Digunakan</h5>
-                            <a href="{{ route('pemesanan.create') }}" class="btn btn-light rounded-pill px-4">
-                                Booking Sekarang
-                            </a>
+                            <span class="badge bg-success fs-6 mb-3 px-3 py-2 rounded-pill">TERSEDIA</span>
+                            <p class="text-muted mb-4">Slot ini kosong dan siap digunakan.</p>
+                            <div class="mt-auto">
+                                <a href="{{ route('pemesanan.create') }}" class="btn btn-success rounded-pill px-4 shadow-sm hover-scale">Booking Slot</a>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -40,11 +120,53 @@
         @endfor
     </div>
 
-    <div class="row mt-5">
-        <div class="col-12 text-center">
-            <div class="alert alert-info d-inline-block">
-                <i class="fa fa-info-circle me-2"></i>
-                Data diperbarui secara otomatis setiap kali ada perubahan status oleh kasir.
+    <hr class="my-5">
+
+    <div class="text-center mb-5" data-aos="fade-up">
+        <h2 class="section-title">Jadwal Booking Hari Ini ({{ \Carbon\Carbon::parse($today)->format('d F Y') }})</h2>
+        <p class="text-muted">Lihat jam yang sudah terisi atau masih kosong untuk booking online.</p>
+    </div>
+
+    <div class="row justify-content-center" data-aos="fade-up">
+        <div class="col-lg-10">
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                {{-- Loop Jam Operasional --}}
+                @for ($i = $startHour; $i <= $endHour; $i++)
+                    @php
+                        $timeString = ($i < 10 ? '0' . $i : $i) . ':00';
+                        $isBooked = in_array($timeString, $bookedSlots);
+                        $isPassed = $timeString <= $now;
+                    @endphp
+
+                    <div class="slot-waktu-wrapper">
+                        <div class="btn slot-waktu-btn
+                            {{ $isBooked ? 'btn-danger' : 'btn-success' }}
+                            {{ ($isPassed && !$isBooked) ? 'btn-light disabled' : '' }}
+                            {{ ($isPassed && $isBooked) ? 'btn-danger disabled' : '' }}"
+                            title="{{ $isBooked ? 'Jam sudah dibooking' : ($isPassed ? 'Waktu sudah lewat' : 'Slot tersedia') }}">
+
+                            <div class="slot-waktu-jam">{{ $timeString }}</div>
+                            @if($isBooked)
+                                <div class="slot-waktu-status">
+                                    <i class="fa fa-lock me-1"></i> Dipesan
+                                </div>
+                            @elseif($isPassed)
+                                <div class="slot-waktu-status">
+                                    <i class="fa fa-history me-1"></i> Lewat
+                                </div>
+                            @else
+                                <div class="slot-waktu-status">
+                                    <i class="fa fa-check me-1"></i> Tersedia
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endfor
+            </div>
+            <div class="text-center mt-4">
+                <a href="{{ route('pemesanan.create') }}" class="btn btn-primary rounded-pill px-5 py-3 fs-5 hover-scale">
+                    <i class="fa fa-calendar-check me-2"></i> Buat Janji Temu Sekarang
+                </a>
             </div>
         </div>
     </div>

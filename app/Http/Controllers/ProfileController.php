@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Transaction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,12 +15,25 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
-    {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+
+public function edit(Request $request): View
+{
+    $user = $request->user();
+    $transactions = [];
+
+    // HANYA jika yang login adalah 'user' (pelanggan), ambil data transaksinya
+    if ($user->role == 'user' && $user->customer) {
+        $transactions = Transaction::where('customer_id', $user->customer->id)
+                            ->with('service') // Ambil data layanan
+                            ->latest() // Urutkan dari yang terbaru
+                            ->get();
     }
+
+    return view('profile.edit', [
+        'user' => $user,
+        'transactions' => $transactions, // Kirim data transaksi ke view
+    ]);
+}
 
     /**
      * Update the user's profile information.

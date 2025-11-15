@@ -12,6 +12,8 @@
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <link href="{{ asset('css/home.css') }}" rel="stylesheet">
     <link href="{{ asset('css/pantau.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/kontak.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
 
 <body>
@@ -34,6 +36,7 @@
         once: true,    // Animasi hanya berjalan sekali
     });
 </script>
+@stack('scripts')
 </body>
 
 </html>

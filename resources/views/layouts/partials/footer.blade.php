@@ -59,7 +59,7 @@
                     &copy; <a class="border-bottom" href="#">{{ $appSettings['business_name'] ?? 'Mahligai AutoCare' }}</a>, All Right Reserved.
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    Designed By <a class="border-bottom" href="https://htmlcodex.com">_DzakhwanRohid</a>
+                    Designed By <a class="border-bottom" href="https://www.instagram.com/dzakhwan_rohid?igsh=MTRhMGZtMWN1dTlqdw%3D%3D&utm_source=qr">_DzakhwanRohid</a>
                 </div>
             </div>
         </div>

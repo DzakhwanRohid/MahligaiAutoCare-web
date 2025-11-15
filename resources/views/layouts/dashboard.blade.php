@@ -111,6 +111,12 @@
                         <ul class="submenu collapse {{ $isLaporanActive ? 'show' : '' }}" id="menuLaporan">
                             <li><a href="{{ route('laporan.pemesanan') }}" class="{{ request()->routeIs('laporan.pemesanan') ? 'active-sub' : '' }}">Laporan Pemesanan</a></li>
                             <li><a href="{{ route('laporan.pendapatan') }}" class="{{ request()->routeIs('laporan.pendapatan') ? 'active-sub' : '' }}">Laporan Pendapatan</a></li>
+                            <li>
+                                <a href="{{ route('admin.feedback.index') }}" class="{{ request()->routeIs('admin.feedback.*') ? 'active-sub' : '' }}">
+                                    Pesan Pengguna
+                              
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 @endif
