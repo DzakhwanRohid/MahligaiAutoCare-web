@@ -12,42 +12,41 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\FeedbackController;
+
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes (VERSI BERSIH V3)
 |--------------------------------------------------------------------------
-|
-| Rute untuk halaman publik
-|
 */
-// RUTE PUBLIK (TETAP SAMA dan SEKARANG AKAN BERFUNGSI)
+
+// --- RUTE PUBLIK ---
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/pantau-antrean', [HomeController::class, 'pantauAntrian'])->name('home.pantau');
 Route::get('/layanan', [HomeController::class, 'layanan'])->name('home.layanan');
 Route::get('/tentang', [HomeController::class, 'tentangKami'])->name('home.tentang');
-Route::get('/kontak', [HomeController::class, 'kontak'])->name('home.kontak');
+Route::get('/kontak', [HomeController::class, 'kontak'])->name('home.kontak'); // Ganti nama ke home.kontak agar konsisten
 Route::post('/kontak', [HomeController::class, 'storeContact'])->name('kontak.store');
-//RUTE PEMESANAN
+
+// --- RUTE PEMESANAN (BOOKING) ---
 Route::get('/pemesanan', [HomeController::class, 'showPemesanan'])->name('pemesanan.create');
-Route::get('/check-slots', [HomeController::class, 'getSlots'])->name('check.slots');
-Route::post('/check-promo', [HomeController::class, 'checkPromo'])->name('check.promo');
 Route::post('/pemesanan', [HomeController::class, 'storePemesanan'])->name('pemesanan.store');
+Route::get('/get-available-schedule', [HomeController::class, 'getAvailableSchedule'])->name('booking.getSchedule');
+Route::post('/check-promo', [HomeController::class, 'checkPromo'])->name('check.promo'); // <-- TAMBAHAN BARU
+
 /*
 |--------------------------------------------------------------------------
-| Rute Dashboard & Autentikasi
+| Rute Dashboard & Admin Panel
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Rute untuk KASIR & ADMIN
-    |--------------------------------------------------------------------------
-    */
+    /* Rute KASIR & ADMIN */
     Route::middleware(['role:admin,kasir'])->group(function () {
         Route::get('/kasir/pos', [POSController::class, 'index'])->name('pos.index');
         Route::post('/kasir/pos', [POSController::class, 'store'])->name('pos.store');
@@ -59,31 +58,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/transaksi/reject/{transaction}', [TransactionController::class, 'rejectBooking'])->name('transaksi.reject');
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Rute  ADMIN
-    |--------------------------------------------------------------------------
-    */
+    /* Rute HANYA UNTUK ADMIN */
     Route::middleware(['role:admin'])->prefix('admin')->group(function () {
-        // --- Manajemen Data ---
         Route::resource('layanan', LayananController::class)->names('admin.layanan');
         Route::resource('promosi', PromotionController::class)->except(['show'])->names('admin.promosi');
-        // --- Manajemen Pengguna ---
         Route::resource('users', UserController::class)->names('admin.users');
         Route::resource('customer', CustomerController::class)->names('admin.customer');
-        // --- Laporan & Analitik ---
+        Route::get('/feedback', [FeedbackController::class, 'index'])->name('admin.feedback.index');
+        Route::get('/feedback/{contactMessage}', [FeedbackController::class, 'show'])->name('admin.feedback.show');
+        Route::delete('/feedback/{contactMessage}', [FeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
         Route::get('/laporan/pemesanan', [ReportController::class, 'pemesanan'])->name('laporan.pemesanan');
         Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.pendapatan');
         Route::post('/laporan/filter', [ReportController::class, 'filter'])->name('laporan.filter');
-       // Rute untuk Pesan/Feedback
-    Route::get('/feedback', [App\Http\Controllers\FeedbackController::class, 'index'])->name('admin.feedback.index');
-    Route::get('/feedback/{contactMessage}', [App\Http\Controllers\FeedbackController::class, 'show'])->name('admin.feedback.show');
-    Route::delete('/feedback/{contactMessage}', [App\Http\Controllers\FeedbackController::class, 'destroy'])->name('admin.feedback.destroy');
-        // --- Pengaturan ---
         Route::get('/pengaturan', [SettingController::class, 'index'])->name('pengaturan.index');
         Route::post('/pengaturan', [SettingController::class, 'update'])->name('pengaturan.update');
-
     });
 });
-// Rute Autentikasi (Login, Register, dll.)
+
 require __DIR__.'/auth.php';

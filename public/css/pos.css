@@ -1,0 +1,222 @@
+/* ==============================================
+   FILE CSS BARU: public/css/pos.css (v4 - DESAIN ELEGAN)
+   ============================================== */
+
+/* --- Variabel Warna Sesuai Tema Web Anda --- */
+:root {
+    --pos-primary: #7baa23; /* Hijau utama */
+    --pos-primary-hover: #8cc03b; /* Hijau cerah */
+    --pos-primary-soft: #f0f5e8; /* Hijau pucat */
+    --pos-primary-glow: rgba(123, 170, 35, 0.4); /* Glow effect */
+    --pos-bg: #f4f6f9;
+    --pos-card-bg: #ffffff;
+    --pos-border: #e9ecef;
+    --pos-text: #212529;
+    --pos-text-muted: #6c757d;
+}
+
+/* --- Tampilan Umum & Fix Biru --- */
+.pos-wrapper .form-control,
+.pos-wrapper .form-select {
+    background-color: #fdfdfd; /* Latar input sedikit off-white */
+}
+.pos-wrapper .form-control:focus,
+.pos-wrapper .form-select:focus {
+    border-color: var(--pos-primary) !important;
+    box-shadow: 0 0 0 0.25rem var(--pos-primary-glow) !important;
+}
+.pos-wrapper .card.shadow-sm {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+    border: 1px solid var(--pos-border);
+    border-radius: 0.5rem;
+}
+.pos-wrapper .card-header {
+    background-color: #fcfcfd;
+    border-bottom: 1px solid var(--pos-border);
+    font-weight: 700;
+    color: var(--pos-primary);
+}
+.pos-wrapper .nav-tabs .nav-link {
+    font-weight: 500;
+    color: var(--pos-text-muted);
+}
+.pos-wrapper .nav-tabs .nav-link.active {
+    font-weight: 700;
+    color: var(--pos-primary);
+    border-bottom-width: 3px;
+    border-color: var(--pos-primary);
+}
+
+/* ================================================
+   DESAIN BARU: Card Layanan (Modern)
+   ================================================ */
+.pos-wrapper .service-card-btn {
+    position: relative; /* Wajib untuk checkmark */
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    width: 100%;
+    text-align: left;
+    background-color: var(--pos-card-bg);
+    border: 1px solid var(--pos-border);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+.pos-wrapper .service-card-btn:hover {
+    border-color: var(--pos-primary);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.pos-wrapper .service-card-btn .service-icon {
+    color: var(--pos-primary);
+    margin-right: 1rem;
+    transition: all 0.2s ease;
+}
+.pos-wrapper .service-card-btn .service-details {
+    display: flex;
+    flex-direction: column;
+}
+.pos-wrapper .service-card-btn .service-name {
+    font-weight: 600;
+    color: var(--pos-text);
+    font-size: 0.95rem;
+}
+.pos-wrapper .service-card-btn .service-price {
+    font-weight: 700;
+    color: var(--pos-primary); /* Harga dibuat hijau */
+    font-size: 0.9rem;
+}
+
+/* ================================================
+   DESAIN BARU: Card Slot (Modern)
+   ================================================ */
+.pos-wrapper .slot-card-btn {
+    position: relative; /* Wajib untuk checkmark */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0.5rem;
+    height: 100%;
+    min-height: 100px;
+    text-align: center;
+    border-width: 1px;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    background-color: var(--pos-card-bg);
+}
+.pos-wrapper .slot-card-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+/* Warna hover khusus untuk slot kosong */
+.pos-wrapper .btn-outline-success:hover {
+    border-color: var(--pos-primary);
+}
+/* Warna hover khusus untuk slot antrean */
+.pos-wrapper .btn-outline-secondary:hover {
+    border-color: var(--pos-text-muted);
+}
+
+/* ================================================
+   DESAIN BARU: State DIPILIH (Checked)
+   ================================================ */
+
+/* 1. Sembunyikan Checkmark secara default */
+.pos-wrapper .selected-check {
+    position: absolute;
+    top: -10px; /* Sembunyi di atas */
+    right: 8px;
+    font-size: 1.5rem; /* Ukuran ikon check */
+    color: var(--pos-primary);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 2. Tampilan Card saat DIPILIH */
+.pos-wrapper .btn-check:checked + .btn.service-card-btn,
+.pos-wrapper .btn-check:checked + .btn.slot-card-btn {
+    background-color: var(--pos-primary-soft); /* Latar hijau pucat */
+    border-color: var(--pos-primary); /* Border hijau tebal */
+    border-width: 2px;
+    box-shadow: 0 5px 15px var(--pos-primary-glow);
+}
+
+/* 3. Tampilkan Checkmark saat DIPILIH */
+.pos-wrapper .btn-check:checked + .btn .selected-check {
+    opacity: 1;
+    top: 8px; /* Muncul ke posisi */
+}
+
+/* ================================================
+   Kolom Pembayaran Kanan
+   ================================================ */
+.pos-wrapper .pos-payment-header {
+    background-color: var(--pos-primary);
+    color: #ffffff;
+    border-color: var(--pos-primary);
+}
+.pos-wrapper .total-box {
+    background-color: var(--pos-primary-soft);
+    padding: 1rem;
+    border-radius: 0.375rem;
+    border: 2px solid var(--pos-primary); /* Border solid, bukan dashed */
+}
+.pos-wrapper .pos-total-label {
+    font-weight: 600;
+    color: var(--pos-text);
+}
+.pos-wrapper .pos-total {
+    color: var(--pos-primary);
+}
+.pos-wrapper #submit_button {
+    background-color: var(--pos-primary);
+    border-color: var(--pos-primary);
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(123, 170, 35, 0.25);
+    transition: all 0.2s ease;
+}
+.pos-wrapper #submit_button:hover {
+    background-color: var(--pos-primary-hover);
+    border-color: var(--pos-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(123, 170, 35, 0.35);
+}
+.pos-wrapper #submit_button.btn-danger {
+    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.25);
+}
+
+/* ================================================
+   ANIMASI BARU: Secure Payment (Menggantikan Scanner)
+   ================================================ */
+.pos-wrapper .pos-footer-animation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+    border: 1px solid var(--pos-border);
+}
+.pos-wrapper .secure-icon {
+    font-size: 1.2rem;
+    color: var(--pos-primary);
+    margin-right: 10px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+.pos-wrapper .secure-text {
+    font-size: 0.85rem;
+    color: var(--pos-text-muted);
+    font-weight: 500;
+}
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

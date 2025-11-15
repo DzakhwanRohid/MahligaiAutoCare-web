@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-{{-- Menambahkan CSS khusus di <head> --}}
+{{-- 1. Memuat CSS baru kita --}}
 @push('styles')
     <link href="{{ asset('css/pemesanan.css') }}" rel="stylesheet">
 @endpush
@@ -32,17 +32,13 @@
                         </div>
                     @endif
 
-                    {{-- Form utama --}}
-                    {{--
-                      PENTING: Kita tambahkan data- attribute di sini
-                      agar bisa dibaca oleh file pemesanan.js
-                    --}}
+                    {{-- 2. Form dengan data-attribute untuk JS --}}
                     <form action="{{ route('pemesanan.store') }}"
                           method="POST"
                           enctype="multipart/form-data"
                           id="bookingForm"
+                          data-schedule-url="{{ route('booking.getSchedule') }}"
                           data-check-promo-url="{{ route('check.promo') }}"
-                          data-check-slots-url="{{ route('check.slots') }}"
                           data-csrf-token="{{ csrf_token() }}">
                         @csrf
 
@@ -51,35 +47,58 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Nama Lengkap</label>
-                                <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name ?? '') }}" required placeholder="Masukkan nama lengkap">
+                                <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $user->name ?? '') }}" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">No. WhatsApp</label>
-                                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone', $customer->phone ?? '') }}" required placeholder="0812...">
+                                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone', $customer->phone ?? '') }}" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Nomor Polisi</label>
-                                <input type="text" name="license_plate" id="license_plate" class="form-control text-uppercase" value="{{ old('license_plate', $customer->license_plate ?? '') }}" placeholder="BM 1234 XX" required>
+                                <input type="text" name="license_plate" id="license_plate" class="form-control text-uppercase" value="{{ old('license_plate', $customer->license_plate ?? '') }}" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Jenis Kendaraan</label>
-                                <input type="text" name="vehicle_type" id="vehicle_type" class="form-control" value="{{ old('vehicle_type', $customer->vehicle_type ?? '') }}" placeholder="Cth: Honda Jazz Merah" required>
+                                <input type="text" name="vehicle_type" id="vehicle_type" class="form-control" value="{{ old('vehicle_type', $customer->vehicle_type ?? '') }}" required>
                             </div>
                         </div>
 
-                        {{-- BAGIAN 2: LAYANAN & JADWAL --}}
+                        {{-- BAGIAN 2: LAYANAN & JADWAL (Logika Baru) --}}
                         <h4 class="mb-4 text-primary border-bottom pb-2"><i class="fa fa-calendar-alt me-2"></i>Layanan & Jadwal</h4>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Pilih Layanan</label>
+                            <label class="form-label fw-bold">1. Pilih Layanan</label>
                             <select name="service_id" id="service_id" class="form-select form-select-lg" required>
-                                <option value="" data-price="0" data-name="Belum Dipilih">-- Pilih Layanan --</option>
+                                <option value="" data-price="0" data-name="Belum Dipilih">-- Pilih Layanan (Lihat Durasi) --</option>
                                 @foreach($services as $service)
-                                    <option value="{{ $service->id }}" data-price="{{ $service->price }}" data-name="{{ $service->name }}">
-                                        {{ $service->name }} - Rp {{ number_format($service->price, 0, ',', '.') }}
+                                    <option value="{{ $service->id }}" data-price="{{ $service->price }}" data-name="{{ $service->name }}" data-duration="{{ $service->duration_minutes }}">
+                                        {{ $service->name }} (Estimasi {{ $service->duration_minutes }} Menit)
                                     </option>
                                 @endforeach
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">2. Pilih Tanggal Kedatangan</label>
+                            <input type="date" id="date_picker" class="form-control" min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">3. Pilih Slot Cuci</label>
+                            <div id="slots_container" class="slot-selection-box">
+                                <div class="text-muted fst-italic small">Silakan pilih layanan dan tanggal...</div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">4. Pilih Jam Tersedia (Untuk Slot yang Dipilih)</label>
+                            <div id="slots_time_container">
+                                {{-- Akan diisi oleh JavaScript --}}
+                            </div>
+                            {{-- Input tersembunyi untuk menyimpan data final --}}
+                            <input type="hidden" name="booking_date" id="final_booking_date" required>
+                            <input type="hidden" name="slot" id="final_slot" required>
+                        </div>
+
+                        {{-- BAGIAN 3: PEMBAYARAN --}}
+                        <h4 class="mb-4 text-primary border-bottom pb-2"><i class="fa fa-wallet me-2"></i>Pembayaran</h4>
+
                         <div class="mb-3">
                             <label class="form-label fw-bold">Punya Kode Promo?</label>
                             <div class="input-group">
@@ -89,21 +108,6 @@
                             </div>
                             <div id="promo_message" class="small mt-1"></div>
                         </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Pilih Tanggal Kedatangan</label>
-                            <input type="date" id="date_picker" class="form-control" min="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Pilih Jam (Slot Tersedia)</label>
-                            <div id="slots_container" class="d-flex flex-wrap gap-2">
-                                <div class="text-muted fst-italic">Silakan pilih tanggal terlebih dahulu...</div>
-                            </div>
-                            <input type="hidden" name="booking_date" id="final_booking_date" required>
-                        </div>
-
-                        {{-- BAGIAN 3: PEMBAYARAN --}}
-                        <h4 class="mb-4 text-primary border-bottom pb-2"><i class="fa fa-wallet me-2"></i>Pembayaran</h4>
 
                         {{-- RINCIAN BIAYA (Dinamis) --}}
                         <div class="mb-3 p-3 bg-light rounded border border-success" id="rincian_box">
@@ -144,30 +148,30 @@
                             </div>
                         </div>
 
-                      {{-- Boks Transfer Bank (Bukti Bayar) --}}
-<div id="payment_info_transfer" class="d-none p-3 bg-light rounded border border-success mb-4">
-    <div class="alert alert-info mb-3">
-        <strong>Info Pembayaran Transfer:</strong><br>
-        Silakan transfer sebesar <strong id="display_price_transfer" class="text-dark fs-5">Rp 0</strong> ke:<br>
-        <ul class="mb-0 mt-2 ps-3">
-            <li><strong>BCA:</strong> 123-456-7890 (Mahligai Auto)</li>
-        </ul>
-    </div>
-    <label class="form-label fw-bold">Upload Bukti Transfer <span class="text-danger">*</span></label>
-    <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept="image/*">
-</div>
+                        {{-- Boks Transfer Bank --}}
+                        <div id="payment_info_transfer" class="d-none p-3 bg-light rounded border border-success mb-4">
+                            <div class="alert alert-info mb-3">
+                                <strong>Info Pembayaran Transfer:</strong><br>
+                                Silakan transfer sebesar <strong id="display_price_transfer" class="text-dark fs-5">Rp 0</strong> ke:<br>
+                                <ul class="mb-0 mt-2 ps-3">
+                                    <li><strong>BCA:</strong> 123-456-7890 (Mahligai Auto)</li>
+                                </ul>
+                            </div>
+                            <label class="form-label fw-bold">Upload Bukti Transfer <span class="text-danger">*</span></label>
+                            <input type="file" name="payment_proof" id="payment_proof" class="form-control" accept="image/*">
+                        </div>
 
-{{-- Boks QRIS (Hanya Tampil QR) --}}
-<div id="payment_info_qris" class="d-none p-3 bg-light rounded border border-success mb-4 text-center">
-    <div class="alert alert-info mb-3">
-        <strong>Info Pembayaran QRIS:</strong><br>
-        Silakan scan QR Code di bawah ini sejumlah <strong id="display_price_qris" class="text-dark fs-5">Rp 0</strong>
-    </div>
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ContohQRISMahligai"
-        alt="QRIS Code" class="img-fluid border p-2" style="max-width: 200px;">
-    <label class="form-label fw-bold mt-3">Upload Bukti Scan <span class="text-danger">*</span></label>
-    <input type="file" name="payment_proof_qris" id="payment_proof_qris" class="form-control" accept="image/*">
-</div>
+                        {{-- Boks QRIS --}}
+                        <div id="payment_info_qris" class="d-none p-3 bg-light rounded border border-success mb-4 text-center">
+                            <div class="alert alert-info mb-3">
+                                <strong>Info Pembayaran QRIS:</strong><br>
+                                Silakan scan QR Code di bawah ini sejumlah <strong id="display_price_qris" class="text-dark fs-5">Rp 0</strong>
+                            </div>
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ContohQRISMahligai"
+                                 alt="QRIS Code" class="img-fluid border p-2" style="max-width: 200px;">
+                            <label class="form-label fw-bold mt-3">Upload Bukti Scan <span class="text-danger">*</span></label>
+                            <input type="file" name="payment_proof_qris" id="payment_proof_qris" class="form-control" accept="image/*">
+                        </div>
 
                         {{-- Tombol Submit --}}
                         <div class="d-grid mt-5">
@@ -197,6 +201,7 @@
                     <p class="mb-1"><strong>Nama:</strong> <span id="modal_nama"></span></p>
                     <p class="mb-1"><strong>Layanan:</strong> <span id="modal_layanan"></span></p>
                     <p class="mb-1"><strong>Waktu:</strong> <span id="modal_waktu"></span></p>
+                    <p class="mb-1"><strong>Slot:</strong> <span id="modal_slot"></span></p>
                     <p class="mb-1"><strong>Metode:</strong> <span id="modal_bayar"></span></p>
                 </div>
 
@@ -217,7 +222,7 @@
 </div>
 @endsection
 
-{{-- Memuat JS khusus di bagian bawah body --}}
+{{-- 3. Memuat JS baru kita --}}
 @push('scripts')
     <script src="{{ asset('js/pemesanan.js') }}"></script>
 @endpush

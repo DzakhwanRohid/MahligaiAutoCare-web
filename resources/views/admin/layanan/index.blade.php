@@ -30,8 +30,9 @@
                                 <tr>
                                     <th style="width: 10%;">Gambar</th>
                                     <th>Nama Layanan</th>
-                                    <th>Deskripsi</th>
                                     <th>Harga</th>
+                                    <th>Durasi</th> {{-- <-- KOLOM BARU --}}
+                                    <th>Deskripsi</th>
                                     <th style="width: 15%;">Aksi</th>
                                 </tr>
                             </thead>
@@ -39,15 +40,12 @@
                                 @forelse ($services as $service)
                                 <tr>
                                     <td>
-                                        @if($service->image)
-                                            <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="img-fluid rounded" style="max-width: 100px;">
-                                        @else
-                                            <span class="text-muted">No Image</span>
-                                        @endif
+                                        <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="img-fluid rounded" style="max-width: 100px;">
                                     </td>
                                     <td>{{ $service->name }}</td>
-                                    <td>{{ $service->description }}</td>
                                     <td>Rp {{ number_format($service->price, 0, ',', '.') }}</td>
+                                    <td>{{ $service->duration_minutes }} Menit</td> {{-- <-- DATA BARU --}}
+                                    <td>{{ $service->description }}</td>
                                     <td>
                                         <a href="{{ route('admin.layanan.edit', $service->id) }}" class="btn btn-sm btn-warning">
                                             <i class="fa fa-edit"></i> Edit
@@ -63,7 +61,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">
+                                    <td colspan="6" class="text-center"> {{-- <-- Ubah colspan jadi 6 --}}
                                         Belum ada data layanan.
                                     </td>
                                 </tr>

@@ -305,3 +305,73 @@
     font-size: 0.8rem;
     font-weight: 400;
 }
+/* --- Styling Khusus Halaman Pantau Antrean --- */
+.bg-success-soft {
+    background-color: #f0fff4; /* Hijau sangat muda */
+    border: 2px solid #198754 !important;
+}
+.slot-card {
+    transition: transform 0.3s;
+    border-radius: 15px;
+}
+.slot-card:hover {
+    transform: translateY(-5px);
+}
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+.status-icon.washing i.fa-shower {
+    animation: shower 1.5s infinite ease-in-out;
+}
+@keyframes shower {
+    0%,
+    100% {
+        transform: translate(-50%, -10px);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(-50%, 0px);
+        opacity: 1;
+    }
+}
+
+/* CSS BARU UNTUK MODAL JADWAL */
+#scheduleTimeline .list-group-item {
+    padding-left: 0;
+    padding-right: 0;
+}
+.schedule-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+}
+.schedule-time {
+    flex-basis: 100px;
+    font-weight: bold;
+    color: #198754;
+    text-align: right;
+    padding-right: 15px;
+    border-right: 2px solid #198754;
+}
+.schedule-info {
+    padding-left: 15px;
+    font-size: 0.9rem;
+}
+.schedule-info .status-badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 50px;
+}
+.schedule-info .status-booked {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+.schedule-info .status-passed {
+    background-color: #f5f5f5;
+    color: #757575;
+    text-decoration: line-through;
+}
+.schedule-info .status-available {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}

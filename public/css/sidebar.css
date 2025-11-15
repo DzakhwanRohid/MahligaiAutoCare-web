@@ -1,0 +1,234 @@
+/* ==============================================
+   FILE CSS BARU: public/css/sidebar.css
+   Desain Sidebar Modern untuk Mahligai AutoCare
+   ============================================== */
+
+/* --- Variabel Warna Sesuai Tema Web Anda --- */
+:root {
+    --sidebar-bg-dark: #3a6023; /* Hijau gelap untuk latar sidebar */
+    --sidebar-bg-light: #4a7c2e; /* Hijau sedikit lebih terang */
+    --sidebar-bg-active: #7baa23; /* Hijau terang untuk item aktif */
+    --sidebar-text-color: #e0e0e0; /* Teks abu-abu terang */
+    --sidebar-text-active: #ffffff; /* Teks putih untuk aktif */
+    --sidebar-border-color: rgba(
+        255,
+        255,
+        255,
+        0.08
+    ); /* Border tipis antar elemen */
+    --primary-color: #7baa23; /* Hijau utama Anda */
+}
+
+/* --- Layout Dasar: Sidebar + Main Content --- */
+body {
+    display: flex; /* Aktifkan flexbox untuk layout */
+    min-height: 100vh;
+    font-family: "Poppins", sans-serif; /* Pastikan font Poppins terload */
+    background-color: var(
+        --pos-bg,
+        #f4f6f9
+    ); /* Ambil dari pos.css atau default */
+}
+
+.app-sidebar {
+    width: 250px; /* Lebar sidebar */
+    flex-shrink: 0; /* Jangan biarkan sidebar menyusut */
+    background-color: var(--sidebar-bg-dark);
+    color: var(--sidebar-text-color);
+    padding: 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    border-top-right-radius: 1.5rem; /* Sudut membulat */
+    border-bottom-right-radius: 1.5rem;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+    position: sticky; /* Tetap di tempat saat scroll */
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto; /* Scroll jika konten sidebar banyak */
+    scrollbar-width: none; /* Sembunyikan scrollbar Firefox */
+    -ms-overflow-style: none; /* Sembunyikan scrollbar IE/Edge */
+}
+.app-sidebar::-webkit-scrollbar {
+    display: none; /* Sembunyikan scrollbar Chrome/Safari */
+}
+
+.main-content {
+    flex-grow: 1; /* Konten utama mengisi sisa ruang */
+    display: flex;
+    flex-direction: column;
+    padding-left: 15px; /* Sedikit padding kiri */
+}
+
+.app-navbar {
+    background-color: #ffffff !important;
+    border-bottom-left-radius: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1.5rem;
+    position: sticky; /* Biar navbar atas tetap */
+    top: 0;
+    z-index: 1000;
+}
+.app-page-title {
+    font-weight: 700;
+    color: var(--pos-text);
+}
+
+/* --- Header Sidebar (Logo & Brand) --- */
+.sidebar-header {
+    padding: 0 1rem 1rem; /* Padding bawah lebih besar */
+    border-bottom: 1px solid var(--sidebar-border-color);
+    margin-bottom: 1rem;
+}
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--sidebar-text-active);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.sidebar-brand .brand-logo {
+    width: 35px; /* Ukuran logo */
+    height: 35px;
+    margin-right: 10px;
+    border-radius: 8px; /* Sudut membulat pada logo */
+}
+.sidebar-brand .brand-text {
+    white-space: nowrap; /* Jangan putus teks */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Navigasi Sidebar (Menu Utama) --- */
+.sidebar-nav {
+    flex-grow: 1; /* Ambil sisa ruang di tengah */
+}
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.menu-item {
+    margin-bottom: 0.25rem;
+}
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--sidebar-text-color);
+    text-decoration: none;
+    border-radius: 0.5rem; /* Sudut membulat */
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.menu-link:hover {
+    background-color: var(--sidebar-bg-light);
+    color: var(--sidebar-text-active);
+}
+.menu-item.active > .menu-link {
+    background-color: var(--sidebar-bg-active);
+    color: var(--sidebar-text-active);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.menu-icon {
+    font-size: 1.1rem;
+    width: 25px; /* Pastikan lebar ikon seragam */
+    text-align: center;
+    margin-right: 10px;
+}
+.menu-item.active > .menu-link .menu-icon {
+    color: var(--sidebar-text-active); /* Ikon tetap putih saat aktif */
+}
+
+/* --- Submenu (Dropdown) --- */
+.menu-item.has-submenu .submenu-arrow {
+    margin-left: auto; /* Dorong panah ke kanan */
+    transition: transform 0.2s ease;
+}
+.menu-item.has-submenu.open .submenu-arrow {
+    transform: rotate(90deg); /* Putar panah saat terbuka */
+}
+.submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0.2rem 0 0.5rem 0;
+    max-height: 0; /* Awalnya tersembunyi */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+.submenu-item .submenu-link {
+    display: block;
+    padding: 0.5rem 1rem 0.5rem 3.5rem; /* Indentasi sub-item */
+    color: var(--sidebar-text-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-radius: 0.3rem; /* Sedikit membulat */
+    transition: all 0.2s ease;
+}
+.submenu-item .submenu-link:hover {
+    background-color: rgba(255, 255, 255, 0.08); /* Latar hover submenu */
+    color: var(--sidebar-text-active);
+}
+.submenu-item.active .submenu-link {
+    background-color: rgba(255, 255, 255, 0.15); /* Latar aktif submenu */
+    color: var(--sidebar-text-active);
+    font-weight: 500;
+}
+
+/* --- Footer Sidebar (Profil Pengguna) --- */
+.sidebar-footer {
+    padding: 1rem 0.75rem 0;
+    border-top: 1px solid var(--sidebar-border-color);
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.user-profile {
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* Ambil ruang sebanyak mungkin */
+    overflow: hidden;
+}
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Bulat sempurna */
+    margin-right: 10px;
+    border: 2px solid var(--sidebar-bg-active);
+}
+.user-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Sembunyikan jika nama terlalu panjang */
+    white-space: nowrap;
+}
+.user-name {
+    font-weight: 600;
+    color: var(--sidebar-text-active);
+    font-size: 0.95rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.user-role {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.logout-link {
+    color: var(--sidebar-text-color);
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+.logout-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}

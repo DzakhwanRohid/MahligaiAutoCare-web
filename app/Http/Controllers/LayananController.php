@@ -31,9 +31,10 @@ class LayananController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:services,name', // Tambah unique
+            'name' => 'required|string|max:255|unique:services,name',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'duration_minutes' => 'required|integer|min:15', // <-- VALIDASI BARU
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -43,6 +44,7 @@ class LayananController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'duration_minutes' => $request->duration_minutes, // <-- SIMPAN BARU
             'image' => $imagePath,
         ]);
 
@@ -60,28 +62,26 @@ class LayananController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Service $layanan) // <-- Ubah $service jadi $layanan
+    public function edit(Service $layanan) // Gunakan $layanan (sesuai perbaikan terakhir)
     {
-        // Kita kirim sebagai 'service' agar view tidak perlu diubah
         return view('admin.layanan.edit', ['service' => $layanan]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Service $layanan) // <-- Ubah $service jadi $layanan
+    public function update(Request $request, Service $layanan) // Gunakan $layanan
     {
-        // Validasi
         $request->validate([
             'name' => 'required|string|max:255|unique:services,name,' . $layanan->id,
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'duration_minutes' => 'required|integer|min:15', // <-- VALIDASI BARU
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $data = $request->except('_token', '_method', 'image');
 
-        // Logika Update Gambar
         if ($request->hasFile('image')) {
             if ($layanan->image) {
                 Storage::disk('public')->delete($layanan->image);
@@ -89,7 +89,8 @@ class LayananController extends Controller
             $data['image'] = $request->file('image')->store('layanan', 'public');
         }
 
-        // Update data
+        $data['duration_minutes'] = $request->duration_minutes; // <-- UPDATE BARU
+
         $layanan->update($data);
 
         return redirect()->route('admin.layanan.index')->with('success', 'Layanan berhasil diperbarui.');
@@ -98,7 +99,7 @@ class LayananController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Service $layanan) // <-- Ubah $service jadi $layanan
+    public function destroy(Service $layanan) // Gunakan $layanan
     {
         if ($layanan->image) {
             Storage::disk('public')->delete($layanan->image);

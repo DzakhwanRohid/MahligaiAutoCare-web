@@ -24,8 +24,10 @@ const displayPriceQris = document.getElementById("display_price_qris");
 
 // Slot Waktu
 const datePicker = document.getElementById("date_picker");
-const slotsContainer = document.getElementById("slots_container");
+const slotContainer = document.getElementById("slots_container");
+const timeContainer = document.getElementById("slots_time_container");
 const finalBookingDate = document.getElementById("final_booking_date");
+const finalSlot = document.getElementById("final_slot"); // <-- Penting
 const startHour = 9,
     endHour = 17;
 
@@ -35,8 +37,8 @@ const confirmationModal = new bootstrap.Modal(
 );
 
 // Ambil data URL dan Token dari HTML
+const scheduleUrl = bookingForm.dataset.scheduleUrl;
 const checkPromoUrl = bookingForm.dataset.checkPromoUrl;
-const checkSlotsUrl = bookingForm.dataset.checkSlotsUrl;
 const csrfToken = bookingForm.dataset.csrfToken;
 
 // --- UTILITY ---
@@ -140,10 +142,11 @@ submitButton.addEventListener("click", function (e) {
     const selectedTime = finalBookingDate.value;
     if (!selectedTime) {
         alert("Silakan pilih jam kedatangan terlebih dahulu.");
-        document.getElementById("slots_container").style.border =
+        document.getElementById("slots_time_container").style.border =
             "2px solid red";
         setTimeout(() => {
-            document.getElementById("slots_container").style.border = "none";
+            document.getElementById("slots_time_container").style.border =
+                "none";
         }, 3000);
         return;
     }
@@ -155,6 +158,7 @@ submitButton.addEventListener("click", function (e) {
     const selectedPayment = document.querySelector(
         'input[name="payment_method"]:checked'
     ).value;
+    const selectedSlot = document.getElementById("final_slot").value;
 
     document.getElementById("modal_nama").innerText =
         document.getElementById("name").value;
@@ -163,6 +167,8 @@ submitButton.addEventListener("click", function (e) {
     document.getElementById("modal_waktu").innerText = new Date(
         selectedTime
     ).toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" });
+    document.getElementById("modal_slot").innerText =
+        `Slot ${selectedSlot}` || "Belum dipilih"; // <-- Tampilkan Slot
     document.getElementById("modal_bayar").innerText = selectedPayment;
 
     document.getElementById("modal_harga_dasar").innerText =
@@ -190,116 +196,139 @@ function togglePayment() {
         'input[name="payment_method"]:checked'
     ).value;
 
-    // Sembunyikan semua boks
     infoBoxTransfer.classList.add("d-none");
     infoBoxQris.classList.add("d-none");
 
-    // Matikan 'required' untuk upload bukti
     proofInput.required = false;
     document.getElementById("payment_proof_qris").required = false;
 
     if (method === "Transfer") {
         infoBoxTransfer.classList.remove("d-none");
-        proofInput.required = true; // Wajib untuk transfer
+        proofInput.required = true;
     } else if (method === "QRIS") {
         infoBoxQris.classList.remove("d-none");
         document.getElementById("payment_proof_qris").required = true;
     }
-    // Jika 'Tunai', tidak ada boks yang muncul
 }
 
-// Tambahkan event listener ke semua radio button
 document.querySelectorAll('input[name="payment_method"]').forEach((radio) => {
     radio.addEventListener("change", togglePayment);
 });
 
-// Panggil sekali saat load (SANGAT PENTING)
-document.addEventListener("DOMContentLoaded", () => {
-    // ... (kode loadSlots dan updatePrice Anda) ...
-    togglePayment(); // Panggil ini saat inisialisasi
-});
-
 // --- 5. LOGIKA SLOT WAKTU (AJAX) ---
 function loadSlots() {
-    const selectedDate = datePicker.value;
-    if (!selectedDate) return;
+    const serviceId = serviceSelect.value;
+    const date = datePicker.value;
 
-    slotsContainer.innerHTML =
-        '<div class="spinner-border text-success spinner-border-sm" role="status"></div> Memuat jadwal...';
+    // Reset
+    slotContainer.innerHTML =
+        '<div class="text-muted fst-italic small">Silakan pilih layanan dan tanggal...</div>';
+    timeContainer.innerHTML = "";
     finalBookingDate.value = "";
+    finalSlot.value = "";
 
-    fetch(`${checkSlotsUrl}?date=${selectedDate}`)
+    if (!serviceId || !date) {
+        return;
+    }
+
+    slotContainer.innerHTML =
+        '<div class="spinner-border text-success spinner-border-sm" role="status"></div> Mencari slot...';
+
+    fetch(`${scheduleUrl}?date=${date}&service_id=${serviceId}`)
         .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok)
+                throw new Error("Gagal memuat jadwal dari server.");
             return response.json();
         })
         .then((data) => {
-            slotsContainer.innerHTML = "";
+            slotContainer.innerHTML = ""; // Bersihkan loading
 
-            const bookedSlots = data.booked || [];
-            const isToday = data.is_today || false;
-            const currentTime = data.current_time || "00:00";
+            let hasAvailableSlot = false;
+            for (let i = 1; i <= 4; i++) {
+                const slotBtn = document.createElement("input");
+                slotBtn.type = "radio";
+                slotBtn.className = "btn-check";
+                slotBtn.name = "slot_selection";
+                slotBtn.id = `slot_${i}`;
+                slotBtn.value = i;
 
-            let availableSlots = 0;
-
-            for (let i = startHour; i <= endHour; i++) {
-                const hour = i < 10 ? "0" + i : i;
-                const timeString = `${hour}:00`;
-
-                const isBooked = bookedSlots.includes(timeString);
-                const isPassed = isToday && timeString <= currentTime;
-
-                const btn = document.createElement("button");
-                btn.type = "button";
-                let btnClass = "btn flex-grow-1 ";
-
-                if (isBooked) {
-                    btnClass += "btn-secondary opacity-50";
-                } else if (isPassed) {
-                    btnClass += "btn-light text-muted border";
+                const hasSlots = data[i] && data[i].length > 0;
+                if (hasSlots) {
+                    slotBtn.onchange = () => displayTimeSlots(data[i]);
+                    hasAvailableSlot = true;
                 } else {
-                    btnClass += "btn-outline-success"; // Hijau
-                    availableSlots++;
+                    slotBtn.disabled = true;
                 }
-                btn.className = btnClass;
-                btn.innerText = timeString;
-                btn.style.minWidth = "80px";
 
-                if (isBooked || isPassed) {
-                    btn.disabled = true;
-                    btn.title = isBooked
-                        ? "Sudah dibooking"
-                        : "Waktu sudah lewat";
-                } else {
-                    btn.onclick = () => selectSlot(btn, timeString);
+                const labelBtn = document.createElement("label");
+                labelBtn.className =
+                    "btn " +
+                    (hasSlots
+                        ? "btn-outline-success"
+                        : "btn-outline-secondary disabled");
+                labelBtn.htmlFor = `slot_${i}`;
+                labelBtn.innerText = `Slot ${i}`;
+
+                if (!hasSlots) {
+                    labelBtn.innerText += " (Penuh)";
                 }
-                slotsContainer.appendChild(btn);
+
+                slotContainer.appendChild(slotBtn);
+                slotContainer.appendChild(labelBtn);
             }
-
-            if (availableSlots === 0 && slotsContainer.innerHTML === "") {
-                slotsContainer.innerHTML =
-                    '<div class="alert alert-warning w-100">Mohon maaf, tidak ada slot yang tersedia untuk tanggal ini.</div>';
+            if (!hasAvailableSlot) {
+                slotContainer.innerHTML =
+                    '<div class="alert alert-warning w-100">Tidak ada slot tersedia untuk layanan/tanggal ini.</div>';
             }
         })
         .catch((error) => {
-            console.error("Error saat loadSlots:", error);
-            slotsContainer.innerHTML =
-                '<span class="text-danger small">Gagal memuat jadwal. Cek konsol browser (F12).</span>';
+            console.error("Error fetching schedule:", error);
+            slotContainer.innerHTML =
+                '<div class="alert alert-danger w-100">Gagal memuat jadwal.</div>';
         });
 }
 
-function selectSlot(btn, time) {
-    slotsContainer.querySelectorAll("button").forEach((b) => {
-        if (!b.disabled) b.className = "btn btn-outline-success flex-grow-1";
+// Fungsi untuk menampilkan jam setelah slot dipilih
+function displayTimeSlots(availableTimes) {
+    timeContainer.innerHTML = "";
+    finalBookingDate.value = "";
+    finalSlot.value = document.querySelector(
+        'input[name="slot_selection"]:checked'
+    ).value;
+
+    if (availableTimes.length === 0) {
+        timeContainer.innerHTML =
+            '<div class="text-muted w-100 text-center">Tidak ada jam tersedia di slot ini.</div>';
+        return;
+    }
+
+    availableTimes.forEach((time) => {
+        const timeBtn = document.createElement("input");
+        timeBtn.type = "radio";
+        timeBtn.className = "btn-check";
+        timeBtn.name = "time_selection";
+        timeBtn.id = `time_${time}`;
+        timeBtn.value = time;
+
+        timeBtn.onchange = () => {
+            finalBookingDate.value = `${datePicker.value} ${time}:00`;
+        };
+
+        const labelBtn = document.createElement("label");
+        labelBtn.className = "btn btn-outline-success time-slot-btn";
+        labelBtn.htmlFor = `time_${time}`;
+        labelBtn.innerText = time;
+
+        timeContainer.appendChild(timeBtn);
+        timeContainer.appendChild(labelBtn);
     });
-    btn.className = "btn btn-success flex-grow-1";
-    finalBookingDate.value = datePicker.value + " " + time + ":00";
 }
 
 // === 6. EVENT LISTENERS & INISIALISASI HALAMAN ===
-serviceSelect.addEventListener("change", () => updatePriceAndPromo(false));
+serviceSelect.addEventListener("change", () => {
+    updatePriceAndPromo(false);
+    loadSlots();
+});
 promoBtn.addEventListener("click", () => updatePriceAndPromo(true));
 promoInput.addEventListener("input", () => {
     if (promoInput.value === "") {

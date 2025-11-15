@@ -8,13 +8,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    @stack('page-styles')
 </head>
 <body>
     <div class="dashboard-wrapper">
         <aside class="sidebar">
             <div class="sidebar-header">
                 <a href="{{ route('home') }}"><img src="{{ asset('img/logo_project.png') }}" alt="Logo" class="logo"></a>
-                <h5 class="mt-2">{{ Auth::user()->role === 'admin' ? 'Administrator' : 'Kasir' }}</h5>
+            <button class="btn" id="sidebar-toggle" type="button">
+                    <i class="fa fa-bars"></i>
+            </button>
             </div>
 
             <ul class="sidebar-menu">
@@ -39,12 +44,12 @@
                     @php
                         // Hapus 'pos.*' dari sini karena sudah dipisah
                         $isOperasionalActive = request()->routeIs('transaksi.antrean') ||
-                                               request()->routeIs('transaksi.riwayat');
+                                                request()->routeIs('transaksi.riwayat');
                     @endphp
                     <li>
                         <a href="#menuOperasional" data-bs-toggle="collapse" role="button"
-                           aria-expanded="{{ $isOperasionalActive ? 'true' : 'false' }}"
-                           class="{{ $isOperasionalActive ? 'active' : '' }}">
+                        aria-expanded="{{ $isOperasionalActive ? 'true' : 'false' }}"
+                        class="{{ $isOperasionalActive ? 'active' : '' }}">
                             <i class="fa fa-tasks"></i> <span>Manajemen Operasional</span>
                             <i class="fa fa-chevron-down dropdown-icon"></i>
                         </a>
@@ -64,8 +69,8 @@
                     @endphp
                     <li>
                         <a href="#menuData" data-bs-toggle="collapse" role="button"
-                           aria-expanded="{{ $isDataActive ? 'true' : 'false' }}"
-                           class="{{ $isDataActive ? 'active' : '' }}">
+                        aria-expanded="{{ $isDataActive ? 'true' : 'false' }}"
+                        class="{{ $isDataActive ? 'active' : '' }}">
                             <i class="fa fa-database"></i> <span>Manajemen Data</span>
                             <i class="fa fa-chevron-down dropdown-icon"></i>
                         </a>
@@ -84,8 +89,8 @@
                     @endphp
                     <li>
                         <a href="#menuPengguna" data-bs-toggle="collapse" role="button"
-                           aria-expanded="{{ $isPenggunaActive ? 'true' : 'false' }}"
-                           class="{{ $isPenggunaActive ? 'active' : '' }}">
+                        aria-expanded="{{ $isPenggunaActive ? 'true' : 'false' }}"
+                        class="{{ $isPenggunaActive ? 'active' : '' }}">
                             <i class="fa fa-users"></i> <span>Manajemen Pengguna</span>
                             <i class="fa fa-chevron-down dropdown-icon"></i>
                         </a>
@@ -103,8 +108,8 @@
                     @endphp
                     <li>
                         <a href="#menuLaporan" data-bs-toggle="collapse" role="button"
-                           aria-expanded="{{ $isLaporanActive ? 'true' : 'false' }}"
-                           class="{{ $isLaporanActive ? 'active' : '' }}">
+                        aria-expanded="{{ $isLaporanActive ? 'true' : 'false' }}"
+                        class="{{ $isLaporanActive ? 'active' : '' }}">
                             <i class="fa fa-chart-bar"></i> <span>Laporan & Analitik</span>
                             <i class="fa fa-chevron-down dropdown-icon"></i>
                         </a>
@@ -114,7 +119,7 @@
                             <li>
                                 <a href="{{ route('admin.feedback.index') }}" class="{{ request()->routeIs('admin.feedback.*') ? 'active-sub' : '' }}">
                                     Pesan Pengguna
-                              
+
                                 </a>
                             </li>
                         </ul>
@@ -130,6 +135,23 @@
                     </li>
                 @endif
             </ul>
+            <div class="sidebar-footer">
+                <a href="{{ route('profile.edit') }}" class="user-profile-link">
+                    <div class="user-info">
+                        <span class="user-name">{{ Auth::user()->name }}</span>
+                        <span class="user-role">{{ Auth::user()->role }}</span>
+                    </div>
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}" class="ms-auto">
+                    @csrf
+                    <a href="{{ route('logout') }}" class="logout-button"
+                        onclick="event.preventDefault(); this.closest('form').submit();"
+                        title="Logout">
+                        <i class="fa fa-power-off"></i>
+                    </a>
+                </form>
+            </div>
         </aside>
 
         <main class="main-content">
@@ -160,6 +182,27 @@
             </div>
         </main>
     </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const wrapper = document.querySelector('.dashboard-wrapper');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+
+        // 1. Cek localStorage saat halaman dimuat
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            wrapper.classList.add('sidebar-collapsed');
+        }
+
+        // 2. Event listener untuk tombol toggle
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                wrapper.classList.toggle('sidebar-collapsed');
+
+                // 3. Simpan status ke localStorage
+                localStorage.setItem('sidebarCollapsed', wrapper.classList.contains('sidebar-collapsed'));
+            });
+        }
+    });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

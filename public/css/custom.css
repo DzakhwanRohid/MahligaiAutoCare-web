@@ -218,19 +218,30 @@
     font-weight: 500;
 }
 
-/*dashboard.css */
+/* ==============================================
+   DESAIN SIDEBAR V10 (FINAL - DARK, SUBTLE HOVER, GREEN THEME)
+   (Gantikan semua CSS sidebar lama Anda)
+   ============================================== */
 
 :root {
-    --primary-color: #7baa23;
-    --dark-color: #5d7e2c;
-    --sidebar-bg: #2c3e50;
+    /* 1. KEMBALIKAN WARNA HIJAU TEMA ANDA */
+    --primary-color: #7baa23; /* (dari custom.css) */
+    --dark-color: #5d7e2c; /* (dari custom.css) */
+    --primary-hover: #8cc03b; /* (dari auth.css) */
+
+    /* 2. ATUR WARNA SIDEBAR ANDA (TETAP GELAP) */
+    --sidebar-bg: #1d2833; /* <-- Latar gelap Anda */
     --sidebar-text: #ecf0f1;
-    --content-bg: #f4f6f9;
+    --sidebar-hover-bg: rgba(255, 255, 255, 0.1); /* <-- "Bayangan Abu-abu" */
+    --sidebar-border: rgba(255, 255, 255, 0.1);
+
+    /* 3. PUDARKAN GLOW (Sesuai permintaan Anda) */
+    --primary-glow: rgba(255, 255, 255, 0.15); /* (Sebelumnya 0.35) */
 }
 
 body {
     font-family: "Poppins", sans-serif;
-    background-color: var(--content-bg);
+    background-color: var(--content-bg, #f4f6f9);
 }
 
 .dashboard-wrapper {
@@ -238,70 +249,300 @@ body {
     min-height: 100vh;
 }
 
-/* Sidebar */
+/* === SIDEBAR (DESAIN BARU) === */
 .sidebar {
     width: 260px;
-    background-color: var(--sidebar-bg);
+    background-color: var(--sidebar-bg); /* <-- Latar Gelap Solid */
+    background-image: none;
     color: var(--sidebar-text);
     position: fixed;
     height: 100%;
     overflow-y: auto;
     transition: width 0.3s;
+    padding: 1rem;
+    border-top-right-radius: 1.5rem;
+    border-bottom-right-radius: 1.5rem;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+
+    /* FIX SCROLLBAR (dari permintaan sebelumnya) */
+    scrollbar-width: thin;
+    scrollbar-color: var(--sidebar-hover-bg) var(--sidebar-bg);
+}
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: var(--sidebar-bg);
+    border-radius: 10px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: var(--sidebar-hover-bg);
+    border-radius: 10px;
+    border: 2px solid var(--sidebar-bg);
 }
 
+/* === HEADER (LOGO & JUDUL) === */
 .sidebar-header {
-    padding: 20px;
+    position: relative;
+    padding: 1rem 0.5rem;
     text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--sidebar-border);
+    margin-bottom: 1rem;
+    flex-shrink: 0;
 }
-
 .sidebar-header .logo {
     max-height: 50px;
+    width: auto;
     margin-bottom: 10px;
 }
+.sidebar-header h5 {
+    /* 4. TULISAN "ADMINISTRATOR" (Putih + Shadow) */
+    display: block;
+    background-color: transparent;
+    color: #ffffff; /* <-- Warna putih (permintaan Anda) */
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); /* <-- Shadow simpel */
+    padding: 0;
+    border-radius: 0;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 0 !important;
+}
 
+/* Tombol Hamburger */
+#sidebar-toggle {
+    position: absolute;
+    top: 1.25rem;
+    right: 1rem;
+    font-size: 1.1rem;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--sidebar-text);
+    padding: 5px 10px;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+#sidebar-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+/* === MENU (TOMBOL) === */
 .sidebar-menu {
     list-style: none;
-    padding: 20px 0;
+    padding: 0;
+    flex-grow: 1;
+    overflow-y: auto;
 }
-
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
 .sidebar-menu li a {
-    display: block;
+    display: flex;
+    align-items: center;
     color: var(--sidebar-text);
     text-decoration: none;
-    padding: 15px 25px;
-    transition: background-color 0.3s, padding-left 0.3s;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+    border-radius: 0.75rem;
+    font-weight: 500;
 }
 
-.sidebar-menu li a:hover,
+/* 5. EFEK HOVER "BAYANG ABU ABU" (Sesuai permintaan Anda) */
+.sidebar-menu li a:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: #fff;
+    transform: translateX(5px);
+    background-image: none;
+}
+
+/* 6. Efek Active (Sama seperti Hover, sesuai permintaan Anda) */
 .sidebar-menu li a.active {
-    background-color: var(--primary-color);
-    padding-left: 30px;
+    background-color: var(--sidebar-hover-bg); /* <-- SAMA SEPERTI HOVER */
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 5px 15px var(--primary-glow); /* <-- GLOW PUDAR */
+    background-image: none; /* Hapus gradasi hijau */
+    transform: translateX(0); /* Jangan geser saat aktif */
 }
 
-.sidebar-menu li a .fa {
+.sidebar-menu li a .fa,
+.sidebar-menu li a .fas {
     margin-right: 15px;
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
 }
 
-/* Main Content */
+/* === SUBMENU (DROPDOWN) === */
+.sidebar-menu li a .dropdown-icon {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+.sidebar-menu li a[aria-expanded="true"] .dropdown-icon {
+    transform: rotate(90deg);
+}
+ul.submenu {
+    list-style: none;
+    padding-left: 25px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+    margin-top: 5px;
+}
+ul.submenu li a {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    color: var(--sidebar-text);
+    margin-bottom: 0;
+}
+ul.submenu li a:hover {
+    background: none;
+    color: #fff;
+    transform: none;
+}
+ul.submenu li a.active-sub {
+    background: none;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: none;
+}
+ul.submenu li a.active-sub::before {
+    content: "●";
+    /* 7. Bulat Submenu (jadi putih agar terlihat) */
+    color: var(--sidebar-text, #ecf0f1);
+    margin-right: 10px;
+    margin-left: -15px;
+}
+
+/* === FOOTER PROFIL === */
+.sidebar-footer {
+    padding: 1rem 0.5rem;
+    border-top: 1px solid var(--sidebar-border);
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+.user-profile-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-grow: 1;
+    min-width: 0;
+}
+.user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.user-name {
+    font-weight: 600;
+    color: #fff;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.user-role {
+    font-size: 0.75rem;
+    color: var(--sidebar-text);
+    text-transform: capitalize;
+}
+.logout-button {
+    color: var(--sidebar-text);
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+.logout-button:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: #fff;
+}
+
+/* === CSS UNTUK FITUR SIDEBAR COLLAPSE (KECIL) === */
+.dashboard-wrapper.sidebar-collapsed .sidebar {
+    width: 90px;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-header {
+    text-align: center;
+    padding: 1rem 0;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-header h5 {
+    display: none;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-header a {
+    display: none;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-header .logo {
+    margin-right: 0;
+}
+.dashboard-wrapper.sidebar-collapsed #sidebar-toggle {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 1rem;
+    width: 70%;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a span,
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .dropdown-icon {
+    display: none;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a {
+    justify-content: center;
+    padding: 12px 10px;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .fa,
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .fas {
+    margin-right: 0;
+    font-size: 1.2rem;
+}
+.dashboard-wrapper.sidebar-collapsed ul.submenu {
+    display: none !important; /* Paksa sembunyi */
+}
+.dashboard-wrapper.sidebar-collapsed
+    .sidebar-menu
+    li
+    a[data-bs-toggle="collapse"]::after {
+    display: none;
+}
+.dashboard-wrapper.sidebar-collapsed .main-content {
+    margin-left: 90px;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-footer {
+    display: none;
+}
+/* === MAIN CONTENT & TOP NAV === */
 .main-content {
-    margin-left: 260px;
+    margin-left: 260px; /* Sesuaikan dengan lebar sidebar */
     width: calc(100% - 260px);
     transition: margin-left 0.3s;
     padding: 0;
 }
 
-/* Top Navigation */
 .top-nav {
     background-color: #fff;
     padding: 15px 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     display: flex;
-    justify-content: flex-end;
     align-items: center;
+    justify-content: flex-end; /* <-- KEMBALIKAN INI */
+    border-bottom-left-radius: 1.5rem;
 }
 
-/* Statistic Cards */
+/* Tampilan Card/Box Konten */
+.card,
+.content-box {
+    /* .content-box dari custom.css */
+    border: none;
+    border-radius: 0.75rem; /* Sudut membulat untuk semua card */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Shadow modern */
+}
+
+/* Hapus sisa style tabel & stat card jika ada, biarkan default */
 .stat-card {
     background-color: #fff;
     border-radius: 10px;
@@ -310,28 +551,25 @@ body {
     display: flex;
     align-items: center;
 }
-
 .stat-card-icon {
+    /* */
     font-size: 2.5rem;
     padding: 20px;
     border-radius: 50%;
     margin-right: 20px;
     color: #fff;
 }
-
 .stat-card h5 {
     font-size: 1rem;
     color: #888;
     margin-bottom: 5px;
 }
-
 .stat-card p {
     font-size: 1.8rem;
     font-weight: 700;
     color: #333;
     margin: 0;
 }
-
 /* Table styling */
 .content-box {
     background-color: #fff;
@@ -339,7 +577,211 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
+/* ==============================================
+   CSS BARU: TOMBOL HAMBURGER DI DALAM SIDEBAR
+   ============================================== */
 
+/* 1. Jadikan header sidebar 'relative' */
+.sidebar-header {
+    position: relative;
+    /* Padding bawah dari style Anda */
+    padding-bottom: 1rem;
+}
+
+/* 2. Atur posisi tombol di kanan atas */
+#sidebar-toggle {
+    position: absolute;
+    top: 1rem; /* Sesuaikan dengan padding header */
+    right: 0.5rem; /* Posisikan di kanan */
+
+    font-size: 1.1rem;
+    border: none;
+    background: var(--sidebar-hover-bg); /* Warna hover menu */
+    color: var(--sidebar-text); /* Warna teks sidebar */
+    padding: 5px 10px;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+/* 3. Efek hover di dalam sidebar */
+#sidebar-toggle:hover {
+    background-color: var(--primary-color); /* Warna hijau tema */
+    color: #fff;
+    transform: scale(1.05);
+}
+/* 4. Sembunyikan link logo saat collapse */
+.dashboard-wrapper.sidebar-collapsed .sidebar-header a {
+    display: none;
+}
+
+/* Pastikan style ini juga ada (menyembunyikan teks) */
+.dashboard-wrapper.sidebar-collapsed .sidebar-header h5 {
+    display: none;
+}
+
+/* Atur tombol toggle saat collapse (sudah ada) */
+.dashboard-wrapper.sidebar-collapsed #sidebar-toggle {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 1rem;
+    width: 70%;
+}
+/* 5. Atur tombol saat sidebar MENGECIL */
+.dashboard-wrapper.sidebar-collapsed .sidebar-header {
+    /* Pusatkan logo saat kecil */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dashboard-wrapper.sidebar-collapsed #sidebar-toggle {
+    /* Posisikan di bawah logo saat kecil */
+    position: relative; /* Hapus 'absolute' */
+    top: auto;
+    right: auto;
+    margin-top: 1rem; /* Beri jarak dari logo */
+    width: 70%; /* Buat tombolnya responsif */
+}
+
+/* ==============================================
+   CSS UNTUK FITUR SIDEBAR COLLAPSE (KECIL)
+   ============================================== */
+
+/* Atur ulang top-nav agar rapi */
+.top-nav {
+    display: flex;
+    align-items: center;
+    /* justify-content: flex-end; (sudah ada) */
+}
+
+/* == KONDISI SAAT SIDEBAR MENGECIL == */
+
+/* 1. Sidebar itu sendiri */
+.dashboard-wrapper.sidebar-collapsed .sidebar {
+    width: 90px; /* Lebar baru saat kecil (cukup untuk ikon) */
+}
+
+/* 2. Header Sidebar (Logo & Teks) */
+.dashboard-wrapper.sidebar-collapsed .sidebar-header {
+    text-align: center; /* Pusatkan logo */
+    padding: 1rem 0;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-header h5 {
+    display: none; /* Sembunyikan 'Administrator' / 'Kasir' */
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-header .logo {
+    margin-right: 0; /* Hapus margin logo */
+}
+
+/* 3. Teks Menu & Ikon Chevron */
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a span,
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .dropdown-icon {
+    display: none; /* Sembunyikan semua teks menu & ikon chevron */
+}
+
+/* 4. Atur Ulang Link Menu (agar ikon di tengah) */
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a {
+    justify-content: center;
+    padding: 12px 10px;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .fa,
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .fas {
+    margin-right: 0; /* Hapus margin ikon */
+    font-size: 1.2rem; /* Besarkan ikon sedikit */
+}
+
+/* 5. Sembunyikan Submenu */
+.dashboard-wrapper.sidebar-collapsed ul.submenu {
+    /* Sembunyikan submenu yang mungkin terbuka */
+    height: 0 !important;
+    overflow: hidden;
+    visibility: hidden;
+    display: none;
+}
+/* Nonaktifkan panah saat sidebar kecil */
+.dashboard-wrapper.sidebar-collapsed
+    .sidebar-menu
+    li
+    a[data-bs-toggle="collapse"]::after {
+    display: none;
+}
+
+/* 6. Konten Utama Melebar */
+.dashboard-wrapper.sidebar-collapsed .main-content {
+    margin-left: 90px;
+}
+
+/* 7. Transisi Mulus (WAJIB) */
+.sidebar,
+.main-content {
+    transition: all 0.3s ease-in-out;
+}
+
+/* ==============================================
+   CSS UNTUK FITUR SIDEBAR COLLAPSE (KECIL)
+   ============================================== */
+
+/* == KONDISI SAAT SIDEBAR MENGECIL == */
+
+/* 1. Sidebar itu sendiri */
+.dashboard-wrapper.sidebar-collapsed .sidebar {
+    width: 90px;
+}
+
+/* 2. Header Sidebar (Logo & Teks) */
+.dashboard-wrapper.sidebar-collapsed .sidebar-header {
+    text-align: center;
+    padding: 1rem 0;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-header h5 {
+    display: none;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-header .logo {
+    margin-right: 0;
+}
+
+/* 3. Teks Menu & Ikon Chevron */
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a span,
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .dropdown-icon {
+    display: none;
+}
+
+/* 4. Atur Ulang Link Menu (agar ikon di tengah) */
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a {
+    justify-content: center;
+    padding: 12px 10px;
+}
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .fa,
+.dashboard-wrapper.sidebar-collapsed .sidebar-menu li a .fas {
+    margin-right: 0;
+    font-size: 1.2rem;
+}
+
+/* 5. Sembunyikan Submenu */
+.dashboard-wrapper.sidebar-collapsed ul.submenu {
+    height: 0 !important;
+    overflow: hidden;
+    visibility: hidden;
+    display: none;
+}
+.dashboard-wrapper.sidebar-collapsed
+    .sidebar-menu
+    li
+    a[data-bs-toggle="collapse"]::after {
+    display: none;
+}
+
+/* 6. Konten Utama Melebar */
+.dashboard-wrapper.sidebar-collapsed .main-content {
+    margin-left: 90px;
+}
+
+/* 7. Transisi Mulus (WAJIB) */
+.sidebar,
+.main-content {
+    transition: all 0.3s ease-in-out;
+}
 /* footer css*/
 .footer .btn-primary {
     background-color: var(
@@ -509,4 +951,157 @@ body {
 }
 #slots_container::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+/*=================================================
+CSS BARU UNTUK DASHBOARD ADMIN MODERN (v3 - GRADIENT)
+===================================================== */
+
+/* Judul Halaman yang Lebih Bersih */
+.page-title-modern {
+    font-weight: 700;
+    color: #333;
+}
+
+/* 1. DESAIN BARU: STAT CARD (GRADIENT) */
+.stat-card-gradient {
+    position: relative; /* Untuk ikon semi-transparan */
+    border-radius: 1rem; /* Sudut membulat seperti referensi */
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column; /* Ubah ke kolom */
+    justify-content: space-between;
+    min-height: 150px; /* Beri tinggi agar seragam */
+    overflow: hidden; /* Penting untuk ikon */
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07); /* Shadow halus */
+    color: #fff; /* Teks default putih */
+}
+.stat-card-gradient:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Ikon besar di kiri (semi-transparan) */
+.stat-icon-gradient {
+    position: absolute;
+    top: -10px;
+    left: -20px;
+    font-size: 100px; /* Ikon besar */
+    color: rgba(255, 255, 255, 0.15); /* Semi-transparan */
+    transform: rotate(-15deg);
+}
+
+.stat-info {
+    position: relative; /* Agar di atas ikon */
+    z-index: 2;
+    text-align: left;
+}
+
+.stat-info .stat-value {
+    font-size: 1.75rem; /* Angka besar */
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+}
+.stat-info .stat-title {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.85); /* Teks judul putih-pudar */
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+/* === TEMA GRADASI === */
+
+/* TEMA 1: HIJAU (Sesuai tema Anda) */
+.stat-card-gradient.theme-green {
+    background-image: linear-gradient(135deg, #8cc03b 0%, #7baa23 100%);
+}
+
+/* TEMA 2: BIRU (Seperti referensi) */
+.stat-card-gradient.theme-blue {
+    background-image: linear-gradient(135deg, #63a4ff 0%, #3a8cff 100%);
+}
+
+/* TEMA 3: ORANYE (Seperti referensi) */
+.stat-card-gradient.theme-orange {
+    background-image: linear-gradient(135deg, #ffb75e 0%, #ed8f03 100%);
+}
+
+/* TEMA 4: TOSCA (Seperti referensi) */
+.stat-card-gradient.theme-cyan {
+    background-image: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+/* === KONSISTENSI WARNA HIJAU TEMA (untuk sisa halaman) === */
+.badge.bg-success {
+    background-color: var(--primary-color, #7baa23) !important;
+    color: #fff;
+}
+.btn-outline-success {
+    border-color: var(--primary-color, #7baa23);
+    color: var(--primary-color, #7baa23);
+}
+.btn-outline-success:hover {
+    background-color: var(--primary-color, #7baa23);
+    color: #fff;
+}
+
+/* 2. DESAIN BARU: CARD HEADER GRAFIK */
+.card-header-modern {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef; /* Garis pemisah bersih */
+}
+.card-title-modern {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--dark-color, #5d7e2c); /* Hijau tua dari tema Anda */
+}
+
+/* 3. DESAIN BARU: DAFTAR TRANSAKSI TERBARU */
+.recent-list-wrapper {
+    padding: 0;
+    margin: 0;
+}
+.recent-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 0.25rem;
+    border-bottom: 1px solid #f1f1f1; /* Border lebih halus */
+}
+.recent-item:last-child {
+    border-bottom: none;
+}
+.recent-info strong {
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+.recent-info small {
+    display: block;
+    color: #6c757d;
+}
+
+/* 4. HAPUS STYLE STAT-CARD LAMA */
+/* Ini akan menyembunyikan style lama jika masih ada */
+.stat-card {
+    padding: 0;
+    box-shadow: none;
+    background: none;
+    display: none; /* Sembunyikan .stat-card lama */
+}
+.stat-card-icon {
+    display: none; /* Sembunyikan .stat-card-icon lama */
+}
+.stat-card-v2 {
+    display: none; /* Sembunyikan .stat-card-v2 lama */
+}
+.stat-card-gradient {
+    display: flex; /* Pastikan .stat-card-gradient baru terlihat */
 }

@@ -120,41 +120,48 @@
                 <h2 class="section-title">Layanan Unggulan</h2>
                 <p class="text-muted">Perawatan paling populer yang dipilih oleh pelanggan kami.</p>
             </div>
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="card service-card h-100">
-                        <img src="img/nano.jpg"
-                            class="card-img-top" alt="Nano Coating">
-                        <div class="card-body">
-                            <h5 class="card-title">Nano Ceramic Coating</h5>
-                            <p class="card-text">Proteksi cat superior dengan efek daun talas untuk kilau maksimal dan
-                                perlindungan jangka panjang.</p>
-                        </div>
+           <div class="row g-4">
+        {{-- Looping Data Services dari Database --}}
+        @forelse($services as $service)
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
+                <div class="card service-card h-100 shadow-sm border-0">
+
+                    {{-- Logika Gambar: Cek apakah ada gambar di database --}}
+                    <div style="height: 200px; overflow: hidden;">
+                        @if($service->image)
+                            <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top w-100 h-100"
+                                alt="{{ $service->name }}" style="object-fit: cover;">
+                        @else
+                            {{-- Gambar Placeholder jika tidak ada gambar --}}
+                            <img src="{{ asset('img/default-car.png') }}" class="card-img-top w-100 h-100"
+                                alt="{{ $service->name }}" style="object-fit: cover;">
+                        @endif
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card service-card h-100">
-                        <img src="img/interior.webp"
-                            class="card-img-top" alt="Detailing Interior">
-                        <div class="card-body">
-                            <h5 class="card-title">Interior Detailing</h5>
-                            <p class="card-text">Membersihkan dan meremajakan setiap sudut interior mobil Anda, membuatnya
-                                terasa seperti baru.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="card service-card h-100">
-                        <img src="img/premium.jpg"
-                            class="card-img-top" alt="Cuci Mobil Premium">
-                        <div class="card-body">
-                            <h5 class="card-title">Premium Car Wash</h5>
-                            <p class="card-text">Bukan cuci biasa. Kami menggunakan teknik 2 bucket wash yang aman untuk cat
-                                mobil Anda.</p>
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-bold">{{ $service->name }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ $service->description }}</p>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="text-primary fw-bold fs-5">
+                                Rp {{ number_format($service->price, 0, ',', '.') }}
+                            </span>
+                            {{-- Link ke halaman booking (bisa diarahkan ke form pemesanan) --}}
+                            <a href="{{ route('pemesanan.create') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                Pesan Sekarang
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
+        @empty
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-info d-inline-block">
+                    <i class="fa fa-info-circle me-2"></i> Belum ada layanan yang tersedia saat ini.
+                </div>
+            </div>
+        @endforelse
+    </div>
         </div>
     </div>
 

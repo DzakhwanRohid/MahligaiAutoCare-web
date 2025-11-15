@@ -2,13 +2,14 @@
 
 @section('title', 'Kasir (POS) - Transaksi Baru')
 
-@section('content')
-    {{--
-       PENTING:
-       Halaman ini bertugas menampilkan FORMULIR TRANSAKSI BARU.
-       Kita memanggil file 'form.blade.php' yang sudah kita siapkan.
+{{-- 1. Perintahkan halaman ini untuk memuat pos.css --}}
+@push('page-styles')
+    <link rel="stylesheet" href="{{ asset('css/pos.css') }}">
+@endpush
 
-       Data $services dan $customers sudah dikirim oleh POSController.
-    --}}
-    @include('kasir.pos.form')
+@section('content')
+    {{-- 2. Bungkus formulir dengan class .pos-wrapper --}}
+    <div class="pos-wrapper">
+        @include('kasir.pos.form')
+    </div>
 @endsection
