@@ -10,9 +10,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\PromotionController;
 
 /*
 |--------------------------------------------------------------------------

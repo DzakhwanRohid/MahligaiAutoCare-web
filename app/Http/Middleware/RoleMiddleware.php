@@ -19,16 +19,9 @@ class RoleMiddleware
         if (!Auth::check()) {
             return redirect()->route('login');
         }
-
         if (!in_array(Auth::user()->role, $roles)) {
-            // --- INI ADALAH PERBAIKANNYA ---
-            // Jika role tidak sesuai (misal: kasir coba buka halaman admin),
-            // kembalikan saja dia ke dashboard-nya yang benar.
-            // Kita sudah punya satu rute 'dashboard' yang pintar.
-
             return redirect()->route('dashboard');
         }
-
         return $next($request);
     }
 }
