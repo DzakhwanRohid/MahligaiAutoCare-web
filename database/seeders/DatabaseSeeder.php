@@ -14,9 +14,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // ==========================================
-        // 1. AKUN PENGGUNA (ADMIN & KASIR)
-        // ==========================================
+        // Akun Admin dan Kasir
         User::create([
             'name' => 'Administrator',
             'email' => 'admin@mahligai.com',
@@ -31,9 +29,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'), // Password: password
         ]);
 
-        // ==========================================
-        // 2. PENGATURAN USAHA (SETTINGS)
-        // ==========================================
+        // Isi Settings
         $settings = [
             'business_name' => 'Mahligai Auto Care',
             'business_address' => 'Jl. Soekarno Hatta No. 88, Pekanbaru, Riau',
@@ -45,9 +41,7 @@ class DatabaseSeeder extends Seeder
             Setting::create(['key' => $key, 'value' => $value]);
         }
 
-        // ==========================================
-        // 3. LAYANAN & HARGA (SERVICES)
-        // ==========================================
+        // Isi Layanan & Harga (SERVICES)
         $services = [
             [
                 'name' => 'Cuci Body Hidrolik',
@@ -75,9 +69,7 @@ class DatabaseSeeder extends Seeder
             Service::create($svc);
         }
 
-        // ==========================================
-        // 4. DISKON & PROMOSI
-        // ==========================================
+        // Isi Diskon & Promosi
         Promotion::create([
             'name' => 'Diskon Grand Opening',
             'code' => 'MAHLIGAI20',
@@ -98,9 +90,7 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // ==========================================
-        // 5. DATA PELANGGAN (CUSTOMERS)
-        // ==========================================
+        // Isi Data Pelanggan (CUSTOMERS)
         $customersData = [
             ['name' => 'Budi Santoso', 'phone' => '081211112222', 'license_plate' => 'BM 1234 AA', 'vehicle_type' => 'Toyota Avanza'],
             ['name' => 'Siti Aminah', 'phone' => '081333334444', 'license_plate' => 'BM 5678 BB', 'vehicle_type' => 'Honda Jazz'],
@@ -113,40 +103,38 @@ class DatabaseSeeder extends Seeder
             $customers[] = Customer::create($data);
         }
 
-        // ==========================================
-        // 6. DATA TRANSAKSI DUMMY (Agar Dashboard Ramai)
-        // ==========================================
+        // 6. Isi Data
 
-        // Ambil layanan untuk contoh
+        // layanan untuk contoh
         $svc1 = Service::where('name', 'Cuci Body Hidrolik')->first();
         $svc2 = Service::where('name', 'Cuci Komplit + Vacuum')->first();
         $svc3 = Service::where('name', 'Premium Wax & Polish')->first();
 
         // TRANSAKSI 1: SELESAI (Pendapatan Masuk)
         Transaction::create([
-            'customer_id' => $customers[0]->id, // Budi
+            'customer_id' => $customers[0]->id,
             'service_id' => $svc1->id,
             'user_id' => $kasir->id,
             'invoice' => 'INV-' . time(),
             'vehicle_brand' => $customers[0]->vehicle_type,
             'vehicle_plate' => $customers[0]->license_plate,
-            'status' => 'Selesai', // Status Selesai
+            'status' => 'Selesai',
             'payment_method' => 'Tunai',
             'base_price' => $svc1->price,
             'discount' => 0,
             'total' => $svc1->price,
-            'created_at' => Carbon::now()->subHours(2), // Dibuat 2 jam lalu
+            'created_at' => Carbon::now()->subHours(2),
         ]);
 
         // TRANSAKSI 2: SEDANG DICUCI (Masuk Kanban "Sedang Dicuci")
         Transaction::create([
-            'customer_id' => $customers[1]->id, // Siti
+            'customer_id' => $customers[1]->id,
             'service_id' => $svc2->id,
             'user_id' => $kasir->id,
             'invoice' => 'INV-' . (time() + 1),
             'vehicle_brand' => $customers[1]->vehicle_type,
             'vehicle_plate' => $customers[1]->license_plate,
-            'status' => 'Sedang Dicuci', // Status Sedang Dicuci
+            'status' => 'Sedang Dicuci',
             'payment_method' => 'QRIS',
             'base_price' => $svc2->price,
             'discount' => 0,
@@ -156,18 +144,18 @@ class DatabaseSeeder extends Seeder
 
         // TRANSAKSI 3: MENUNGGU (Masuk Kanban "Antrean")
         Transaction::create([
-            'customer_id' => $customers[2]->id, // Rudi
+            'customer_id' => $customers[2]->id,
             'service_id' => $svc3->id,
             'user_id' => $kasir->id,
             'invoice' => 'INV-' . (time() + 2),
             'vehicle_brand' => $customers[2]->vehicle_type,
             'vehicle_plate' => $customers[2]->license_plate,
-            'status' => 'Menunggu', // Status Antrean
+            'status' => 'Menunggu',
             'payment_method' => 'Tunai',
             'base_price' => $svc3->price,
             'discount' => 0,
             'total' => $svc3->price,
-            'created_at' => Carbon::now(), // Baru saja dibuat
+            'created_at' => Carbon::now(),
         ]);
     }
 }

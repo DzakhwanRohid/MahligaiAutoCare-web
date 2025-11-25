@@ -26,7 +26,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-    
+
 
         return redirect()->intended(route('dashboard'));
     }
@@ -42,6 +42,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('http://127.0.0.1:8000/');
+        return redirect('http://127.0.0.1:8000/login');
     }
 }

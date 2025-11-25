@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
-
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Customer;
@@ -28,16 +26,14 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-   public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-
             // VALIDASI DATA PELANGGAN
             'phone' => ['required', 'string', 'max:20'],
-            // Tambahkan 'unique:customers' agar tidak error SQL
             'license_plate' => ['nullable', 'string', 'max:20', 'unique:customers,license_plate'],
             'vehicle_type' => ['nullable', 'string', 'max:100'],
         ]);
@@ -61,9 +57,7 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
-
         return redirect(route('dashboard', absolute: false));
     }
 }
