@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,149 +12,223 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     @stack('page-styles')
 </head>
+
 <body>
     <div class="dashboard-wrapper">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <a href="{{ route('home') }}"><img src="{{ asset('img/logo_project.png') }}" alt="Logo" class="logo"></a>
-            <button class="btn" id="sidebar-toggle" type="button">
+                <a href="{{ route('home') }}"><img src="{{ asset('img/logo_project.png') }}" alt="Logo"
+                        class="logo"></a>
+                <button class="btn" id="sidebar-toggle" type="button">
                     <i class="fa fa-bars"></i>
-            </button>
+                </button>
             </div>
 
-            <ul class="sidebar-menu">
-                {{-- 1. Dashboard Utama --}}
-                <li>
-                    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                        <i class="fa fa-tachometer-alt"></i> <span>Dashboard</span>
-                    </a>
-                </li>
+                    <ul class="sidebar-menu">
 
-                {{-- 2. KASIR (POS) - MENU TERPISAH (BARU) --}}
-                @if(in_array(Auth::user()->role, ['admin', 'kasir']))
-                    <li>
-                        <a href="{{ route('pos.index') }}" class="{{ request()->routeIs('pos.*') ? 'active' : '' }}">
-                            <i class="fa fa-cash-register"></i> <span>Kasir (POS)</span>
-                        </a>
-                    </li>
-                @endif
+                        @if(request()->routeIs('profile.edit'))
+                            {{-- =================================== --}}
+                            {{-- TAMPILAN SIDEBAR KHUSUS HALAMAN PROFIL --}}
+                            {{-- =================================== --}}
 
-                {{-- 3. Manajemen Operasional (Sisa Menu) --}}
-                @if(in_array(Auth::user()->role, ['admin', 'kasir']))
-                    @php
-                        // Hapus 'pos.*' dari sini karena sudah dipisah
-                        $isOperasionalActive = request()->routeIs('transaksi.antrean') ||
-                                                request()->routeIs('transaksi.riwayat');
-                    @endphp
-                    <li>
-                        <a href="#menuOperasional" data-bs-toggle="collapse" role="button"
-                        aria-expanded="{{ $isOperasionalActive ? 'true' : 'false' }}"
-                        class="{{ $isOperasionalActive ? 'active' : '' }}">
-                            <i class="fa fa-tasks"></i> <span>Manajemen Operasional</span>
-                            <i class="fa fa-chevron-down dropdown-icon"></i>
-                        </a>
-                        <ul class="submenu collapse {{ $isOperasionalActive ? 'show' : '' }}" id="menuOperasional">
-                            {{-- Link POS dihapus dari sini --}}
-                            <li><a href="{{ route('transaksi.antrean') }}" class="{{ request()->routeIs('transaksi.antrean') ? 'active-sub' : '' }}">Antrean Real-time</a></li>
-                            <li><a href="{{ route('transaksi.riwayat') }}" class="{{ request()->routeIs('transaksi.riwayat') ? 'active-sub' : '' }}">Riwayat Transaksi</a></li>
-                        </ul>
-                    </li>
-                @endif
+                            @php
+                                $activePage = request()->query('page', 'info');
+                            @endphp
 
-                {{-- 4. Manajemen Data (Hanya Admin) --}}
-                @if(Auth::user()->role == 'admin')
-                    @php
-                        $isDataActive = request()->routeIs('admin.layanan.*') ||
-                                        request()->routeIs('admin.promosi.*');
-                    @endphp
-                    <li>
-                        <a href="#menuData" data-bs-toggle="collapse" role="button"
-                        aria-expanded="{{ $isDataActive ? 'true' : 'false' }}"
-                        class="{{ $isDataActive ? 'active' : '' }}">
-                            <i class="fa fa-database"></i> <span>Manajemen Data</span>
-                            <i class="fa fa-chevron-down dropdown-icon"></i>
-                        </a>
-                        <ul class="submenu collapse {{ $isDataActive ? 'show' : '' }}" id="menuData">
-                            <li><a href="{{ route('admin.layanan.index') }}" class="{{ request()->routeIs('admin.layanan.*') ? 'active-sub' : '' }}">Layanan & Harga</a></li>
-                            <li><a href="{{ route('admin.promosi.index') }}" class="{{ request()->routeIs('admin.promosi.*') ? 'active-sub' : '' }}">Diskon & Promosi</a></li>
-                        </ul>
-                    </li>
-                @endif
-
-                {{-- 5. Manajemen Pengguna (Hanya Admin) --}}
-                @if(Auth::user()->role == 'admin')
-                    @php
-                        $isPenggunaActive = request()->routeIs('admin.users.*') ||
-                                            request()->routeIs('admin.customer.*');
-                    @endphp
-                    <li>
-                        <a href="#menuPengguna" data-bs-toggle="collapse" role="button"
-                        aria-expanded="{{ $isPenggunaActive ? 'true' : 'false' }}"
-                        class="{{ $isPenggunaActive ? 'active' : '' }}">
-                            <i class="fa fa-users"></i> <span>Manajemen Pengguna</span>
-                            <i class="fa fa-chevron-down dropdown-icon"></i>
-                        </a>
-                        <ul class="submenu collapse {{ $isPenggunaActive ? 'show' : '' }}" id="menuPengguna">
-                            <li><a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active-sub' : '' }}">Manajemen Akun</a></li>
-                            <li><a href="{{ route('admin.customer.index') }}" class="{{ request()->routeIs('admin.customer.*') ? 'active-sub' : '' }}">Data Pelanggan</a></li>
-                        </ul>
-                    </li>
-                @endif
-
-                {{-- 6. Laporan & Analitik (Hanya Admin) --}}
-                @if(Auth::user()->role == 'admin')
-                    @php
-                        $isLaporanActive = request()->routeIs('laporan.*');
-                    @endphp
-                    <li>
-                        <a href="#menuLaporan" data-bs-toggle="collapse" role="button"
-                        aria-expanded="{{ $isLaporanActive ? 'true' : 'false' }}"
-                        class="{{ $isLaporanActive ? 'active' : '' }}">
-                            <i class="fa fa-chart-bar"></i> <span>Laporan & Analitik</span>
-                            <i class="fa fa-chevron-down dropdown-icon"></i>
-                        </a>
-                        <ul class="submenu collapse {{ $isLaporanActive ? 'show' : '' }}" id="menuLaporan">
-                            <li><a href="{{ route('laporan.pemesanan') }}" class="{{ request()->routeIs('laporan.pemesanan') ? 'active-sub' : '' }}">Laporan Pemesanan</a></li>
-                            <li><a href="{{ route('laporan.pendapatan') }}" class="{{ request()->routeIs('laporan.pendapatan') ? 'active-sub' : '' }}">Laporan Pendapatan</a></li>
                             <li>
-                                <a href="{{ route('admin.feedback.index') }}" class="{{ request()->routeIs('admin.feedback.*') ? 'active-sub' : '' }}">
-                                    Pesan Pengguna
-
+                                <a href="{{ route('profile.edit', ['page' => 'info']) }}"
+                                    class="{{ $activePage == 'info' ? 'active' : '' }}">
+                                    <i class="fa fa-user-circle"></i> <span>Profil Saya</span>
                                 </a>
                             </li>
-                        </ul>
-                    </li>
-                @endif
 
-                {{-- 7. Pengaturan (Hanya Admin) --}}
-                @if(Auth::user()->role == 'admin')
-                    <li>
-                        <a href="{{ route('pengaturan.index') }}" class="{{ request()->routeIs('pengaturan.index') ? 'active' : '' }}">
-                            <i class="fa fa-cogs"></i> <span>Pengaturan</span>
+                            {{-- Link ke bagian Update Password --}}
+                            <li>
+                                <a href="{{ route('profile.edit', ['page' => 'password']) }}"
+                                    class="{{ $activePage == 'password' ? 'active' : '' }}">
+                                    <i class="fa fa-key"></i> <span>Update Password</span>
+                                </a>
+                            </li>
+
+                            {{-- Link ke bagian Riwayat Transaksi (Hanya untuk Role 'user') --}}
+                            @if(Auth::user()->role == 'user')
+                                <li>
+                                    <a href="{{ route('profile.edit', ['page' => 'riwayat']) }}"
+                                        class="{{ $activePage == 'riwayat' ? 'active' : '' }}">
+                                        <i class="fa fa-history"></i> <span>Riwayat Transaksi</span>
+                                    </a>
+                                </li>
+                            @endif
+
+                            <li>
+                                <a href="{{ route('profile.edit', ['page' => 'hapus']) }}"
+                                    class="{{ $activePage == 'hapus' ? 'active' : '' }} link-danger">
+                                    <i class="fa fa-trash-alt"></i> <span>Hapus Akun</span>
+                                </a>
+                            </li>
+
+                            {{-- Link Kembali ke Dashboard --}}
+                            <li class="mt-4">
+                                <a href="{{ route('dashboard') }}">
+                                    <i class="fa fa-arrow-left"></i> <span>Kembali</span>
+                                </a>
+                            </li>
+
+                        @else
+                            {{-- =================================== --}}
+                            {{-- TAMPILAN SIDEBAR --}}
+                            {{-- =================================== --}}
+
+                            {{-- 1. Dashboard Utama --}}
+                            <li>
+                                <a href="{{ route('dashboard') }}"
+                                    class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                                    <i class="fa fa-tachometer-alt"></i> <span>Dashboard</span>
+                                </a>
+                            </li>
+
+                            {{-- 2. KASIR (POS) --}}
+                            @if(in_array(Auth::user()->role, ['admin', 'kasir']))
+                                <li>
+                                    <a href="{{ route('pos.index') }}"
+                                        class="{{ request()->routeIs('pos.*') ? 'active' : '' }}">
+                                        <i class="fa fa-cash-register"></i> <span>Kasir (POS)</span>
+                                    </a>
+                                </li>
+                            @endif
+
+                            {{-- 3. Manajemen Operasional --}}
+                            @if(in_array(Auth::user()->role, ['admin', 'kasir']))
+                                @php
+                                    $isOperasionalActive = request()->routeIs('transaksi.antrean') ||
+                                        request()->routeIs('transaksi.riwayat');
+                                @endphp
+                                <li>
+                                    <a href="#menuOperasional" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="{{ $isOperasionalActive ? 'true' : 'false' }}"
+                                        class="{{ $isOperasionalActive ? 'active' : '' }}">
+                                        <i class="fa fa-tasks"></i> <span>Manajemen Operasional</span>
+                                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                                    </a>
+                                    <ul class="submenu collapse {{ $isOperasionalActive ? 'show' : '' }}" id="menuOperasional">
+                                        <li><a href="{{ route('transaksi.antrean') }}"
+                                                class="{{ request()->routeIs('transaksi.antrean') ? 'active-sub' : '' }}">Antrean
+                                                Real-time</a></li>
+                                        <li><a href="{{ route('transaksi.riwayat') }}"
+                                                class="{{ request()->routeIs('transaksi.riwayat') ? 'active-sub' : '' }}">Riwayat
+                                                Transaksi</a></li>
+                                    </ul>
+                                </li>
+                            @endif
+
+                            {{-- 4. Manajemen Data (Hanya Admin) --}}
+                            @if(Auth::user()->role == 'admin')
+                                @php
+                                    $isDataActive = request()->routeIs('admin.layanan.*') ||
+                                        request()->routeIs('admin.promosi.*');
+                                @endphp
+                                <li>
+                                    <a href="#menuData" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="{{ $isDataActive ? 'true' : 'false' }}"
+                                        class="{{ $isDataActive ? 'active' : '' }}">
+                                        <i class="fa fa-database"></i> <span>Manajemen Data</span>
+                                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                                    </a>
+                                    <ul class="submenu collapse {{ $isDataActive ? 'show' : '' }}" id="menuData">
+                                        <li><a href="{{ route('admin.layanan.index') }}"
+                                                class="{{ request()->routeIs('admin.layanan.*') ? 'active-sub' : '' }}">Layanan
+                                                & Harga</a></li>
+                                        <li><a href="{{ route('admin.promosi.index') }}"
+                                                class="{{ request()->routeIs('admin.promosi.*') ? 'active-sub' : '' }}">Diskon &
+                                                Promosi</a></li>
+                                    </ul>
+                                </li>
+                            @endif
+
+                            {{-- 5. Manajemen Pengguna (Hanya Admin) --}}
+                            @if(Auth::user()->role == 'admin')
+                                @php
+                                    $isPenggunaActive = request()->routeIs('admin.users.*') ||
+                                        request()->routeIs('admin.customer.*');
+                                @endphp
+                                <li>
+                                    <a href="#menuPengguna" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="{{ $isPenggunaActive ? 'true' : 'false' }}"
+                                        class="{{ $isPenggunaActive ? 'active' : '' }}">
+                                        <i class="fa fa-users"></i> <span>Manajemen Pengguna</span>
+                                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                                    </a>
+                                    <ul class="submenu collapse {{ $isPenggunaActive ? 'show' : '' }}" id="menuPengguna">
+                                        <li><a href="{{ route('admin.users.index') }}"
+                                                class="{{ request()->routeIs('admin.users.*') ? 'active-sub' : '' }}">Manajemen
+                                                Akun</a></li>
+                                        <li><a href="{{ route('admin.customer.index') }}"
+                                                class="{{ request()->routeIs('admin.customer.*') ? 'active-sub' : '' }}">Data
+                                                Pelanggan</a></li>
+                                    </ul>
+                                </li>
+                            @endif
+
+                            {{-- 6. Laporan & Analitik (Hanya Admin) --}}
+                            @if(Auth::user()->role == 'admin')
+                                @php
+                                    $isLaporanActive = request()->routeIs('laporan.*') || request()->routeIs('admin.feedback.*');
+                                @endphp
+                                <li>
+                                    <a href="#menuLaporan" data-bs-toggle="collapse" role="button"
+                                        aria-expanded="{{ $isLaporanActive ? 'true' : 'false' }}"
+                                        class="{{ $isLaporanActive ? 'active' : '' }}">
+                                        <i class="fa fa-chart-bar"></i> <span>Laporan & Analitik</span>
+                                        <i class="fa fa-chevron-down dropdown-icon"></i>
+                                    </a>
+                                    <ul class="submenu collapse {{ $isLaporanActive ? 'show' : '' }}" id="menuLaporan">
+                                        <li><a href="{{ route('laporan.pemesanan') }}"
+                                                class="{{ request()->routeIs('laporan.pemesanan') ? 'active-sub' : '' }}">Laporan
+                                                Pemesanan</a></li>
+                                        <li><a href="{{ route('laporan.pendapatan') }}"
+                                                class="{{ request()->routeIs('laporan.pendapatan') ? 'active-sub' : '' }}">Laporan
+                                                Pendapatan</a></li>
+                                        <li>
+                                            <a href="{{ route('admin.feedback.index') }}"
+                                                class="{{ request()->routeIs('admin.feedback.*') ? 'active-sub' : '' }}">
+                                                Pesan Pengguna
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
+
+                            {{-- 7. Pengaturan (Hanya Admin) --}}
+                            @if(Auth::user()->role == 'admin')
+                                <li>
+                                    <a href="{{ route('pengaturan.index') }}"
+                                        class="{{ request()->routeIs('pengaturan.index') ? 'active' : '' }}">
+                                        <i class="fa fa-cogs"></i> <span>Pengaturan</span>
+                                    </a>
+                                </li>
+                            @endif
+                        @endif
+                    </ul>
+                    <div class="sidebar-footer">
+                        <a href="{{ route('profile.edit') }}" class="user-profile-link">
+                            <div class="user-info">
+                                <span class="user-name">{{ Auth::user()->name }}</span>
+                                <span class="user-role">{{ Auth::user()->role }}</span>
+                            </div>
                         </a>
-                    </li>
-                @endif
-            </ul>
-            <div class="sidebar-footer">
-                <a href="{{ route('profile.edit') }}" class="user-profile-link">
-                    <div class="user-info">
-                        <span class="user-name">{{ Auth::user()->name }}</span>
-                        <span class="user-role">{{ Auth::user()->role }}</span>
-                    </div>
-                </a>
 
-                <form method="POST" action="{{ route('logout') }}" class="ms-auto">
-                    @csrf
-                    <a href="{{ route('logout') }}" class="logout-button"
-                        onclick="event.preventDefault(); this.closest('form').submit();"
-                        title="Logout">
-                        <i class="fa fa-power-off"></i>
-                    </a>
-                </form>
-            </div>
+                        <form method="POST" action="{{ route('logout') }}" class="ms-auto">
+                            @csrf
+                            <a href="{{ route('logout') }}" class="logout-button"
+                                onclick="event.preventDefault(); this.closest('form').submit();" title="Logout">
+                                <i class="fa fa-power-off"></i>
+                            </a>
+                        </form>
+                    </div>
         </aside>
 
         <main class="main-content">
@@ -165,7 +240,9 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUser1">
                         <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profil</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -185,26 +262,27 @@
         </main>
     </div>
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const wrapper = document.querySelector('.dashboard-wrapper');
-        const toggleBtn = document.getElementById('sidebar-toggle');
+        document.addEventListener("DOMContentLoaded", function () {
+            const wrapper = document.querySelector('.dashboard-wrapper');
+            const toggleBtn = document.getElementById('sidebar-toggle');
 
-        // 1. Cek localStorage saat halaman dimuat
-        if (localStorage.getItem('sidebarCollapsed') === 'true') {
-            wrapper.classList.add('sidebar-collapsed');
-        }
+            // 1. Cek localStorage saat halaman dimuat
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                wrapper.classList.add('sidebar-collapsed');
+            }
 
-        // 2. Event listener untuk tombol toggle
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function() {
-                wrapper.classList.toggle('sidebar-collapsed');
+            // 2. Event listener untuk tombol toggle
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    wrapper.classList.toggle('sidebar-collapsed');
 
-                // 3. Simpan status ke localStorage
-                localStorage.setItem('sidebarCollapsed', wrapper.classList.contains('sidebar-collapsed'));
-            });
-        }
-    });
+                    // 3. Simpan status ke localStorage
+                    localStorage.setItem('sidebarCollapsed', wrapper.classList.contains('sidebar-collapsed'));
+                });
+            }
+        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

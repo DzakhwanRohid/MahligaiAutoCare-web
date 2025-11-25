@@ -22,17 +22,33 @@ public function edit(Request $request): View
     $transactions = [];
 
     // HANYA jika yang login adalah 'user' (pelanggan), ambil data transaksinya
-    if ($user->role == 'user' && $user->customer) {
-        $transactions = Transaction::where('customer_id', $user->customer->id)
-                            ->with('service') // Ambil data layanan
-                            ->latest() // Urutkan dari yang terbaru
-                            ->get();
-    }
+    if ($user->role == 'user') {
+            if ($user->customer) {
+                $transactions = Transaction::where('customer_id', $user->customer->id)
+                                    ->with('service') 
+                                    ->latest() 
+                                    ->get();
+            }
+            
+            // Tampilkan view BREEZE/TAILWIND (yang lama)
+            return view('profile.edit', [
+                'user' => $user,
+                'transactions' => $transactions, 
+            ]);
 
-    return view('profile.edit', [
-        'user' => $user,
-        'transactions' => $transactions, // Kirim data transaksi ke view
-    ]);
+        } 
+        // JIKA YANG LOGIN ADALAH ADMIN ATAU KASIR
+        else if (in_array($user->role, ['admin', 'kasir'])) {
+            
+            // Tampilkan view DASHBOARD/BOOTSTRAP (yang baru)
+            return view('profile.admin-edit', [ 
+                'user' => $user,
+                // Kita tidak perlu kirim $transactions karena view ini tidak menampilkannya
+            ]);
+        }
+
+        // Fallback jika role tidak dikenali
+        abort(403);
 }
 
     /**
