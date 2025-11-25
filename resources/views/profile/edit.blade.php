@@ -1,132 +1,156 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profil Saya') }}
-        </h2>
-    </x-slot>
+@extends('layouts.dashboard')
 
-    {{-- Kita gunakan Alpine.js (bawaan Breeze) untuk membuat Tabs --}}
-    <div class="py-12" x-data="{ tab: 'riwayat' }">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+@section('title', 'Profil Saya')
 
-            {{-- Tab Navigation --}}
-            <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
-                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
-                    {{-- Tombol Tab 1: Riwayat (Default) --}}
-                    <li class="mr-2" role="presentation">
-                        <button @click.prevent="tab = 'riwayat'"
-                                :class="{ 'border-indigo-500 text-indigo-600': tab === 'riwayat', 'border-transparent hover:text-gray-600 hover:border-gray-300': tab !== 'riwayat' }"
-                                class="inline-block p-4 border-b-2 rounded-t-lg text-base"
-                                id="riwayat-tab" type="button">
-                            <i class="fa fa-history me-2"></i>Riwayat Transaksi
-                        </button>
-                    </li>
-                    {{-- Tombol Tab 2: Pengaturan Akun --}}
-                    <li class="mr-2" role="presentation">
-                        <button @click.prevent="tab = 'pengaturan'"
-                                :class="{ 'border-indigo-500 text-indigo-600': tab === 'pengaturan', 'border-transparent hover:text-gray-600 hover:border-gray-300': tab !== 'pengaturan' }"
-                                class="inline-block p-4 border-b-2 rounded-t-lg text-base"
-                                id="pengaturan-tab" type="button">
-                            <i class="fa fa-cog me-2"></i>Pengaturan Akun
-                        </button>
-                    </li>
-                </ul>
-            </div>
+@section('content')
+<div class="container-fluid">
+    
+    @php
+        // Ambil halaman aktif dari URL, default-nya 'info'
+        $page = request()->query('page', 'info');
+    @endphp
 
-            {{-- Tab Content --}}
-            <div>
-                {{-- ========================================================== --}}
-                {{-- KONTEN TAB 1: RIWAYAT TRANSAKSI (Dengan Alert Baru) --}}
-                {{-- ========================================================== --}}
-                <div x-show="tab === 'riwayat'" id="riwayat" class="space-y-6">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900 dark:text-gray-100">
-                            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                Riwayat Transaksi & Booking Saya
-                            </h2>
-                            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                Pantau status booking Anda atau lihat riwayat cucian sebelumnya.
-                            </p>
+    @if (session('status'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @if (session('status') === 'profile-updated')
+                Informasi profil berhasil diperbarui.
+            @elseif (session('status') === 'password-updated')
+                Password berhasil diperbarui.
+            @else
+                {{ session('status') }}
+            @endif
+            <button type-"button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
-                            <div class="mt-6 overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                    <thead class="bg-gray-50 dark:bg-gray-700">
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Jadwal/Tanggal</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Layanan</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Total</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                        @forelse($transactions as $tx)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                {{ $tx->booking_date ? \Carbon\Carbon::parse($tx->booking_date)->format('d M Y, H:i') : $tx->created_at->format('d M Y') }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $tx->service->name ?? 'N/A' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">Rp {{ number_format($tx->total, 0, ',', '.') }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+    <div class="row gy-4">
 
-                                                {{-- === PERBAIKAN LOGIKA STATUS DENGAN ALERT === --}}
-                                                @if($tx->status == 'Terkonfirmasi')
-                                                    <div class="p-3 rounded-md bg-blue-50 border border-blue-200">
-                                                        <p class="font-bold text-blue-800"><i class="fa fa-check-circle me-2"></i>Pesanan Terkonfirmasi</p>
-                                                        <p class="text-blue-700 text-xs">Silakan datang ke tempat kami sesuai jadwal.</p>
-                                                    </div>
-                                                @elseif($tx->status == 'Selesai' || $tx->status == 'Sudah Dibayar')
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Selesai</span>
-                                                @elseif($tx->status == 'Sedang Dicuci')
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Sedang Dicuci</span>
-                                                @elseif($tx->status == 'Ditolak')
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Ditolak (Pembayaran Gagal)</span>
-                                                @elseif($tx->status == 'Menunggu')
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Menunggu Verifikasi</span>
-                                                @endif
-                                                {{-- ========================================== --}}
-                                            </td>
-                                        </tr>
-                                        @empty
-                                        <tr>
-                                            <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                                Anda belum memiliki riwayat transaksi.
-                                            </td>
-                                        </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+        {{-- ================================================== --}}
+        {{-- BAGIAN 1: INFORMASI PROFIL --}}
+        {{-- ================================================== --}}
+        @if ($page == 'info')
+        <div class="col-lg-8">
+            {{-- Pastikan file partial ini sudah dikonversi ke Bootstrap 5 --}}
+            @include('profile.partials.update-profile-information-form')
+        </div>
+
+        {{-- ================================================== --}}
+        {{-- BAGIAN 2: UPDATE PASSWORD --}}
+        {{-- ================================================== --}}
+        @elseif ($page == 'password')
+        <div class="col-lg-8">
+            {{-- Pastikan file partial ini sudah dikonversi ke Bootstrap 5 --}}
+            @include('profile.partials.update-password-form')
+        </div>
+
+        {{-- ================================================== --}}
+        {{-- BAGIAN 3: RIWAYAT TRANSAKSI (Hanya Role 'user') --}}
+        {{-- ================================================== --}}
+        @elseif ($page == 'riwayat' && Auth::user()->role == 'user')
+        <div class="col-12">
+            <div class="card h-100 border-0 shadow-sm">
+                {{-- Header Card --}}
+                <div class="card-header bg-transparent border-bottom py-3">
+                    <h5 class="card-title mb-0 fw-bold text-primary">
+                        <i class="fa fa-history me-2"></i>{{ __('Riwayat Transaksi & Booking Saya') }}
+                    </h5>
                 </div>
 
-                {{-- ========================================================== --}}
-                {{-- KONTEN TAB 2: PENGATURAN AKUN --}}
-                {{-- ========================================================== --}}
-                <div x-show="tab === 'pengaturan'" id="pengaturan" class="space-y-6">
-                    {{-- Form Update Info Profil --}}
-                    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                        <div class="max-w-xl">
-                            @include('profile.partials.update-profile-information-form')
-                        </div>
-                    </div>
+                {{-- Body Card --}}
+                <div class="card-body p-4">
+                    <p class="card-text mb-4 text-muted small">
+                        <i class="fa fa-info-circle me-1"></i>
+                        {{ __('Pantau status booking Anda atau lihat riwayat cucian sebelumnya secara real-time.') }}
+                    </p>
 
-                    {{-- Form Update Password --}}
-                    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                        <div class="max-w-xl">
-                            @include('profile.partials.update-password-form')
-                        </div>
-                    </div>
-
-                    {{-- Form Hapus Akun --}}
-                    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                        <div class="max-w-xl">
-                            @include('profile.partials.delete-user-form')
-                        </div>
+                    <div class="table-responsive rounded-3 border">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="py-3 px-4 text-secondary small text-uppercase fw-bold"><i class="fa fa-calendar-alt me-2"></i>Jadwal/Tanggal</th>
+                                    <th class="py-3 px-4 text-secondary small text-uppercase fw-bold"><i class="fa fa-tag me-2"></i>Layanan</th>
+                                    <th class="py-3 px-4 text-secondary small text-uppercase fw-bold"><i class="fa fa-wallet me-2"></i>Total</th>
+                                    <th class="py-3 px-4 text-secondary small text-uppercase fw-bold text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($transactions as $tx)
+                                <tr>
+                                    <td class="px-4 py-3 text-muted fw-medium">
+                                        {{ $tx->booking_date ? \Carbon\Carbon::parse($tx->booking_date)->format('d M Y, H:i') : $tx->created_at->format('d M Y') }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <span class="fw-bold text-dark">{{ $tx->service->name ?? 'Layanan Dihapus' }}</span>
+                                    </td>
+                                    <td class="px-4 py-3 fw-bold text-success">
+                                        {{-- Pastikan menggunakan total_amount sesuai database --}}
+                                        Rp {{ number_format($tx->total_amount ?? $tx->total, 0, ',', '.') }}
+                                    </td>
+                                    <td class="px-4 py-3 text-center">
+                                        {{-- Logika Status dengan Badge Modern --}}
+                                        @if($tx->status == 'Terkonfirmasi')
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-2">
+                                                <i class="fa fa-check-circle me-1"></i> Terkonfirmasi
+                                            </span>
+                                        @elseif($tx->status == 'Selesai' || $tx->status == 'Sudah Dibayar')
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2">
+                                                <i class="fa fa-check-double me-1"></i> Selesai
+                                            </span>
+                                        @elseif($tx->status == 'Sedang Dicuci' || $tx->status == 'proses')
+                                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-2">
+                                                <i class="fa fa-soap me-1"></i> Sedang Dicuci
+                                            </span>
+                                        @elseif($tx->status == 'Ditolak')
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-2">
+                                                <i class="fa fa-times-circle me-1"></i> Ditolak
+                                            </span>
+                                        @elseif($tx->status == 'Menunggu' || $tx->status == 'pending')
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-2">
+                                                <i class="fa fa-clock me-1"></i> Menunggu
+                                            </span>
+                                        @else
+                                            <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
+                                                {{ $tx->status }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <div class="d-flex flex-column align-items-center">
+                                            <i class="fa fa-clipboard-list fa-3x mb-3 text-gray-300"></i>
+                                            <p class="mb-0 fw-medium">Belum ada riwayat transaksi.</p>
+                                            <small>Silakan lakukan pemesanan layanan kami.</small>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
             </div>
         </div>
+
+        {{-- ================================================== --}}
+        {{-- KODE YANG DIUBAH: BAGIAN 4: HAPUS AKUN (Untuk SEMUA Role) --}}
+        {{-- ================================================== --}}
+        @elseif ($page == 'hapus')
+        <div class="col-lg-8">
+            {{-- Pastikan file partial ini sudah dikonversi ke Bootstrap 5 --}}
+            @include('profile.partials.delete-user-form')
+        </div>
+        
+        {{-- Fallback jika halaman tidak ditemukan --}}
+        @else
+        <div class="col-12">
+            <div class="alert alert-warning" role="alert">
+                Halaman tidak ditemukan atau Anda tidak memiliki izin untuk melihat ini.
+            </div>
+        </div>
+        @endif
+
     </div>
-</x-app-layout>
+</div>
+@endsection
