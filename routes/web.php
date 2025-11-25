@@ -58,6 +58,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/transaksi/reject/{transaction}', [TransactionController::class, 'rejectBooking'])->name('transaksi.reject');
     });
 
+    Route::prefix('pos')->name('pos.')->group(function () {
+    Route::get('/', [POSController::class, 'index'])->name('index');
+    Route::post('/', [POSController::class, 'store'])->name('store');
+    Route::get('/struk/{transaction}', [POSController::class, 'struk'])->name('struk');
+    Route::get('/search-customers', [POSController::class, 'searchCustomers'])->name('search-customers');
+});
+
     /* Rute HANYA UNTUK ADMIN */
     Route::middleware(['role:admin'])->prefix('admin')->group(function () {
         Route::resource('layanan', LayananController::class)->names('admin.layanan');

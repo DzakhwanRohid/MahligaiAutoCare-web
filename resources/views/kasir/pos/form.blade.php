@@ -33,59 +33,55 @@
             {{-- KOLOM KIRI (INPUT DATA) --}}
             <div class="col-lg-7">
                 {{-- CARD PELANGGAN --}}
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold">1. Data Pelanggan</h6>
-                    </div>
-                    <div class="card-body">
-                        <ul class="nav nav-tabs mb-3" id="customerTab" role="tablist">
-                            <li class="nav-item">
-                                <button class="nav-link active" id="terdaftar-tab" data-bs-toggle="tab" data-bs-target="#terdaftar" type="button" role="tab">Pelanggan Terdaftar</button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" id="walkin-tab" data-bs-toggle="tab" data-bs-target="#walkin" type="button" role="tab">Pelanggan Baru (Walk-in)</button>
-                            </li>
-                        </ul>
+<div class="card shadow-sm mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold">1. Data Pelanggan</h6>
+    </div>
+    <div class="card-body">
+        <ul class="nav nav-tabs mb-3" id="customerTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="terdaftar-tab" data-bs-toggle="tab" data-bs-target="#terdaftar" type="button" role="tab">Pelanggan Terdaftar</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="walkin-tab" data-bs-toggle="tab" data-bs-target="#walkin" type="button" role="tab">Pelanggan Baru (Walk-in)</button>
+            </li>
+        </ul>
 
-                        <div class="tab-content" id="customerTabContent">
-                            <div class="tab-pane fade show active" id="terdaftar" role="tabpanel">
-                                <input type="hidden" name="customer_type" id="customer_type_input" value="terdaftar">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Cari Pelanggan (No. Polisi / Nama)</label>
-                                    <select id="customer_search_box" name="customer_id" class="form-select">
-                                        <option value="">-- Pilih Pelanggan --</option>
-                                        @foreach($customers as $customer)
-                                            <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
-                                                {{ $customer->license_plate }} - {{ $customer->name }} ({{ $customer->phone }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade" id="walkin" role="tabpanel">
-                                {{-- Form Walk-in --}}
-                                <div class="mb-3">
-                                    <label class="form-label">Nama Pelanggan</label>
-                                    <input type="text" class="form-control" name="walkin_name" value="{{ old('walkin_name') }}" disabled>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">No. Polisi</label>
-                                        <input type="text" class="form-control" name="walkin_license_plate" value="{{ old('walkin_license_plate') }}" disabled>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label">No. HP</label>
-                                        <input type="text" class="form-control" name="walkin_phone" value="{{ old('walkin_phone') }}" disabled>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Tipe Kendaraan</label>
-                                    <input type="text" class="form-control" name="walkin_vehicle_type" value="{{ old('walkin_vehicle_type') }}" placeholder="Contoh: Pajero Sport" disabled>
-                                </div>
-                            </div>
-                        </div>
+        <div class="tab-content" id="customerTabContent">
+            <div class="tab-pane fade show active" id="terdaftar" role="tabpanel">
+                <input type="hidden" name="customer_type" id="customer_type_input" value="terdaftar">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Cari Pelanggan (No. Polisi / Nama)</label>
+                    <select id="customer_search_box" name="customer_id" class="form-select">
+                        <option value="">-- Pilih Pelanggan --</option>
+                        {{-- Opsi awal tidak perlu diisi, akan di-load via AJAX --}}
+                    </select>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="walkin" role="tabpanel">
+                {{-- Form Walk-in --}}
+                <div class="mb-3">
+                    <label class="form-label">Nama Pelanggan</label>
+                    <input type="text" class="form-control" name="walkin_name" value="{{ old('walkin_name') }}" disabled>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">No. Polisi</label>
+                        <input type="text" class="form-control" name="walkin_license_plate" value="{{ old('walkin_license_plate') }}" disabled>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">No. HP</label>
+                        <input type="text" class="form-control" name="walkin_phone" value="{{ old('walkin_phone') }}" disabled>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Tipe Kendaraan</label>
+                    <input type="text" class="form-control" name="walkin_vehicle_type" value="{{ old('walkin_vehicle_type') }}" placeholder="Contoh: Pajero Sport" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
                 {{-- CARD LAYANAN (DESAIN BARU v4) --}}
                 <div class="card shadow-sm mb-4">
@@ -243,11 +239,7 @@
 {{-- Aset untuk jQuery & Select2 (Pastikan sudah ada di layout utama Anda) --}}
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 <script>
-    // ... (SELURUH KODE JAVASCRIPT ANDA TETAP SAMA SEPERTI SEBELUMNYA) ...
-    // ... (Tidak perlu diubah, salin saja semua dari file Anda sebelumnya) ...
-
     // Variabel Global
     const displayTotal = document.getElementById('display_total');
     const amountInput = document.getElementById('amount_paid');
@@ -334,12 +326,33 @@
 
     document.addEventListener('DOMContentLoaded', function () {
         if (typeof jQuery !== 'undefined') {
+            // Konfigurasi Select2 dengan AJAX
             $('#customer_search_box').select2({
                 theme: "bootstrap-5",
                 placeholder: '-- Cari No. Polisi / Nama Pelanggan --',
-                width: '100%'
+                width: '100%',
+                minimumInputLength: 1, // Minimal karakter untuk memulai pencarian
+                delay: 300, // Delay sebelum request dikirim
+                ajax: {
+                    url: '{{ route("pos.search-customers") }}',
+                    dataType: 'json',
+                    data: function (params) {
+                        return {
+                            q: params.term, // Kata kunci pencarian
+                            page: params.page || 1
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.results,
+                            pagination: data.pagination
+                        };
+                    },
+                    cache: true
+                }
             });
         }
+
         checkWorkingHours();
         updateTotal();
         togglePaymentMethod();

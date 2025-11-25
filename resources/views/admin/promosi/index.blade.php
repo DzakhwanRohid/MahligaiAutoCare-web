@@ -87,7 +87,6 @@
 
                     <div class="mt-3">
                         {{ $promotions->links('pagination::bootstrap-5') }} </div>
-
                 </div>
             </div>
         </div>

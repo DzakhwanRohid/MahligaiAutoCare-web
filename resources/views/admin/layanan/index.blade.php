@@ -24,6 +24,20 @@
                         </div>
                     @endif
 
+                    <div class="custom-search-container">
+                        <form method="GET" action="{{ route('admin.layanan.index') }}">
+                            <input type="text"
+                                name="search"
+                                value="{{ request('search') }}"
+                                placeholder="Cari nama layanan..."
+                                class="custom-search-input">
+
+                            <button type="submit" class="custom-search-button">
+                                Cari
+                            </button>
+                        </form>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover">
                             <thead class="table-dark">
@@ -70,9 +84,10 @@
                         </table>
                     </div>
 
-                    <div class="mt-3">
-                        {{ $services->links('pagination::bootstrap-5') }}
-                    </div>
+                    <div class="mt-4">
+    {{ $services->links('pagination::bootstrap-5') }}
+</div>
+
 
                 </div>
             </div>

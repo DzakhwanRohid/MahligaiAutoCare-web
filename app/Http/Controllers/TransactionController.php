@@ -16,7 +16,7 @@ class TransactionController extends Controller
     /**
      * Menampilkan halaman Riwayat Transaksi (Sekarang dipisah 2 tabel)
      */
-   public function index()
+    public function index()
     {
         // 1. Ambil Pesanan Online (Perlu Verifikasi)
         $onlineBookings = Transaction::with(['customer', 'service'])
@@ -30,13 +30,13 @@ class TransactionController extends Controller
             ->where('status', '!=', 'Menunggu')
             ->where('invoice', 'like', 'BKG-%') // Hanya booking
             ->latest()
-            ->paginate(10, ['*'], 'bookings_page'); // Paginator kustom
+            ->paginate(5, ['*'], 'bookings_page'); // Paginator kustom
 
         // 3. Ambil Riwayat Walk-in (Dari POS)
         $walkinHistory = Transaction::with(['customer', 'service', 'user'])
             ->where('invoice', 'like', 'INV-%') // Hanya walk-in
             ->latest()
-            ->paginate(10, ['*'], 'walkin_page'); // Paginator kustom
+            ->paginate(5, ['*'], 'walkin_page'); // Paginator kustom
 
         return view('kasir.transaksi', compact(
             'onlineBookings',

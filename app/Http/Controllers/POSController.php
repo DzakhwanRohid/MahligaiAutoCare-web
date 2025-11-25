@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Customer;
-use App\Models\Promotion; // <-- 1. IMPORT PROMOTION
-use App\Models\Transaction; // <-- 2. IMPORT TRANSACTION
+use App\Models\Promotion;
+use App\Models\Transaction;
+use App\Models\Setting;
 use Carbon\Carbon;
 
 class POSController extends Controller
@@ -14,21 +15,63 @@ class POSController extends Controller
     /**
      * Menampilkan halaman utama POS
      */
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::orderBy('name')->get();
-        $customers = Customer::with('user')
-                        ->whereNotNull('license_plate')
-                        ->orderBy('name')
-                        ->get();
+        // Ambil keyword pencarian dari input
+        $search = $request->input('search');
 
-        // Cek Slot yang SEDANG TERPAKAI (Status 'Sedang Dicuci')
-        $filledSlots = Transaction::where('status', 'Sedang Dicuci')
-            ->whereNotNull('slot')
-            ->pluck('slot')
-            ->toArray();
+        // Logic Search + Pagination 5 (Sesuai request)
+        $customers = Customer::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%")
+                            ->orWhere('license_plate', 'like', "%{$search}%");
+            })
+            ->latest()
+            ->paginate(5); // MEMBATASI TAMPILAN CUMA 5
 
-        return view('kasir.pos.index', compact('services', 'customers', 'filledSlots'));
+        // Append query string agar saat pindah halaman search tidak hilang
+        $customers->appends(['search' => $search]);
+
+        $services = Service::all();
+        $setting = Setting::first();
+
+        return view('kasir.pos.index', compact('customers', 'services', 'setting'));
+    }
+
+    /**
+     * API untuk pencarian pelanggan (Select2 compatible)
+     */
+    public function searchCustomers(Request $request)
+    {
+        $search = $request->input('q');
+
+        $customers = Customer::query()
+            ->when($search, function ($query, $search) {
+                return $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%")
+                            ->orWhere('license_plate', 'like', "%{$search}%");
+            })
+            ->select('id', 'name', 'phone', 'license_plate', 'vehicle_type')
+            ->limit(5) // Batasi hasil hanya 5 item
+            ->get();
+
+        // Format data untuk Select2
+        $formattedCustomers = $customers->map(function ($customer) {
+            return [
+                'id' => $customer->id,
+                'text' => $customer->license_plate . ' - ' . $customer->name . ' (' . $customer->phone . ')',
+                'license_plate' => $customer->license_plate,
+                'name' => $customer->name,
+                'phone' => $customer->phone,
+                'vehicle_type' => $customer->vehicle_type
+            ];
+        });
+
+        return response()->json([
+            'results' => $formattedCustomers,
+            'pagination' => ['more' => false] // Nonaktifkan load more
+        ]);
     }
 
     /**
@@ -194,4 +237,3 @@ class POSController extends Controller
         return view('kasir.pos.struk', compact('transaction'));
     }
 }
-

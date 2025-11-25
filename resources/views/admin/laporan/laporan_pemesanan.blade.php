@@ -2,16 +2,50 @@
 
 @section('title', 'Laporan Pemesanan')
 
+
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <!-- Header dengan Title dan Refresh Button -->
+            <div class="header-action-container">
+                <div class="title-section">
+                    <h1>Laporan Pemesanan</h1>
+                </div>
+                <div class="action-section">
+                    <a href="{{ route('laporan.pemesanan') }}" class="btn refresh-btn">
+                        <i class="fa fa-refresh me-1"></i> Refresh Data
+                    </a>
+                </div>
+            </div>
+
+            <!-- Search Box -->
+            <div class="custom-search-container">
+                <form action="{{ route('laporan.pemesanan') }}" method="GET">
+                    <input type="text"
+                           class="custom-search-input"
+                           name="search"
+                           placeholder="Cari No. Transaksi, Nama Pelanggan, atau No. Polisi..."
+                           value="{{ request('search') }}">
+                    <button type="submit" class="custom-search-button">
+                        <i class="fa fa-search me-1"></i> Cari
+                    </button>
+                </form>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="card filter-section">
                 <div class="card-header">
                     <h3 class="card-title">Filter Laporan Pemesanan</h3>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('laporan.pemesanan') }}" method="GET">
+                        <!-- Include search parameter in filter form -->
+                        @if(request('search'))
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                        @endif
+
                         <div class="row">
                             <div class="col-md-3">
                                 <label for="start_date" class="form-label">Tanggal Mulai</label>
@@ -41,11 +75,14 @@
                                     <option value="Menunggu" {{ request('status') == 'Menunggu' ? 'selected' : '' }}>Menunggu</option>
                                     <option value="Sedang Dicuci" {{ request('status') == 'Sedang Dicuci' ? 'selected' : '' }}>Sedang Dicuci</option>
                                     <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                                    <option value="Sudah Dibayar" {{ request('status') == 'Sudah Dibayar' ? 'selected' : '' }}>Sudah Dibayar</option>
+                                    <option value="Terkonfirmasi" {{ request('status') == 'Terkonfirmasi' ? 'selected' : '' }}>Terkonfirmasi</option>
+                                    <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
                                 </select>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end mt-3">
-                            <a href="{{ route('laporan.pemesanan') }}" class="btn btn-secondary me-2">Reset</a>
+                            <a href="{{ route('laporan.pemesanan') }}" class="btn btn-secondary me-2">Reset Semua</a>
                             <button type="submit" class="btn btn-primary">
                                 <i class="fa fa-filter"></i> Terapkan Filter
                             </button>
@@ -54,10 +91,22 @@
                 </div>
             </div>
 
+            <!-- Results Section -->
             <div class="card mt-4">
                 <div class="card-header">
                     <h3 class="card-title">Hasil Laporan</h3>
-                    {{-- Tambahkan tombol Export jika data ditemukan --}}
+                    @if(request()->anyFilled(['start_date', 'end_date', 'service_id', 'status', 'search']))
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                Menampilkan hasil untuk:
+                                @if(request('search')) <span class="badge bg-info">Pencarian: "{{ request('search') }}"</span> @endif
+                                @if(request('start_date')) <span class="badge bg-info">Dari: {{ request('start_date') }}</span> @endif
+                                @if(request('end_date')) <span class="badge bg-info">Sampai: {{ request('end_date') }}</span> @endif
+                                @if(request('service_id')) <span class="badge bg-info">Layanan: {{ $services->where('id', request('service_id'))->first()->name ?? '' }}</span> @endif
+                                @if(request('status')) <span class="badge bg-info">Status: {{ request('status') }}</span> @endif
+                            </small>
+                        </div>
+                    @endif
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -82,7 +131,7 @@
                                     <td>{{ $tx->customer->license_plate ?? 'N/A' }}</td>
                                     <td>{{ $tx->service->name ?? 'N/A' }}</td>
 
-                                    {{-- === PERBAIKAN LOGIKA STATUS DI SINI === --}}
+                                    {{-- LOGIKA STATUS --}}
                                     <td>
                                         @if($tx->status == 'Selesai' || $tx->status == 'Sudah Dibayar')
                                             <span class="badge bg-success">{{ $tx->status }}</span>
@@ -105,7 +154,11 @@
                                 @empty
                                 <tr>
                                     <td colspan="7" class="text-center">
-                                        Tidak ada data transaksi yang sesuai dengan filter.
+                                        @if(request()->anyFilled(['start_date', 'end_date', 'service_id', 'status', 'search']))
+                                            Tidak ada data transaksi yang sesuai dengan filter yang dipilih.
+                                        @else
+                                            Belum ada data transaksi.
+                                        @endif
                                     </td>
                                 </tr>
                                 @endforelse

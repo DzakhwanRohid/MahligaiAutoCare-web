@@ -10,11 +10,23 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customer::with('user')->latest()->paginate(10);
+        $query = Customer::query();
+
+        // Logic Search: Mencari berdasarkan Nama, No HP, atau Plat Nomor
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%") // Pastikan kolom di DB 'phone' atau 'phone_number'
+                    ->orWhere('license_plate', 'like', "%{$search}%");
+            });
+        }
+        $customers = $query->latest()->paginate(10)->withQueryString();
         return view('admin.customer.index', compact('customers'));
     }
+
 
     /**
      * Show the form for creating a new resource.

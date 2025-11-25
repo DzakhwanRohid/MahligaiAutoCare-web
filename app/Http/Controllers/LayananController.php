@@ -11,9 +11,20 @@ class LayananController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::latest()->paginate(10);
+        // 1. Mulai Query
+        $query = Service::query();
+
+        // 2. Logika Search (Jika ada input 'search' dari user)
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // 3. Ambil data dengan Pagination (10 baris per halaman)
+        // withQueryString() penting agar saat pindah halaman, kata kunci pencarian tidak hilang
+        $services = $query->latest()->paginate(5)->withQueryString();
+
         return view('admin.layanan.index', compact('services'));
     }
 

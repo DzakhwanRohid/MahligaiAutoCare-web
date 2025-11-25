@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Pagination\Paginator;
 use App\Models\Setting;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-  public function boot(): void
+    public function boot(): void
     {
         if (Schema::hasTable('settings')) {
             // Ambil semua settings dan jadikan default jika kosong
@@ -37,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
 
             // Gabungkan default dengan data dari DB (data DB akan menimpa default)
             $globalSettings = array_merge($defaults, $settings);
-
+            Paginator::useTailwind();
             View::share('appSettings', $globalSettings);
         }
     }

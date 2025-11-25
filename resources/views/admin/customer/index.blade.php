@@ -31,6 +31,20 @@
                         </div>
                     @endif
 
+
+                    <div class="custom-search-container">
+                            <form method="GET" action="{{ route('admin.customer.index') }}">
+                                <input type="text"
+                                    name="search"
+                                    value="{{ request('search') }}"
+                                    placeholder="Cari nama, HP, atau plat..."
+                                    class="custom-search-input">
+                                <button type="submit" class="custom-search-button">
+                                    Cari
+                                </button>
+                            </form>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover">
                             <thead class="table-dark">

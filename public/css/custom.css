@@ -1105,3 +1105,116 @@ CSS BARU UNTUK DASHBOARD ADMIN MODERN (v3 - GRADIENT)
 .stat-card-gradient {
     display: flex; /* Pastikan .stat-card-gradient baru terlihat */
 }
+
+.pagination .page-item .page-link {
+    color: #16a34a !important; /* Tailwind Green-600 */
+    box-shadow: none !important;
+}
+
+/* Mengubah warna background saat aktif (halaman yang dipilih) */
+.pagination .page-item.active .page-link {
+    background-color: #16a34a !important;
+    border-color: #16a34a !important;
+    color: white !important;
+}
+
+/* Mengubah warna saat di-hover */
+.pagination .page-item .page-link:hover {
+    background-color: #dcfce7 !important; /* Hijau muda */
+    color: #15803d !important;
+    border-color: #dee2e6 !important;
+}
+
+/* Fokus ring (garis luar saat diklik) */
+.pagination .page-item .page-link:focus {
+    box-shadow: 0 0 0 0.25rem rgba(22, 163, 74, 0.25) !important;
+}
+
+.custom-search-container {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.custom-search-container form {
+    display: flex;
+    gap: 10px; /* Jarak antara input dan tombol */
+    width: 100%;
+    max-width: 400px; /* Batasi lebar agar tidak terlalu panjang */
+}
+
+/* 2. Style Input Text */
+.custom-search-input {
+    flex: 1; /* Input otomatis mengisi ruang */
+    height: 42px; /* Tinggi fix agar sejajar tombol */
+    padding: 8px 15px;
+    font-size: 14px;
+    border: 1px solid #d1d5db; /* Abu-abu soft */
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.custom-search-input:focus {
+    border-color: #16a34a; /* Hijau saat diklik */
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+
+/* 3. Style Button Cari (HIJAU MUTLAK) */
+.custom-search-button {
+    background-color: #16a34a !important; /* Hijau Green-600 */
+    color: white !important;
+    height: 42px; /* Tinggi samakan dengan input */
+    padding: 0 25px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Efek Hover (Saat mouse di atas tombol) */
+.custom-search-button:hover {
+    background-color: #15803d !important; /* Hijau lebih gelap (Green-700) */
+}
+
+/* Style untuk Refresh Button */
+.refresh-btn {
+    background-color: #16a34a !important; /* Biru */
+    color: white !important;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+.refresh-btn:hover {
+    background-color: #15803d !important; /* Biru lebih gelap */
+    color: white !important;
+    text-decoration: none;
+}
+
+.header-action-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title-section h1 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 1.5rem;
+    font-weight: 600;
+}

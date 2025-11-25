@@ -61,27 +61,44 @@ class ReportController extends Controller
     }
 
     /**
-     * Laporan Pemesanan (Ini sudah benar dari langkah sebelumnya)
+     * Laporan Pemesanan dengan Search dan Filter Backend
      */
     public function pemesanan(Request $request)
     {
         $query = Transaction::with(['customer', 'service'])->latest();
 
+        // Filter berdasarkan tanggal
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', Carbon::parse($request->start_date));
         }
         if ($request->filled('end_date')) {
             $query->whereDate('created_at', '<=', Carbon::parse($request->end_date));
         }
+
+        // Filter berdasarkan layanan
         if ($request->filled('service_id')) {
             $query->where('service_id', $request->service_id);
         }
+
+        // Filter berdasarkan status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
+        // Search berdasarkan keyword (No. Transaksi, Nama Pelanggan, No. Polisi)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('invoice', 'like', "%{$search}%")
+                  ->orWhereHas('customer', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('license_plate', 'like', "%{$search}%");
+                  });
+            });
+        }
+
         $services = Service::orderBy('name')->get();
-        $transactions = $query->paginate(15);
+        $transactions = $query->paginate(10);
 
         return view('admin.laporan.laporan_pemesanan', compact('transactions', 'services'));
     }
