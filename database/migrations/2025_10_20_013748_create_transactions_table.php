@@ -15,7 +15,7 @@ return new class extends Migration
             
             $table->foreignId('customer_id')->constrained('customers');
             $table->foreignId('service_id')->constrained('services');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             
             $table->string('vehicle_brand');
             $table->string('vehicle_plate');

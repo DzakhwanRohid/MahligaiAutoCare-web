@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
@@ -33,6 +32,7 @@ Route::get('/pemesanan', [HomeController::class, 'showPemesanan'])->name('pemesa
 Route::post('/pemesanan', [HomeController::class, 'storePemesanan'])->name('pemesanan.store');
 Route::get('/get-available-schedule', [HomeController::class, 'getAvailableSchedule'])->name('booking.getSchedule');
 Route::post('/check-promo', [HomeController::class, 'checkPromo'])->name('check.promo'); // <-- TAMBAHAN BARU
+
 
 /*
 |--------------------------------------------------------------------------
