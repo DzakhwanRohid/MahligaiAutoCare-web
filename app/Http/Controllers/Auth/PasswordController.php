@@ -15,9 +15,13 @@ class PasswordController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
+        $currentPasswordRule = $request->user()->google_id 
+                                ? 'nullable' 
+                                : ['required', 'current_password'];
+
         $validated = $request->validateWithBag('updatePassword', [
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'current_password' => $currentPasswordRule,
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
         $request->user()->update([
