@@ -53,10 +53,10 @@ class POSController extends Controller
                             ->orWhere('license_plate', 'like', "%{$search}%");
             })
             ->select('id', 'name', 'phone', 'license_plate', 'vehicle_type')
-            ->limit(5) // Batasi hasil hanya 5 item
+            ->limit(5)
             ->get();
 
-        // Format data untuk Select2
+
         $formattedCustomers = $customers->map(function ($customer) {
             return [
                 'id' => $customer->id,
@@ -70,7 +70,7 @@ class POSController extends Controller
 
         return response()->json([
             'results' => $formattedCustomers,
-            'pagination' => ['more' => false] // Nonaktifkan load more
+            'pagination' => ['more' => false]
         ]);
     }
 
