@@ -7,17 +7,10 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
-
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-
-                    {{-- ====================================================== --}}
-                    {{-- MENU BARU (REVISI TANPA 'OWNER') --}}
-                    {{-- ====================================================== --}}
-
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-
                     @if(in_array(Auth::user()->role, ['admin', 'kasir']))
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-dropdown align="left" width="48">
@@ -42,7 +35,6 @@
                         </x-dropdown>
                     </div>
                     @endif
-
                     @if(Auth::user()->role == 'admin')
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-dropdown align="left" width="48">
@@ -64,7 +56,6 @@
                         </x-dropdown>
                     </div>
                     @endif
-
                     @if(Auth::user()->role == 'admin')
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-dropdown align="left" width="48">
@@ -86,7 +77,6 @@
                         </x-dropdown>
                     </div>
                     @endif
-
                     @if(Auth::user()->role == 'admin')
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
                         <x-dropdown align="left" width="48">
@@ -111,17 +101,14 @@
                         </x-dropdown>
                     </div>
                     @endif
-
                     @if(Auth::user()->role == 'admin')
                     {{-- RUTE SUDAH BENAR --}}
                     <x-nav-link :href="route('pengaturan.index')" :active="request()->routeIs('pengaturan.index')">
                         {{ __('Pengaturan') }}
                     </x-nav-link>
                     @endif
-
                 </div>
             </div>
-
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
@@ -134,12 +121,10 @@
                             </div>
                         </button>
                     </x-slot>
-
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
-
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <x-dropdown-link :href="route('logout')"
@@ -151,7 +136,6 @@
                     </x-slot>
                 </x-dropdown>
             </div>
-
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-900 focus:text-gray-500 dark:focus:text-gray-400 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -162,13 +146,11 @@
             </div>
         </div>
     </div>
-
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-
             @if(in_array(Auth::user()->role, ['admin', 'kasir']))
             <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                 <div class="px-4"><div class="font-medium text-base text-gray-800 dark:text-gray-200">Manajemen Operasional</div></div>
@@ -185,7 +167,6 @@
                 </div>
             </div>
             @endif
-
             @if(Auth::user()->role == 'admin')
             <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                 <div class="px-4"><div class="font-medium text-base text-gray-800 dark:text-gray-200">Manajemen Data</div></div>
@@ -200,12 +181,10 @@
                 </div>
             </div>
             @endif
-
             @if(Auth::user()->role == 'admin')
             <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                 <div class="px-4"><div class="font-medium text-base text-gray-800 dark:text-gray-200">Manajemen Pengguna</div></div>
                 <div class="mt-3 space-y-1">
-                    {{-- PERBAIKAN DI SINI --}}
                     <x-responsive-nav-link :href="route('admin.users.index')">
                         {{ __('Manajemen User (Karyawan)') }}
                     </x-responsive-nav-link>
@@ -215,12 +194,10 @@
                 </div>
             </div>
             @endif
-
             @if(Auth::user()->role == 'admin')
             <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                 <div class="px-4"><div class="font-medium text-base text-gray-800 dark:text-gray-200">Laporan & Analitik</div></div>
                 <div class="mt-3 space-y-1">
-                    {{-- RUTE SUDAH BENAR --}}
                     <x-responsive-nav-link :href="route('laporan.pemesanan')">
                         {{ __('Laporan Pemesanan') }}
                     </x-responsive-nav-link>
@@ -233,12 +210,10 @@
                 </div>
             </div>
             @endif
-
             @if(Auth::user()->role == 'admin')
             <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
                 <div class="px-4"><div class="font-medium text-base text-gray-800 dark:text-gray-200">Pengaturan</div></div>
                 <div class="mt-3 space-y-1">
-                    {{-- RUTE SUDAH BENAR --}}
                     <x-responsive-nav-link :href="route('pengaturan.index')">
                         {{ __('Pengaturan Akun') }}
                     </x-responsive-nav-link>
@@ -246,18 +221,15 @@
             </div>
             @endif
         </div>
-
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             <div class="px-4">
                 <div class="font-medium text-base text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</div>
                 <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
             </div>
-
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
-
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <x-responsive-nav-link :href="route('logout')"

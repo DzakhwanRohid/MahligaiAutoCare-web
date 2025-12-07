@@ -12,7 +12,6 @@
             <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle" href="#"><i
                     class="fab fa-youtube"></i></a>
         </div>
-
         <div class="auth-links d-flex align-items-center">
             @guest
                 <a href="{{ route('login') }}" class="text-light me-3">Login</a>
@@ -28,7 +27,7 @@
                         <i class="fas fa-tachometer-alt me-1"></i>
                         Dashboard
                     </a>
-                @else 
+                @else
                     <a href="{{ route('profile.edit') }}" class="text-light me-3">
                         <i class="fas fa-user me-1"></i>
                         Profile

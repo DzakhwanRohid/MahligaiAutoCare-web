@@ -1,148 +1,211 @@
 @extends('layouts.main')
-
-{{-- Menambahkan CSS khusus di <head> --}}
-@push('styles')
-    <link href="{{ asset('css/kontak.css') }}" rel="stylesheet">
-@endpush
-
 @section('content')
 
-{{-- HEADER KONTAK --}}
-<div class="page-header text-center">
+<!-- HEADER SECTION - Konsisten dengan warna hijau -->
+<section class="contact-header-section">
+    <div class="header-overlay"></div>
     <div class="container">
-        <h1 class="display-4">Hubungi Kami</h1>
-        <p class="lead">Kami siap mendengar pertanyaan, kritik, dan saran dari Anda.</p>
+        <div class="header-content">
+            <h1 class="contact-header-title">
+                <span class="contact-title-line">Hubungi Kami</span>
+                <span class="contact-title-highlight">Mahligai AutoCare</span>
+            </h1>
+            <div class="contact-divider">
+                <div class="contact-divider-line"></div>
+                <div class="contact-divider-icon">◈</div>
+                <div class="contact-divider-line"></div>
+            </div>
+            <p class="contact-header-subtitle">Dapatkan Konsultasi Gratis Hari Ini!</p>
+        </div>
     </div>
-</div>
+    <div class="contact-wave">
+        <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+            <path d="M0,0V15c150,10,300,10,450,5S750,5,900,10s300,10,450,5V0Z" fill="#fff"/>
+        </svg>
+    </div>
+</section>
 
 {{-- FORMULIR DAN INFO KONTAK --}}
-<div class="container home-section">
-    <div class="row g-5">
+   <div class="container">
+            <div class="section-header center">
+                <h2 class="section-title">Hubungi <span class="text-gradient">Kami</span></h2>
+                <p class="section-subtitle">Butuh bantuan? Tim support kami siap membantu 24/7</p>
+            </div>
 
-        {{-- KIRI: INFO KONTAK (DINAMIS DARI $appSettings) --}}
-        <div class="col-lg-5" data-aos="fade-right">
-            <div class="contact-info-box shadow-sm">
-                <h4 class="mb-4">Informasi Kontak</h4>
-                <div class="info-item">
-                    <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div>
-                        <h6 class="mb-0">Alamat:</h6>
-                        <p class="text-muted mb-0">{{ $appSettings['business_address'] }}</p>
+            <div class="contact-grid-enhanced">
+                <div class="contact-info-enhanced" data-aos="fade-right">
+                    <div class="contact-card">
+                        <div class="contact-card-header">
+                            <div class="contact-icon-large">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h3>Kami Siap Membantu</h3>
+                            <p class="contact-intro">Dapatkan respon cepat dari tim kami</p>
+                        </div>
+
+                        <div class="contact-details-list">
+                            <div class="contact-detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <h4>Alamat Workshop</h4>
+                                    <p>Jl. Jend. Sudirman No. 123, Pekanbaru, Riau</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-phone-alt"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <h4>Telepon & WhatsApp</h4>
+                                    <p>+62 812 3456 7890</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <h4>Email</h4>
+                                    <p>info@mahligaiautocare.com</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <h4>Jam Operasional</h4>
+                                    <p>Senin - Minggu: 08:00 - 20:00 WIB</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-social-links">
+                            <p class="social-title">Ikuti Kami</p>
+                            <div class="social-icons">
+                                <a href="#" class="social-link">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" class="social-link">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="info-item">
-                    <div class="info-icon"><i class="fas fa-phone-alt"></i></div>
-                    <div>
-                        <h6 class="mb-0">Telepon:</h6>
-                        <p class="text-muted mb-0">{{ $appSettings['business_phone'] }}</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon"><i class="fas fa-envelope"></i></div>
-                    <div>
-                        <h6 class="mb-0">Email:</h6>
-                        <p class="text-muted mb-0">{{ $appSettings['business_email'] }}</p>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-icon"><i class="fas fa-clock"></i></div>
-                    <div>
-                        <h6 class="mb-0">Jam Operasional:</h6>
-                        <p class="text-muted mb-0">{{ $appSettings['business_hours'] }}</p>
+
+                <div class="contact-form-enhanced" data-aos="fade-left">
+                    <div class="form-card">
+                        <div class="form-header">
+                            <h3><i class="fas fa-paper-plane me-2"></i>Kiri Kritik & Saran</h3>
+                            <p>Kritik & Saran Anda Sangat Bermanfaat Bagi Kami</p>
+                        </div>
+
+                        <form id="contactFormEnhanced">
+                            <div class="form-row">
+                                @auth
+                                <div class="form-group-enhanced">
+                                    <label>Nama Anda</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" value="{{ Auth::user()->name }}" readonly class="form-input-filled">
+                                    </div>
+                                </div>
+
+                                <div class="form-group-enhanced">
+                                    <label>Email Anda</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-envelope"></i>
+                                        <input type="email" value="{{ Auth::user()->email }}" readonly class="form-input-filled">
+                                    </div>
+                                </div>
+                                @else
+                                <div class="form-group-enhanced">
+                                    <label>Nama Lengkap</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" placeholder="Masukkan nama Anda" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group-enhanced">
+                                    <label>Email</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-envelope"></i>
+                                        <input type="email" placeholder="email@contoh.com" required>
+                                    </div>
+                                </div>
+                                @endauth
+                            </div>
+
+                            <div class="form-group-enhanced">
+                                <label>Subjek Pesan</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-tag"></i>
+                                    <input type="text" placeholder="Apa yang bisa kami bantu?" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group-enhanced">
+                                <label>Pesan Anda</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-comment-alt"></i>
+                                    <textarea placeholder="Tulis pesan Anda di sini..." rows="1" required></textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-submit-enhanced">
+                                <i class="fas fa-paper-plane me-2"></i>Kirim Pesan
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        {{-- KANAN: FORMULIR KIRIM PESAN (DINAMIS) --}}
-        <div class="col-lg-7" data-aos="fade-left">
-            <div class="contact-form shadow-sm">
-                <h4 class="mb-4">Kirim Pesan</h4>
+    <!-- ====================
+        MAP SECTION - Enhanced
+    ===================== -->
+    <section class="map-section-enhanced">
+        <div class="container">
+            <div class="map-wrapper">
+                <div class="map-header">
+                    <h3><i class="fas fa-map-marker-alt me-2"></i>Lokasi Kami</h3>
+                    <p>Kunjungi langsung untuk konsultasi gratis</p>
+                </div>
 
-                {{-- Tampilkan Pesan Sukses --}}
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
-                    </div>
-                @endif
-                {{-- Tampilkan Error Validasi --}}
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                <div class="map-container-enhanced">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127870.21133316147!2d101.37893902148117!3d0.5104218357732202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5ac1a27cd9011%3A0x2035b1856d11f62!2sPekanbaru%2C%20Pekanbaru%20City%2C%20Riau!5e0!3m2!1sen!2sid!4v1668668615397!5m2!1sen!2sid"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
 
-                {{-- FORMULIR YANG SUDAH TERHUBUNG --}}
-                <form action="{{ route('kontak.store') }}" method="POST">
-                    @csrf
-                    <div class="row g-3">
-
-                        {{-- Logika Cek Login untuk Auto-fill --}}
-                        @auth
-                        {{-- Jika SUDAH LOGIN --}}
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="name" name="name" value="{{ Auth::user()->name }}" readonly>
-                                <label for="name">Nama Anda (Terdaftar)</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="email" class="form-control" id="email" name="email" value="{{ Auth::user()->email }}" readonly>
-                                <label for="email">Email Anda (Terdaftar)</label>
-                            </div>
-                        </div>
-                        @else
-                        {{-- Jika TAMU (Guest) --}}
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Nama Anda" required>
-                                <label for="name">Nama Anda</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Email Anda" required>
-                                <label for="email">Email Anda</label>
-                            </div>
-                        </div>
-                        @endauth
-
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="subject" name="subject" placeholder="Subjek" required>
-                                <label for="subject">Subjek</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-floating">
-                                <textarea class="form-control" placeholder="Tinggalkan pesan di sini" id="message" name="message" style="height: 150px" required></textarea>
-                                <label for="message">Pesan</label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <button class="btn btn-success rounded-pill w-100 py-3" type="submit">Kirim Pesan</button>
+                    <div class="map-overlay">
+                        <div class="overlay-badge">
+                            <i class="fas fa-car"></i>
+                            <span>Parkir Luas</span>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
-{{-- PETA LOKASI SECTION (Tetap Ada) --}}
-<div class="container py-5" data-aos="fade-up">
-    <div class="map-responsive shadow-lg">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127870.21133316147!2d101.37893902148117!3d0.5104218357732202!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d5ac1a27cd9011%3A0x2035b1856d11f62!2sPekanbaru%2C%20Pekanbaru%20City%2C%20Riau!5e0!3m2!1sen!2sid!4v1668668615397!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-</div>
 @endsection
 
-{{-- Memuat JS khusus di bagian bawah body --}}
 @push('scripts')
     <script src="{{ asset('js/kontak.js') }}"></script>
 @endpush
+

@@ -1,10 +1,7 @@
 @extends('layouts.dashboard')
-
 @section('title', 'Antrean Real-time & Manajemen Slot')
-
 @section('content')
 <div class="container-fluid">
-
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
@@ -16,7 +13,7 @@
     <div class="row mb-5">
         @for ($i = 1; $i <= 4; $i++)
             @php
-                $tx = $dicuci->get($i); // Ambil transaksi di slot $i
+                $tx = $dicuci->get($i);
             @endphp
             <div class="col-md-3 col-sm-6 mb-3">
                 <div class="card h-100 shadow-sm border-{{ $tx ? 'danger' : 'success' }}">
@@ -30,7 +27,6 @@
                             <span class="badge bg-light text-dark border mb-3">
                                 <i class="fa fa-user"></i> {{ $tx->customer->name }}
                             </span>
-
                             {{-- Info Durasi --}}
                             @php
                                 $estimasiSelesai = \Carbon\Carbon::parse($tx->booking_date)->addMinutes($tx->service->duration_minutes);
@@ -164,8 +160,5 @@
             </div>
         </div>
     </div>
-
-    {{-- (Kita hapus bagian "Selesai" dari Kanban lama Anda, karena itu lebih cocok di Riwayat Transaksi) --}}
-
 </div>
 @endsection

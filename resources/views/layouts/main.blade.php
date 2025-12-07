@@ -16,6 +16,7 @@
     <link href="{{ asset('css/pantau.css') }}" rel="stylesheet">
     <link href="{{ asset('css/kontak.css') }}" rel="stylesheet">
     <link href="{{ asset('css/pemesanan.css') }}" rel="stylesheet">
+      <link href="{{ asset('css/modern-index.css') }}" rel="stylesheet">
     @stack('styles')
 
 </head>

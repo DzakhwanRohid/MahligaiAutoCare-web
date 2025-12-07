@@ -3,19 +3,16 @@
         <div class="row g-5">
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-light mb-4">Alamat</h4>
-
                 {{-- BAGIAN DINAMIS: Mengambil Alamat dari Pengaturan --}}
                 <p class="mb-2">
                     <i class="fa fa-map-marker-alt me-3"></i>
                     {{ $appSettings['business_address'] ?? 'Jl. Jend. Sudirman No. 123, Pekanbaru' }}
                 </p>
-
                 {{-- BAGIAN DINAMIS: Mengambil No HP dari Pengaturan --}}
                 <p class="mb-2">
                     <i class="fa fa-phone-alt me-3"></i>
                     {{ $appSettings['business_phone'] ?? '+62 812 3456 7890' }}
                 </p>
-
                 <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@mahligaiautocare.com</p>
                 <div class="d-flex pt-2">
                     <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
@@ -26,28 +23,28 @@
             </div>
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-light mb-4">Jam Buka</h4>
-                <h6 class="text-light">Senin - Jumat:</h6>
-                <p class="mb-4">09.00 - 21.00 WIB</p>
-                <h6 class="text-light">Sabtu - Minggu:</h6>
-                <p class="mb-0">09.00 - 20.00 WIB</p>
+                <h6 class="text-light">Setiap Hari:</h6>
+                <p class="mb-4">07.00 - 17.00 WIB</p>
             </div>
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-light mb-4">Layanan</h4>
                 {{-- Kita tambahkan satu link dinamis ke halaman semua layanan --}}
                 <a class="btn btn-link" href="{{ route('home.layanan') }}">Lihat Semua Layanan</a>
-                <a class="btn btn-link" href="#">Cuci Mobil Premium</a>
-                <a class="btn btn-link" href="#">Detailing Interior</a>
-                <a class="btn btn-link" href="#">Nano Ceramic Coating</a>
-                <a class="btn btn-link" href="#">Restorasi Lampu</a>
-                <a class="btn btn-link" href="#">Pembersihan Mesin</a>
             </div>
-            <div class="col-lg-3 col-md-6">
-                <h4 class="text-light mb-4">Newsletter</h4>
-                <p>Dapatkan update dan promo terbaru dari kami.</p>
-                <div class="position-relative mx-auto" style="max-width: 400px;">
-                    <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Email Anda">
-                    <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Daftar</button>
-                </div>
+              <div class="col-lg-3 col-md-6">
+                <h4 class="text-light mb-4">Kritik & Saran</h4>
+                <p class="mb-3">Masukan Anda sangat berharga untuk kami meningkatkan pelayanan.</p>
+                <a href="{{ route('home.kontak') }}" class="btn btn-primary w-100 mb-3">
+                    <i class="fas fa-comment-alt me-2"></i>Kirim Kritik & Saran
+                </a>
+                <p class="small text-muted mb-0">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Privasi Anda terlindungi
+                </p>
+                <p class="small text-muted">
+                    <i class="fas fa-clock me-2"></i>
+                    Respon maksimal 24 jam
+                </p>
             </div>
         </div>
     </div>

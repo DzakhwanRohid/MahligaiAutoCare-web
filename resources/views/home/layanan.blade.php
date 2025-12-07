@@ -2,60 +2,91 @@
 
 @section('content')
 
-{{-- HEADER LAYANAN --}}
-<div class="page-header text-center">
+<!-- HEADER SECTION - Dark Gradient -->
+<section class="page-header-services">
+    <div class="header-gradient"></div>
+
     <div class="container">
-        <h1 class="display-4">Layanan Kami</h1>
-        <p class="lead">Kualitas terbaik untuk kilau sempurna kendaraan Anda.</p>
+        <div class="header-content-inner">
+            <h1 class="main-title">
+                <span class="title-line title-line-outline">Layanan</span>
+                <span class="title-line title-line-white">Mahligai</span>
+                <span class="title-line title-line-green">AutoCare</span>
+            </h1>
+
+            <div class="title-separator">
+                <span class="separator-line"></span>
+                <span class="separator-icon">◈</span>
+                <span class="separator-line"></span>
+            </div>
+
+            <p class="subtitle">
+                Kualitas terbaik untuk kilau sempurna kendaraan Anda
+            </p>
+        </div>
     </div>
-</div>
+
+    <div class="wave-divider">
+        <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
+            <path d="M0,0V15c150,10,300,10,450,5S750,5,900,10s300,10,450,5V0Z" fill="#fff"/>
+        </svg>
+    </div>
+</section>
 
 {{-- DETAIL LAYANAN --}}
-<div class="container home-section">
-    <div class="text-center mb-5" data-aos="fade-up">
-        <h2 class="section-title">Detail Layanan Perawatan</h2>
-        <p class="text-muted">Kami menawarkan berbagai layanan untuk memenuhi setiap kebutuhan mobil Anda.</p>
+<div class="services-container">
+    <div class="services-header text-center mb-6">
+        <div class="section-mini-label">Paket Layanan</div>
+        <h2 class="services-main-title">Detail Layanan Perawatan</h2>
+        <p class="services-subtitle">Berbagai pilihan layanan premium untuk memenuhi setiap kebutuhan mobil Anda</p>
     </div>
 
-    <div class="row g-4">
+    <div class="services-grid">
         {{-- Looping Data Services dari Database --}}
         @forelse($services as $service)
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
-                <div class="card service-card h-100 shadow-sm border-0">
+            <div class="service-card" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
+                {{-- Badge Premium --}}
+                <div class="service-badge">Premium</div>
 
-                    {{-- Logika Gambar: Cek apakah ada gambar di database --}}
-                    <div style="height: 200px; overflow: hidden;">
-                        @if($service->image)
-                            <img src="{{ asset('storage/' . $service->image) }}" class="card-img-top w-100 h-100"
-                                alt="{{ $service->name }}" style="object-fit: cover;">
-                        @else
-                            {{-- Gambar Placeholder jika tidak ada gambar --}}
-                            <img src="{{ asset('img/default-car.png') }}" class="card-img-top w-100 h-100"
-                                alt="{{ $service->name }}" style="object-fit: cover;">
-                        @endif
+                {{-- Gambar Service --}}
+                <div class="service-image-container">
+                    @if($service->image)
+                        <img src="{{ asset('storage/' . $service->image) }}" class="service-image"
+                            alt="{{ $service->name }}">
+                    @else
+                        <img src="{{ asset('img/default-car.png') }}" class="service-image"
+                            alt="{{ $service->name }}">
+                    @endif
+                </div>
+
+                <div class="service-info">
+                    <h3 class="service-title">{{ $service->name }}</h3>
+                    <p class="service-description">{{ Str::limit($service->description, 80) }}</p>
+
+                    <div class="service-meta">
+                        <div class="duration">
+                            <i class="fas fa-clock"></i>
+                            <span>{{ $service->duration_minutes ?? '60' }} menit</span>
+                        </div>
                     </div>
 
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold">{{ $service->name }}</h5>
-                        <p class="card-text text-muted flex-grow-1">{{ $service->description }}</p>
-
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <span class="text-primary fw-bold fs-5">
-                                Rp {{ number_format($service->price, 0, ',', '.') }}
-                            </span>
-                            {{-- Link ke halaman booking (bisa diarahkan ke form pemesanan) --}}
-                            <a href="{{ route('pemesanan.create') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                Pesan Sekarang
-                            </a>
+                    <div class="service-footer">
+                        <div class="service-price">
+                            <span class="price-value">Rp {{ number_format($service->price, 0, ',', '.') }}</span>
                         </div>
+                        <a href="{{ route('pemesanan.create') }}" class="service-button">
+                            Pesan
+                        </a>
                     </div>
                 </div>
             </div>
         @empty
-            <div class="col-12 text-center py-5">
-                <div class="alert alert-info d-inline-block">
-                    <i class="fa fa-info-circle me-2"></i> Belum ada layanan yang tersedia saat ini.
+            <div class="empty-services">
+                <div class="empty-icon">
+                    <i class="fas fa-car"></i>
                 </div>
+                <h4>Belum ada layanan tersedia</h4>
+                <p>Silahkan kembali lagi nanti</p>
             </div>
         @endforelse
     </div>

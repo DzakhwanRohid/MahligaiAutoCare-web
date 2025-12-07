@@ -1,121 +1,182 @@
 <x-guest-layout>
-    {{-- Container Scrollable --}}
-    <div style="max-height: 80vh; overflow-y: auto; padding-right: 10px;">
+    <div class="auth-glass-card">
+        {{-- LEFT SIDE - Brand Section --}}
+        <div class="auth-brand-side">
+            <div class="brand-pattern"></div>
 
-        <h2 class="text-center mb-4 font-weight-bold">Buat Akun Baru</h2>
-
-        <form method="POST" action="{{ route('register') }}" class="auth-form">
-            @csrf
-
-            <div class="form-group mb-3">
-                <label for="name" class="form-label fw-bold">{{ __('Nama Lengkap') }}</label>
-                <input id="name" class="form-control" type="text" name="name" :value="old('name')" required autofocus
-                    autocomplete="name" placeholder="Masukkan nama lengkap Anda" />
-                <x-input-error :messages="$errors->get('name')" class="mt-1 text-danger small" />
+            <div class="logo-container">
+                <div class="logo">
+    <img src="{{ asset('img/logo_project.png') }}" alt="Mahligai AutoCare Logo" class="logo">
+</div>
+                <h1 class="brand-title">Mahligai AutoCare</h1>
+                <p class="brand-subtitle">Professional Car Wash & Detailing</p>
             </div>
 
-            <div class="form-group mb-3">
-                <label for="email" class="form-label fw-bold">{{ __('Email') }}</label>
-                <input id="email" class="form-control" type="email" name="email" :value="old('email')" required
-                    autocomplete="username" placeholder="contoh@email.com" />
-                <x-input-error :messages="$errors->get('email')" class="mt-1 text-danger small" />
-            </div>
-
-            <div class="form-group mb-3">
-                <label for="phone" class="form-label fw-bold">{{ __('No. Handphone (WhatsApp)') }}</label>
-                <input id="phone" class="form-control" type="text" name="phone" :value="old('phone')" required
-                    placeholder="081234567890" />
-                <x-input-error :messages="$errors->get('phone')" class="mt-1 text-danger small" />
-            </div>
-
-            {{-- GRID: Data Kendaraan (Bersebelahan) --}}
-            <div class="row g-2 mb-3">
-                <div class="col-md-6">
-                    <label for="license_plate" class="form-label fw-bold">{{ __('No. Polisi (Opsional)') }}</label>
-                    <input id="license_plate" class="form-control text-uppercase" type="text" name="license_plate"
-                        :value="old('license_plate')" placeholder="BM 1234 AB" />
-                    <x-input-error :messages="$errors->get('license_plate')" class="mt-1 text-danger small" />
+            <div class="brand-features">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <strong>Booking Online</strong>
+                        <span>Pesan slot cuci dengan mudah</span>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label for="vehicle_type" class="form-label fw-bold">{{ __('Jenis Mobil (Opsional)') }}</label>
-                    <input id="vehicle_type" class="form-control" type="text" name="vehicle_type"
-                        :value="old('vehicle_type')" placeholder="Cth: Avanza Hitam" />
-                    <x-input-error :messages="$errors->get('vehicle_type')" class="mt-1 text-danger small" />
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-percent"></i>
+                    </div>
+                    <div class="feature-text">
+                        <strong>Promo Eksklusif</strong>
+                        <span>Diskon khusus member</span>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="feature-text">
+                        <strong>Riwayat Transaksi</strong>
+                        <span>Pantau semua layanan Anda</span>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="form-group mb-3">
-                <label for="password" class="form-label fw-bold">{{ __('Password') }}</label>
-                <input id="password" class="form-control" type="password" name="password" required
-                    autocomplete="new-password" placeholder="Minimal 8 karakter" />
-                <x-input-error :messages="$errors->get('password')" class="mt-1 text-danger small" />
+        {{-- RIGHT SIDE - Form Section --}}
+        <div class="auth-form-side">
+            <div class="form-container">
+                <div class="card-header">
+                    <h2 class="card-title">Register</h2>
+                    <p class="card-subtitle">Buat akun baru Anda</p>
+                </div>
+
+                <form method="POST" action="{{ route('register') }}" class="auth-form">
+                    @csrf
+
+                    {{-- Name --}}
+                    <div class="form-group">
+                        <label for="name" class="form-label">Nama Lengkap</label>
+                        <div class="input-group">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text"
+                                   id="name"
+                                   name="name"
+                                   class="form-control"
+                                   value="{{ old('name') }}"
+                                   placeholder="Enter your full name"
+                                   required
+                                   autofocus>
+                        </div>
+                        <x-input-error :messages="$errors->get('name')" class="error-message" />
+                    </div>
+
+                    {{-- Email --}}
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   class="form-control"
+                                   value="{{ old('email') }}"
+                                   placeholder="Enter your email"
+                                   required>
+                        </div>
+                        <x-input-error :messages="$errors->get('email')" class="error-message" />
+                    </div>
+
+                    {{-- Phone --}}
+                    <div class="form-group">
+                        <label for="phone" class="form-label">No. Handphone</label>
+                        <div class="input-group">
+                            <i class="fas fa-phone input-icon"></i>
+                            <input type="text"
+                                   id="phone"
+                                   name="phone"
+                                   class="form-control"
+                                   value="{{ old('phone') }}"
+                                   placeholder="081234567890"
+                                   required>
+                        </div>
+                        <x-input-error :messages="$errors->get('phone')" class="error-message" />
+                    </div>
+
+                    {{-- Password --}}
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Minimal 8 karakter"
+                                   required>
+                        </div>
+                        <x-input-error :messages="$errors->get('password')" class="error-message" />
+                    </div>
+
+                    {{-- Confirm Password --}}
+                    <div class="form-group">
+                        <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password"
+                                   id="password_confirmation"
+                                   name="password_confirmation"
+                                   class="form-control"
+                                   placeholder="Confirm your password"
+                                   required>
+                        </div>
+                        <x-input-error :messages="$errors->get('password_confirmation')" class="error-message" />
+                    </div>
+
+                    {{-- Vehicle Info (Optional) --}}
+                    <div class="form-group">
+                        <label class="form-label">Info Kendaraan <small style="font-weight: normal; opacity: 0.7;">(Opsional)</small></label>
+                        <div class="input-group mb-2">
+                            <i class="fas fa-car input-icon"></i>
+                            <input type="text"
+                                   name="license_plate"
+                                   class="form-control"
+                                   value="{{ old('license_plate') }}"
+                                   placeholder="No. Polisi (BM 1234 AB)">
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <i class="fas fa-cog input-icon"></i>
+                            <input type="text"
+                                   name="vehicle_type"
+                                   class="form-control"
+                                   value="{{ old('vehicle_type') }}"
+                                   placeholder="Jenis Mobil (Avanza Hitam)">
+                        </div>
+                    </div>
+
+                    {{-- Submit Button --}}
+                    <button type="submit" class="auth-submit-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Register Now
+                    </button>
+
+                    {{-- Login Link --}}
+                    <p class="auth-link mt-4">
+                        Already have an account?
+                        <a href="{{ route('login') }}">Login here</a>
+                    </p>
+                </form>
+
+                {{-- Footer --}}
+                <div class="auth-footer">
+                    <p class="help-link">
+                        Kembali Ke <a href="/">Beranda</a>
+                    </p>
+                </div>
             </div>
-
-            <div class="form-group mb-4">
-                <label for="password_confirmation" class="form-label fw-bold">{{ __('Konfirmasi Password') }}</label>
-                <input id="password_confirmation" class="form-control" type="password" name="password_confirmation"
-                    required autocomplete="new-password" placeholder="Ulangi password Anda" />
-                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1 text-danger small" />
-            </div>
-
-            <div class="form-group text-center d-grid gap-2">
-                <button type="submit" class="btn btn-primary btn-lg btn-block">
-                    {{ __('Daftar Sekarang') }}
-                </button>
-            </div>
-
-            <div class="form-group text-center mt-3">
-                <a href="{{ route('google.login') }}"
-                   class="btn"
-                   style="width: 100%; 
-                          display: flex; 
-                          justify-content: center; 
-                          align-items: center; 
-                          background-color: white; 
-                          border: 1px solid #ccc; 
-                          border-radius: 4px; 
-                          padding: 8px 0; 
-                          text-decoration: none; 
-                          color: #333;">
-                    
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" 
-                         width="20" height="20" 
-                         alt="Google Logo" 
-                         style="margin-right: 10px;">
-                    
-                    <span style="font-weight: 600;">Daftar dengan Google</span>
-                </a>
-            </div>
-
-            <p class="text-center mt-3 mb-0">
-                Sudah punya akun?
-                <a class="text-primary fw-bold text-decoration-none" href="{{ route('login') }}">
-                    {{ __('Login di sini') }}
-                </a>
-            </p>
-        </form>
+        </div>
     </div>
-
-
-    {{-- Style Tambahan untuk Scrollbar Cantik --}}
-    <style>
-        /* Kustomisasi Scrollbar agar tidak kaku */
-        div::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        div::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        div::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-
-        div::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-    </style>
 </x-guest-layout>
