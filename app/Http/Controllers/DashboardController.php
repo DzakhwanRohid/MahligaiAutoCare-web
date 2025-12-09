@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Models\Service;
 use App\Models\Customer;
-use App\Models\User; // Pastikan User diimport
+use App\Models\User;
 
 class DashboardController extends Controller
 {
@@ -24,7 +24,6 @@ class DashboardController extends Controller
         } elseif (Auth::user()->role === 'kasir') {
             return $this->kasir();
         }
-
         // Fallback jika role user biasa
         return redirect()->route('home');
     }
@@ -37,13 +36,10 @@ class DashboardController extends Controller
         $today = Carbon::today();
 
         // --- 1. Data KPI (Kartu Atas) ---
-        // Ini adalah variabel yang dicari oleh View Anda:
         $totalPendapatanBulanIni = Transaction::whereMonth('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year) // Filter tahun ini juga
+            ->whereYear('created_at', Carbon::now()->year)
             ->whereIn('status', ['Selesai', 'Sudah Dibayar'])
             ->sum('total');
-
-        // (Variabel ini untuk KPI lainnya di view)
         $penggunaBaruBulanIni = Customer::whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
@@ -61,9 +57,8 @@ class DashboardController extends Controller
                 ->whereMonth('created_at', $date->month)
                 ->whereIn('status', ['Selesai', 'Sudah Dibayar'])
                 ->sum('total');
-            $incomeData[] = $total / 1000000; // Ubah ke Juta
+            $incomeData[] = $total / 1000000;
         }
-
         // --- 3. Data Layanan Terpopuler (Pie Chart) ---
         $topServices = Transaction::select('service_id', DB::raw('count(*) as total'))
             ->whereIn('status', ['Selesai', 'Sudah Dibayar'])
@@ -84,13 +79,12 @@ class DashboardController extends Controller
             $count = Transaction::whereDate('created_at', $date->format('Y-m-d'))->count();
             $dailyData[] = $count;
         }
-
         // 5. Transaksi Terbaru (Tabel)
         $transaksi_terbaru = Transaction::with(['customer', 'service'])->latest()->take(5)->get();
 
         // KIRIM SEMUA DATA KE VIEW
         return view('dashboards.admin', compact(
-            'totalPendapatanBulanIni', // <-- Variabel yang error
+            'totalPendapatanBulanIni',
             'penggunaBaruBulanIni',
             'totalTransaksi',
             'jumlahLayanan',

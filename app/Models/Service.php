@@ -20,7 +20,7 @@ class Service extends Model
         'description',
         'price',
         'image',
-        'duration_minutes', // <-- TAMBAHAN BARU
+        'duration_minutes', 
     ];
 
     /**

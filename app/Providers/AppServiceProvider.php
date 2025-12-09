@@ -26,7 +26,6 @@ class AppServiceProvider extends ServiceProvider
         if (Schema::hasTable('settings')) {
             // Ambil semua settings dan jadikan default jika kosong
             $settings = Setting::pluck('value', 'key')->all();
-
             // Siapkan fallback default jika key belum ada di database
             $defaults = [
                 'business_name' => 'Mahligai AutoCare',
@@ -35,7 +34,6 @@ class AppServiceProvider extends ServiceProvider
                 'business_email' => 'info@mahligaiautocare.com',
                 'business_hours' => 'Senin - Minggu: 08:00 - 20:00 WIB',
             ];
-
             // Gabungkan default dengan data dari DB (data DB akan menimpa default)
             $globalSettings = array_merge($defaults, $settings);
             Paginator::useTailwind();

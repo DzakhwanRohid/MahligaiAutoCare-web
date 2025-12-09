@@ -14,7 +14,6 @@ class ReportController extends Controller
      */
     public function index()
     {
-        // Menampilkan view dengan form filter
         return view('admin.laporan.laporan_pendapatan');
     }
 
@@ -27,28 +26,22 @@ class ReportController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
-
         $startDate = Carbon::parse($request->start_date)->startOfDay();
         $endDate = Carbon::parse($request->end_date)->endOfDay();
-
-        // 1. Buat Query Dasar untuk Laporan Pendapatan (Hanya yang Selesai)
+        // 1. Buat Query Dasar untuk Laporan Pendapatan
         $queryBase = Transaction::whereBetween('created_at', [$startDate, $endDate])
                                 ->where('status', 'Selesai');
-
         // 2. Hitung KPI (Ringkasan Total)
-        // Kita clone query agar tidak mempengaruhi query tabel harian
         $summaryQuery = clone $queryBase;
         $totalPendapatan = $summaryQuery->sum('total');
         $totalTransaksi = $summaryQuery->count();
         $rataRata = ($totalTransaksi > 0) ? $totalPendapatan / $totalTransaksi : 0;
-
         // 3. Ambil Laporan Harian (Grup per Tanggal)
         $laporan = $queryBase
             ->selectRaw('DATE(created_at) as tanggal, COUNT(*) as total_transaksi, SUM(total) as total_pendapatan')
             ->groupBy('tanggal')
             ->orderBy('tanggal', 'asc')
             ->get();
-
         // 4. Kirim semua data ke view
         return view('admin.laporan.laporan_pendapatan', compact(
             'laporan',
@@ -59,33 +52,24 @@ class ReportController extends Controller
             'rataRata'
         ));
     }
-
     /**
      * Laporan Pemesanan dengan Search dan Filter Backend
      */
     public function pemesanan(Request $request)
     {
         $query = Transaction::with(['customer', 'service'])->latest();
-
-        // Filter berdasarkan tanggal
         if ($request->filled('start_date')) {
             $query->whereDate('created_at', '>=', Carbon::parse($request->start_date));
         }
         if ($request->filled('end_date')) {
             $query->whereDate('created_at', '<=', Carbon::parse($request->end_date));
         }
-
-        // Filter berdasarkan layanan
         if ($request->filled('service_id')) {
             $query->where('service_id', $request->service_id);
         }
-
-        // Filter berdasarkan status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
-
-        // Search berdasarkan keyword (No. Transaksi, Nama Pelanggan, No. Polisi)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -96,10 +80,8 @@ class ReportController extends Controller
                   });
             });
         }
-
         $services = Service::orderBy('name')->get();
         $transactions = $query->paginate(10);
-
         return view('admin.laporan.laporan_pemesanan', compact('transactions', 'services'));
     }
 }

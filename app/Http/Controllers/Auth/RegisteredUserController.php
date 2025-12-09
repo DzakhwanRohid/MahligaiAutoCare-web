@@ -32,7 +32,6 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            // VALIDASI DATA PELANGGAN
             'phone' => ['required', 'string', 'max:20'],
             'license_plate' => ['nullable', 'string', 'max:20', 'unique:customers,license_plate'],
             'vehicle_type' => ['nullable', 'string', 'max:100'],

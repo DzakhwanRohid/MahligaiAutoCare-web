@@ -19,14 +19,13 @@ class CustomerController extends Controller
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%") // Pastikan kolom di DB 'phone' atau 'phone_number'
-                    ->orWhere('license_plate', 'like', "%{$search}%");
+                ->orWhere('phone', 'like', "%{$search}%")
+                ->orWhere('license_plate', 'like', "%{$search}%");
             });
         }
         $customers = $query->latest()->paginate(10)->withQueryString();
         return view('admin.customer.index', compact('customers'));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -54,15 +53,13 @@ class CustomerController extends Controller
 
         return redirect()->route('admin.customer.index')->with('success', 'Pelanggan (walk-in) baru berhasil ditambahkan.');
     }
-
     /**
      * Display the specified resource.
      */
     public function show(Customer $customer)
     {
-        // Tidak kita gunakan
+        // Tidak digunakan
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -70,7 +67,6 @@ class CustomerController extends Controller
     {
         return view('admin.customer.edit', compact('customer'));
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -79,11 +75,9 @@ class CustomerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            // Validasi unik license_plate, abaikan ID customer ini
             'license_plate' => 'nullable|string|max:20|unique:customers,license_plate,' . $customer->id,
             'vehicle_type' => 'nullable|string|max:100',
         ]);
-
         // 1. Update Data di Tabel Customers
         $customer->update([
             'name' => $request->name,
@@ -91,8 +85,7 @@ class CustomerController extends Controller
             'license_plate' => $request->license_plate,
             'vehicle_type' => $request->vehicle_type,
         ]);
-
-        // 2. SINKRONISASI: Update Data di Tabel Users (Jika punya akun)
+        // 2.Update Data di Tabel Users (Jika punya akun)
         if ($customer->user_id) {
             $user = \App\Models\User::find($customer->user_id);
             if ($user) {
@@ -103,32 +96,25 @@ class CustomerController extends Controller
                 ]);
             }
         }
-
         return redirect()->route('admin.customer.index')->with('success', 'Data pelanggan berhasil diperbarui.');
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Customer $customer)
     {
-        // LOGIKA KEAMANAN PENTING:
-
         // 1. Cek jika pelanggan punya akun user
         if ($customer->user) {
             return redirect()->route('admin.customer.index')
                 ->with('error', 'Tidak bisa menghapus pelanggan ini. Dia terdaftar sebagai User. Hapus Akun User-nya terlebih dahulu di Manajemen User.');
         }
-
         // 2. Cek jika pelanggan punya riwayat transaksi
         if ($customer->transactions()->count() > 0) {
             return redirect()->route('admin.customer.index')
                 ->with('error', 'Tidak bisa menghapus pelanggan ini. Dia memiliki riwayat transaksi.');
         }
-
         // 3. Jika aman (walk-in dan tidak punya transaksi), hapus.
         $customer->delete();
-
         return redirect()->route('admin.customer.index')->with('success', 'Pelanggan berhasil dihapus.');
     }
 }

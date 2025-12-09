@@ -15,7 +15,6 @@ class FeedbackController extends Controller
 
     public function show(ContactMessage $contactMessage)
     {
-        // Tandai sebagai sudah dibaca
         if (!$contactMessage->is_read) {
             $contactMessage->update(['is_read' => true]);
         }

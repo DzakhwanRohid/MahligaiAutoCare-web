@@ -19,6 +19,6 @@ class ContactMessage extends Model
         'email',
         'subject',
         'message',
-        'is_read', // Ini untuk status sudah dibaca/belum
+        'is_read', 
     ];
 }

@@ -7,12 +7,12 @@ use App\Models\Service;
 use App\Models\Customer;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\Promotion; // <-- WAJIB
-use App\Models\ContactMessage; // <-- WAJIB
-use Carbon\Carbon;          // <-- WAJIB
-use Carbon\CarbonPeriod;    // <-- WAJIB
-use Illuminate\Support\Facades\Auth; // <-- WAJIB
-use Illuminate\Support\Facades\DB; // <-- WAJIB
+use App\Models\Promotion;
+use App\Models\ContactMessage;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -77,44 +77,37 @@ class HomeController extends Controller
     /**
      * Menampilkan halaman Pantau Antrean.
      */
-   public function pantauAntrian()
+    public function pantauAntrian()
     {
         $today = Carbon::now($this->tz);
         $now = $today->clone()->format('H:i'); // Waktu saat ini (string)
 
         // Definisikan Jam Operasional
-        $startHour = 9;
-        $endHour = 17; // Jam 5 Sore
+        $startHour = 7;
+        $endHour = 17;
         $jamTutup = Carbon::parse($today->format('Y-m-d'), $this->tz)->hour($endHour)->minute(0);
-
         // Cek apakah jam sekarang sudah melewati jam tutup
         $isClosed = $today->gt($jamTutup);
-
         // 1. Data untuk 4 Slot Fisik (Yang sedang dicuci SAAT INI)
         $slots = Transaction::where('status', 'Sedang Dicuci')
             ->whereNotNull('slot')
             ->with(['service', 'customer'])
             ->get()
             ->keyBy('slot');
-
         // 2. Data untuk Jadwal Booking Hari Ini (SEMUA DATA)
         $jadwalHariIni = Transaction::whereDate('booking_date', $today->format('Y-m-d'))
             ->whereIn('status', ['Menunggu', 'Terkonfirmasi', 'Sedang Dicuci'])
             ->with('service')
             ->orderBy('booking_date', 'asc')
             ->get();
-
         // 3. Kebutuhan View 1: $jadwalSlots (Untuk Modal Pop-up)
         $jadwalSlots = $jadwalHariIni->groupBy('slot');
-
         // 4. Kebutuhan View 2: $bookedSlots (Untuk Timeline Grid Bawah)
-        //    INI YANG HILANG SEBELUMNYA
         $bookedSlots = $jadwalHariIni
             ->map(function ($item) {
                 return Carbon::parse($item->booking_date)->format('H:i');
             })
             ->toArray();
-
         // 5. Pesanan Aktif Milik User
         $myActiveBookings = collect();
         if (Auth::check() && Auth::user()->customer) {
@@ -124,14 +117,13 @@ class HomeController extends Controller
                 ->orderBy('booking_date', 'asc')
                 ->get();
         }
-
         return view('home.pantau', compact(
             'slots',
             'jadwalSlots',
-            'bookedSlots', // <-- SEKARANG SUDAH DIKIRIM
+            'bookedSlots',
             'startHour',
             'endHour',
-            'now', // Variabel $now diubah jadi $nowString
+            'now',
             'today',
             'myActiveBookings',
             'isClosed'
@@ -148,11 +140,6 @@ class HomeController extends Controller
         return view('home.pemesanan', compact('services', 'user', 'customer'));
     }
 
-    /**
-     * ==========================================================
-     * OTAK SISTEM (VERSI BARU YANG DIPERBAIKI)
-     * ==========================================================
-     */
     public function getAvailableSchedule(Request $request)
     {
         $request->validate([
@@ -162,61 +149,46 @@ class HomeController extends Controller
 
         $tanggal = $request->date;
         $service = Service::find($request->service_id);
-        $durasiLayanan = $service->duration_minutes; // Misal: 60
-
-        $jamBuka = Carbon::parse($tanggal, $this->tz)->hour(9)->minute(0);
+        $durasiLayanan = $service->duration_minutes;
+        $jamBuka = Carbon::parse($tanggal, $this->tz)->hour(7)->minute(0);
         $jamTutup = Carbon::parse($tanggal, $this->tz)->hour(17)->minute(0);
         $now = Carbon::now($this->tz);
-
         // 1. Ambil semua booking yang ada di tanggal itu
         $bookings = Transaction::whereDate('booking_date', $tanggal)
             ->whereIn('status', ['Menunggu', 'Terkonfirmasi', 'Sedang Dicuci'])
-            ->with('service') // Penting untuk ambil durasi booking lama
+            ->with('service')
             ->get();
-
         $jadwalTersedia = [ 1 => [], 2 => [], 3 => [], 4 => [] ];
         $interval = 15; // Cek ketersediaan setiap 15 menit
-
         // 2. Loop untuk setiap 4 Slot
         for ($slotId = 1; $slotId <= 4; $slotId++) {
-
             // Ambil semua booking HANYA untuk slot ini
             $bookingsInThisSlot = $bookings->where('slot', $slotId);
-
-            // Buat daftar slot waktu (09:00, 09:15, 09:30...)
+            // Buat daftar slot waktu
             $period = CarbonPeriod::create($jamBuka, $interval.' minutes', $jamTutup->clone()->subMinutes($durasiLayanan));
-
             foreach ($period as $waktuMulaiCek) {
-                // $waktuMulaiCek adalah calon jam booking (misal: 09:15)
-
+                // $waktuMulaiCek adalah calon jam booking
                 // Cek 1: Apakah jam ini sudah lewat?
                 if ($waktuMulaiCek->isToday() && $waktuMulaiCek->lt($now)) {
                     continue; // Skip, jam sudah lewat
                 }
-
                 $waktuSelesaiCek = $waktuMulaiCek->clone()->addMinutes($durasiLayanan);
-
                 // Cek 2: Apakah jam ini bertabrakan dengan booking lain di slot ini?
                 $isClear = true;
                 foreach ($bookingsInThisSlot as $tx) {
                     $txStart = Carbon::parse($tx->booking_date, $this->tz);
                     $txEnd = $txStart->clone()->addMinutes($tx->service->duration_minutes);
-
-                    // Cek tumpang tindih (Overlap check)
-                    // Jika (MulaiBaru < SelesaiLama) DAN (SelesaiBaru > MulaiLama)
                     if ($waktuMulaiCek->lt($txEnd) && $waktuSelesaiCek->gt($txStart)) {
-                        $isClear = false; // Ada tabrakan!
+                        $isClear = false;
                         break;
                     }
                 }
-
                 // Cek 3: Jika lolos 2 cek di atas, slot ini AMAN
                 if ($isClear) {
                     $jadwalTersedia[$slotId][] = $waktuMulaiCek->format('H:i');
                 }
             }
         }
-
         return response()->json($jadwalTersedia);
     }
 
@@ -229,19 +201,16 @@ class HomeController extends Controller
             'service_id' => 'required|exists:services,id',
             'promo_code' => 'required|string',
         ]);
-
         $service = Service::find($request->service_id);
         $basePrice = $service->price;
         $discountAmount = 0;
         $totalPrice = $basePrice;
-
         $code = strtoupper($request->promo_code);
         $promo = Promotion::where('code', $code)
             ->where('is_active', true)
             ->whereDate('start_date', '<=', Carbon::today())
             ->whereDate('end_date', '>=', Carbon::today())
             ->first();
-
         if ($promo) {
             if ($promo->type == 'percentage') {
                 $discountAmount = ($basePrice * $promo->value) / 100;
@@ -250,7 +219,6 @@ class HomeController extends Controller
             }
             $totalPrice = $basePrice - $discountAmount;
             if ($totalPrice < 0) $totalPrice = 0;
-
             return response()->json([
                 'success' => true,
                 'base_price' => $basePrice,
@@ -292,7 +260,6 @@ class HomeController extends Controller
         $waktuMulai = Carbon::parse($request->booking_date);
         $waktuSelesai = $waktuMulai->clone()->addMinutes($service->duration_minutes);
         $tz = 'Asia/Jakarta';
-
         $isBooked = Transaction::where('slot', $request->slot)
             ->whereDate('booking_date', $waktuMulai->format('Y-m-d'))
             ->whereIn('status', ['Menunggu', 'Terkonfirmasi', 'Sedang Dicuci'])
@@ -304,11 +271,9 @@ class HomeController extends Controller
                 });
             })
             ->exists();
-
         if ($isBooked) {
             return back()->withErrors(['booking_date' => 'Mohon maaf, jam tersebut baru saja diambil orang lain.'])->withInput();
         }
-
         // 3. LOGIKA CUSTOMER
         $user = Auth::user();
         $customerId = null;
@@ -327,18 +292,15 @@ class HomeController extends Controller
             );
             $customerId = $customer->id;
         }
-
         // 4. AMBIL HARGA FINAL DARI JS
         $total = $request->final_total_price;
         $basePrice = $request->final_base_price;
         $discountAmount = $request->final_discount_amount;
         $promotionId = null;
-
         if($request->filled('promotion_code') && $discountAmount > 0) {
             $promo = Promotion::where('code', $request->promotion_code)->first();
             if($promo) $promotionId = $promo->id;
         }
-
         // 5. UPLOAD BUKTI BAYAR
         $proofPath = null;
         if ($request->hasFile('payment_proof')) {
@@ -346,7 +308,6 @@ class HomeController extends Controller
         } elseif ($request->hasFile('payment_proof_qris')) {
             $proofPath = $request->file('payment_proof_qris')->store('bukti_bayar', 'public');
         }
-
         // 6. SIMPAN TRANSAKSI
         Transaction::create([
             'invoice' => 'BKG-' . time(),
@@ -359,13 +320,12 @@ class HomeController extends Controller
             'total' => $total,
             'base_price' => $basePrice,
             'discount' => $discountAmount,
-            'status' => 'Menunggu', // Status awal (perlu verifikasi Admin)
+            'status' => 'Menunggu',
             'payment_method' => $request->payment_method,
             'booking_date' => $request->booking_date,
             'slot' => $request->slot,
             'payment_proof' => $proofPath,
         ]);
-
         return redirect()->route('home.pantau')->with('success', 'Booking berhasil! Menunggu konfirmasi dari Admin.');
     }
 }
